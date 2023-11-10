@@ -1,15 +1,26 @@
 ---
-title: "LDA"
+title: "EDA"
 author: "Runze Cui"
 date: "2023-11-10"
-output: pdf_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(knitr)
 library(kableExtra)
 library(survival)
+```
+
+```{r}
+dat <- read_csv("./data/heart_failure.csv") %>% 
+  arrange(TIME) %>% janitor::clean_names()
+# write.csv(dat, "dat.csv")
+dat
+```
+
+```{r}
+
 ```
 
