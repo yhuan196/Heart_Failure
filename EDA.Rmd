@@ -13,14 +13,19 @@ library(kableExtra)
 library(survival)
 ```
 
+# Read File
 ```{r}
 dat <- read_csv("./data/heart_failure.csv") %>% 
   arrange(TIME) %>% janitor::clean_names()
 # write.csv(dat, "dat.csv")
 dat
 ```
+# EDA
 
-```{r}
+# Life Table
 
-```
+# K-M Model
 
+# Log-Rank Test
+
+# Cox PH Model
