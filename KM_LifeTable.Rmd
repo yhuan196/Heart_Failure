@@ -1,0 +1,37 @@
+---
+title: "KM_LifeTable"
+author: "Huanyu Chen"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(survival)
+library(survminer)
+library(tidyverse)
+```
+
+```{r}
+dat <- read_csv("./data/heart_failure.csv") %>% 
+  arrange(TIME) %>% janitor::clean_names()
+dat
+```
+
+```{r}
+# Kaplan-Meier Survival Estimate
+surv_object <- Surv(time = dat$time, event = dat$event)
+km_fit <- survfit(surv_object ~ 1)
+summary(km_fit)
+```
+
+```{r}
+# Life Table
+surv_object <- Surv(time = dat$time, event = dat$event)
+life_table <- survfit(surv_object ~ 1)
+summary(life_table, times = c(1:10)*30) # Monthly intervals
+
+ggsurvplot(km_fit, data = dat, title = "Kaplan-Meier Survival Curve",
+           xlab = "Time (months)", ylab = "Survival Probability",
+           risk.table = TRUE, risk.table.y.text = FALSE, 
+           ggtheme = theme_minimal())
+```
