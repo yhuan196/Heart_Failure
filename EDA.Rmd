@@ -11,16 +11,38 @@ library(tidyverse)
 library(knitr)
 library(kableExtra)
 library(survival)
+library(writexl)
+library(readxl)
 ```
 
 # Read File
 ```{r}
 dat <- read_csv("./data/heart_failure.csv") %>% 
-  arrange(TIME) %>% janitor::clean_names()
-# write.csv(dat, "dat.csv")
-dat
+  arrange(TIME) %>% janitor::clean_names() %>% 
+  mutate(gender = factor(gender), 
+         smooking = factor(smoking),
+         diabetes = factor(diabetes),
+         bp = factor(bp),
+         anaemia = factor(anaemia))
+# write_xlsx(dat, "./data/dat.xlsx")
+dat 
 ```
 # EDA
+
+```{r}
+dat %>% as.tibble()
+summary(dat)
+sum(is.na(dat))
+```
+Discrete Variable: event, gender, smoking, 
+
+Continuous Variable: 
+
+```{r}
+# create a table:
+```
+
+
 
 # Life Table
 
