@@ -2,14 +2,14 @@
 title: "EDA"
 author: "Runze Cui"
 date: "2023-11-10"
-output: pdf_document
 header-includes:
 - \usepackage{booktabs}
 editor_options: 
   chunk_output_type: console
+output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(knitr)
@@ -18,9 +18,10 @@ library(survival)
 library(writexl)
 library(readxl)
 library(table1)
+library(rmarkdown)
 ```
 
-## Read File
+### Read File
 
 ```{r echo=T}
 dat <- read_csv("./data/heart_failure.csv") %>% 
@@ -37,14 +38,14 @@ dat <- read_csv("./data/heart_failure.csv") %>%
 dat_overview = head(dat)
 ```
 
-## EDA:
+### Summary Statistics:
 
 - 299 patients of heart failure comprising of 105 women and 194 men.
 - All the patients were more than 40 years old.
 
 **Discrete Variable:** event (indicator), gender, smoking, diabetes, bp and anaemia.
 
-**Continuous Variable:** time, age, ejection_fraction (EF), sodium, creatinine, pletelets and cpk.
+**Continuous Variable:** age, ejection_fraction (EF), sodium, creatinine, pletelets and cpk.
 
 
 ```{r results='asis'}
@@ -64,9 +65,51 @@ label(dat$cpk) = "CPK"
 
 t1 = table1(~ event + gender + smoking + diabetes + bp + anaemia, 
                   data = dat, topclass = "Rtable1-zebra")
-t2 = table1(~ time + age + ejection_fraction + sodium + creatinine + platelets + cpk, 
+t2 = table1(~ age + ejection_fraction + sodium + creatinine + platelets + cpk, 
                    data = dat, topclass = "Rtable1-zebra")
 t1
 t2
 ```
+
+
+### Check distributions for all covariates:
+
+Note: Use histograms for continuous variables and bar charts for categorical variables.
+
+```{r fig.align='center', fig.height=5, fig.width=8}
+# Data contains the continuous vars only
+cont_dat = dat %>% 
+  select(age, ejection_fraction, sodium, creatinine, platelets, cpk) %>% 
+  rename(EF = ejection_fraction)
+# Long format 
+cont_dat.long = cont_dat %>% 
+  pivot_longer(cols = c(age, EF, sodium, creatinine, platelets, cpk))
+# Plot the continuous variable histograms
+cont_hist = ggplot(data = cont_dat.long, aes(x = value)) +
+  geom_histogram(aes(fill = name), bins = 30) +
+  facet_wrap(~name, scales = "free") +
+  labs(x = "Value", y = "Count", title = "Histograms of Continuous Covariates") +
+  theme_bw() +
+  theme(legend.position = "none")
+cont_hist
+
+# Data contains the categorical vars only
+cate_data = dat %>% 
+  select(event, gender, smoking, diabetes, bp, anaemia)
+# Long format 
+cate_dat.long = cate_data %>% 
+  pivot_longer(cols = c(event, gender, smoking, diabetes, bp, anaemia))
+# Plot the categorical variable barplots
+cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
+  geom_bar() +
+  geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5) +
+  facet_wrap(~name, scales = "free") +
+  labs(x = "Category", y = "Count", fill = "Category", title = "Bar Charts of Categorical Covariates") +
+  theme_bw() +
+  theme(legend.position = "none") +
+  ylim(0, 220)
+cate_barplot
+```
+
+
 
