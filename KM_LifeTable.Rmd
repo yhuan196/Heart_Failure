@@ -1,5 +1,5 @@
 ---
-title: "KM_LifeTable"
+title: "K-M Life Table"
 author: "Huanyu Chen"
 date: "`r Sys.Date()`"
 output: html_document
@@ -36,7 +36,8 @@ ggsurvplot(km_fit, data = dat, title = "Kaplan-Meier Survival Curve",
            ggtheme = theme_minimal())
 ```
 
-# Plot Survival Curves Stratified by Gender
+# Life Table Stratified by Gender
+## Plot
 ```{r}
 surv_object <- Surv(time = dat$time, event = dat$event)
 km_fit_gender <- survfit(surv_object ~ gender, data = dat)
@@ -47,3 +48,32 @@ ggsurvplot(km_fit_gender, data = dat,
            ggtheme = theme_minimal())
 ```
 
+## Log Rank Test
+We would like to test if there is difference in survival between genders.
+```{r}
+logrank_test <- survdiff(surv_object ~ gender, data = dat)
+print(logrank_test)
+```
+
+With a p-value of 0.9, there is no sufficient evidence to reject the null hypothesis. In this case, there is no difference in survival between the two genders based on this dataset.
+
+# Life Table Stratified by Smoking Status
+## Plot
+```{r}
+surv_object <- Surv(time = dat$time, event = dat$event)
+km_fit_gender <- survfit(surv_object ~ smoking, data = dat)
+ggsurvplot(km_fit_gender, data = dat, 
+           title = "Kaplan-Meier Survival Curve by Smoking Status",
+           xlab = "Time (months)", ylab = "Survival Probability",
+           risk.table = TRUE, risk.table.y.text = FALSE, 
+           ggtheme = theme_minimal())
+```
+
+## Log Rank Test
+We would like to test if there is difference in survival between smoking status.
+```{r}
+logrank_test <- survdiff(surv_object ~ smoking, data = dat)
+print(logrank_test)
+```
+
+With a p-value of 1, there is no sufficient evidence to reject the null hypothesis. In this case, there is no difference in survival between smokers and non-smokers based on this dataset.
