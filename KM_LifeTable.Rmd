@@ -17,15 +17,15 @@ dat <- read_csv("./data/heart_failure.csv") %>%
 dat
 ```
 
-```{r}
 # Kaplan-Meier Survival Estimate
+```{r}
 surv_object <- Surv(time = dat$time, event = dat$event)
 km_fit <- survfit(surv_object ~ 1)
 summary(km_fit)
 ```
 
-```{r}
 # Life Table
+```{r}
 surv_object <- Surv(time = dat$time, event = dat$event)
 life_table <- survfit(surv_object ~ 1)
 summary(life_table, times = c(1:10)*30) # Monthly intervals
@@ -35,3 +35,15 @@ ggsurvplot(km_fit, data = dat, title = "Kaplan-Meier Survival Curve",
            risk.table = TRUE, risk.table.y.text = FALSE, 
            ggtheme = theme_minimal())
 ```
+
+# Plot Survival Curves Stratified by Gender
+```{r}
+surv_object <- Surv(time = dat$time, event = dat$event)
+km_fit_gender <- survfit(surv_object ~ gender, data = dat)
+ggsurvplot(km_fit_gender, data = dat, 
+           title = "Kaplan-Meier Survival Curve by Gender",
+           xlab = "Time (months)", ylab = "Survival Probability",
+           risk.table = TRUE, risk.table.y.text = FALSE, 
+           ggtheme = theme_minimal())
+```
+
