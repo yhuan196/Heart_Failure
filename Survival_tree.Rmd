@@ -2,7 +2,7 @@
 title: "Survival_tree"
 author: "Runze Cui"
 date: "2023-11-27"
-output: html_document
+output: pdf_document
 editor_options: 
   chunk_output_type: console
 ---
