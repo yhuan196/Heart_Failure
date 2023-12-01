@@ -199,6 +199,72 @@ stepwise_model
     ## sodium             -0.0456907483452765   0.955337356171037  0.0233585301861612    -1.95606264525779  0.0504577748881677     
     ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
 
+**consider transformation on left-skewed predictors**
+
+``` r
+stepwise_data <- stepwise_data %>%
+  mutate(logcpk = log(cpk+1),
+         logcre=log(creatinine+1))
+
+# Variable selection using stepwise Cox model
+stepwise_model <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                anaemia + age + ejection_fraction + sodium + logcre + 
+                                pletelets + logcpk, data = stepwise_data)
+stepwise_model
+```
+
+    ##           Table 1. Summary of Parameters          
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##            Paramters                  Value       
+    ## ——————————————————————————————————————————————————
+    ## Response Variable              Surv(time, event)   
+    ## Included Variable              NULL                
+    ## Selection Method               forward             
+    ## Select Criterion               SL                  
+    ## Entry Significance Level(sle)  0.15                
+    ## Method                         efron               
+    ## Multicollinearity Terms        NULL                
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                                       Table 2. Variables Type                                       
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##    class                                           variable                                         
+    ## ————————————————————————————————————————————————————————————————————————————————————————————————————
+    ## nmatrix.2  Surv(time, event)                                                                         
+    ## numeric    gender smoking diabetes bp anaemia age ejection_fraction sodium logcre pletelets logcpk   
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                        Table 3. Process of Selection                        
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##  Step    EnteredEffect    RemovedEffect  DF  NumberIn           SL          
+    ## ————————————————————————————————————————————————————————————————————————————
+    ## 1     logcre                            1   1         1.6871984448572e-07    
+    ## 2     age                               1   2         9.78512797059471e-06   
+    ## 3     ejection_fraction                 1   3         4.14836454652977e-06   
+    ## 4     bp                                1   4         0.0163833264326175     
+    ## 5     anaemia                           1   5         0.0689106560670863     
+    ## 6     sodium                            1   6         0.137463071634242      
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                           Table 4. Selected Varaibles                          
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##  variables1  variables2     variables3      variables4  variables5  variables6 
+    ## ———————————————————————————————————————————————————————————————————————————————
+    ## logcre      age         ejection_fraction  bp          anaemia     sodium       
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                                      Table 5. Coefficients of the Selected Variables                                     
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##      Variable              coef              exp(coef)           se(coef)                z                Pr(>|z|)       
+    ## —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+    ## logcre             1.30763101581221     3.69740423676436   0.293778646211065    4.45107577653123   8.54411832970726e-06   
+    ## age                0.0416644317595133   1.04254457519706   0.00904436952880791  4.60667066143248   4.09167266089582e-06   
+    ## ejection_fraction  -0.0429559987808823  0.957953540263324  0.0101497273424933   -4.23223179612333  2.31383757283858e-05   
+    ## bp                 0.50744191505745     1.66103668263713   0.21181836595948     2.39564644339916   0.0165910851849217     
+    ## anaemia            0.414916745814877    1.51424466823816   0.209598507238112    1.97957872545111   0.0477508854851059     
+    ## sodium             -0.0366399594020293  0.96402316034887   0.0240870312129267   -1.52114883225484  0.128222492476848      
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+
 ## Check assumptions for Cox model
 
 ``` r
@@ -208,19 +274,20 @@ cox_zph <- cox.zph(cox_model)
 plot(cox_zph) # Residual plots
 ```
 
-![](Cox_Model_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-5.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-6.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-7.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-8.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-9.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-10.png)<!-- -->
+![](Cox_Model_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-5.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-6.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-7.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-8.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-9.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-10.png)<!-- -->
 
 ``` r
 # Plot survival curves
 ggsurvplot(survfit(cox_model), data = data, conf.int = TRUE)
 ```
 
-![](Cox_Model_files/figure-gfm/unnamed-chunk-4-11.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-12.png)<!-- -->
+![](Cox_Model_files/figure-gfm/unnamed-chunk-5-11.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-12.png)<!-- -->
 
 ``` r
 # refit a model with 7 selected variables 
 # bp, anaemia, age, ejection_fraction, sodium, creatinine, cpk
-step_model <- coxph(Surv(time, event) ~ bp + anaemia + age + ejection_fraction + sodium + creatinine + cpk, data = stepwise_data)
+step_model <- coxph(Surv(time, event) ~ bp + anaemia + age + ejection_fraction + sodium + 
+                      creatinine + cpk, data = stepwise_data)
 summary(step_model)
 ```
 
@@ -261,11 +328,11 @@ cox_step <- cox.zph(step_model)
 plot(cox_step) # Residual plots
 ```
 
-![](Cox_Model_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-5.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-6.png)<!-- -->
+![](Cox_Model_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-6-3.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-6-4.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-6-5.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-6-6.png)<!-- -->
 
 ``` r
 # Plot survival curves
 ggsurvplot(survfit(step_model), data = data, conf.int = TRUE)
 ```
 
-![](Cox_Model_files/figure-gfm/unnamed-chunk-5-7.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-8.png)<!-- -->
+![](Cox_Model_files/figure-gfm/unnamed-chunk-6-7.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-6-8.png)<!-- -->

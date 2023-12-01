@@ -112,6 +112,21 @@ stepwise_model <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + 
 stepwise_model
 ```
 
+**consider transformation on left-skewed predictors**
+
+```{r}
+stepwise_data <- stepwise_data %>%
+  mutate(logcpk = log(cpk+1),
+         logcre=log(creatinine+1))
+
+# Variable selection using stepwise Cox model
+stepwise_model <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                anaemia + age + ejection_fraction + sodium + logcre + 
+                                pletelets + logcpk, data = stepwise_data)
+stepwise_model
+```
+
+
 ## Check assumptions for Cox model
 
 ```{r}
@@ -127,7 +142,8 @@ ggsurvplot(survfit(cox_model), data = data, conf.int = TRUE)
 ```{r}
 # refit a model with 7 selected variables 
 # bp, anaemia, age, ejection_fraction, sodium, creatinine, cpk
-step_model <- coxph(Surv(time, event) ~ bp + anaemia + age + ejection_fraction + sodium + creatinine + cpk, data = stepwise_data)
+step_model <- coxph(Surv(time, event) ~ bp + anaemia + age + ejection_fraction + sodium + 
+                      creatinine + cpk, data = stepwise_data)
 summary(step_model)
 
 # Check assumptions with model obtained from stepwiseCox
