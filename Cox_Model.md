@@ -207,10 +207,10 @@ stepwise_data <- stepwise_data %>%
          logcre=log(creatinine+1))
 
 # Variable selection using stepwise Cox model
-stepwise_model <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
                                 anaemia + age + ejection_fraction + sodium + logcre + 
                                 pletelets + logcpk, data = stepwise_data)
-stepwise_model
+stepwise_model2
 ```
 
     ##           Table 1. Summary of Parameters          
@@ -267,6 +267,8 @@ stepwise_model
 
 ## Check assumptions for Cox model
 
+**full model**
+
 ``` r
 # Check assumptions with cox.zph
 # full model
@@ -282,6 +284,8 @@ ggsurvplot(survfit(cox_model), data = data, conf.int = TRUE)
 ```
 
 ![](Cox_Model_files/figure-gfm/unnamed-chunk-5-11.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-12.png)<!-- -->
+
+**Refit model with variables selected from stepwiseCox**
 
 ``` r
 # refit a model with 7 selected variables 
@@ -336,3 +340,58 @@ ggsurvplot(survfit(step_model), data = data, conf.int = TRUE)
 ```
 
 ![](Cox_Model_files/figure-gfm/unnamed-chunk-6-7.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-6-8.png)<!-- -->
+
+**Refit model with variables selected from stepwiseCox** log transform
+on left-skewed predictors
+
+``` r
+# refit a model with 5 selected variables 
+# logcre,age, ejection_fraction, bp, anaemia, sodium
+step_model4 <- coxph(Surv(time, event) ~ log(creatinine+1)+age + ejection_fraction + bp +
+                       anaemia + sodium, data = stepwise_data)
+summary(step_model4)
+```
+
+    ## Call:
+    ## coxph(formula = Surv(time, event) ~ log(creatinine + 1) + age + 
+    ##     ejection_fraction + bp + anaemia + sodium, data = stepwise_data)
+    ## 
+    ##   n= 299, number of events= 96 
+    ## 
+    ##                          coef exp(coef)  se(coef)      z Pr(>|z|)    
+    ## log(creatinine + 1)  1.307631  3.697404  0.293779  4.451 8.54e-06 ***
+    ## age                  0.041664  1.042545  0.009044  4.607 4.09e-06 ***
+    ## ejection_fraction   -0.042956  0.957954  0.010150 -4.232 2.31e-05 ***
+    ## bp                   0.507442  1.661037  0.211818  2.396   0.0166 *  
+    ## anaemia              0.414917  1.514245  0.209599  1.980   0.0478 *  
+    ## sodium              -0.036640  0.964023  0.024087 -1.521   0.1282    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ##                     exp(coef) exp(-coef) lower .95 upper .95
+    ## log(creatinine + 1)     3.697     0.2705    2.0789    6.5760
+    ## age                     1.043     0.9592    1.0242    1.0612
+    ## ejection_fraction       0.958     1.0439    0.9391    0.9772
+    ## bp                      1.661     0.6020    1.0967    2.5158
+    ## anaemia                 1.514     0.6604    1.0041    2.2835
+    ## sodium                  0.964     1.0373    0.9196    1.0106
+    ## 
+    ## Concordance= 0.734  (se = 0.027 )
+    ## Likelihood ratio test= 79.39  on 6 df,   p=5e-15
+    ## Wald test            = 85.86  on 6 df,   p=<2e-16
+    ## Score (logrank) test = 85.53  on 6 df,   p=3e-16
+
+``` r
+# Check assumptions with model obtained from stepwiseCox
+cox_step4 <- cox.zph(step_model4)
+plot(cox_step4) # Residual plots
+```
+
+![](Cox_Model_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-7-3.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-7-4.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-7-5.png)<!-- -->
+
+``` r
+# Plot survival curves
+ggsurvplot(survfit(step_model4), data = data, conf.int = TRUE)
+```
+
+![](Cox_Model_files/figure-gfm/unnamed-chunk-7-6.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-7-7.png)<!-- -->

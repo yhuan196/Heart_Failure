@@ -120,15 +120,16 @@ stepwise_data <- stepwise_data %>%
          logcre=log(creatinine+1))
 
 # Variable selection using stepwise Cox model
-stepwise_model <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
                                 anaemia + age + ejection_fraction + sodium + logcre + 
                                 pletelets + logcpk, data = stepwise_data)
-stepwise_model
+stepwise_model2
 ```
 
 
 ## Check assumptions for Cox model
 
+**full model**
 ```{r}
 # Check assumptions with cox.zph
 # full model
@@ -139,6 +140,7 @@ plot(cox_zph) # Residual plots
 ggsurvplot(survfit(cox_model), data = data, conf.int = TRUE)
 ```
 
+**Refit model with variables selected from stepwiseCox**
 ```{r}
 # refit a model with 7 selected variables 
 # bp, anaemia, age, ejection_fraction, sodium, creatinine, cpk
@@ -152,5 +154,22 @@ plot(cox_step) # Residual plots
 
 # Plot survival curves
 ggsurvplot(survfit(step_model), data = data, conf.int = TRUE)
+```
+
+**Refit model with variables selected from stepwiseCox**
+log transform on left-skewed predictors
+```{r}
+# refit a model with 5 selected variables 
+# logcre,age, ejection_fraction, bp, anaemia, sodium
+step_model4 <- coxph(Surv(time, event) ~ log(creatinine+1)+age + ejection_fraction + bp +
+                       anaemia + sodium, data = stepwise_data)
+summary(step_model4)
+
+# Check assumptions with model obtained from stepwiseCox
+cox_step4 <- cox.zph(step_model4)
+plot(cox_step4) # Residual plots
+
+# Plot survival curves
+ggsurvplot(survfit(step_model4), data = data, conf.int = TRUE)
 ```
 
