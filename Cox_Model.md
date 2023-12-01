@@ -3,7 +3,9 @@ P8108 Survival Analysis Heart Failure
 Yi Huang
 2023-11-10
 
-## Preparation, install and read packages, read functions
+## Preparation
+
+install and read packages, read functions
 
 ``` r
 #----------------------------------------------------------------
@@ -30,39 +32,7 @@ if (any(installed_packages == FALSE)) {
 
 # Load packages invisibly
 invisible(lapply(packages, library, character.only = TRUE))
-```
 
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-    ## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-    ## ✔ forcats   1.0.0     ✔ readr     2.1.4
-    ## ✔ ggplot2   3.4.4     ✔ stringr   1.5.0
-    ## ✔ lubridate 1.9.2     ✔ tibble    3.2.1
-    ## ✔ purrr     1.0.2     ✔ tidyr     1.3.0
-    ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-    ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-    ## Loading required package: ggpubr
-    ## 
-    ## 
-    ## Attaching package: 'survminer'
-    ## 
-    ## 
-    ## The following object is masked from 'package:survival':
-    ## 
-    ##     myeloma
-
-``` r
 # Remove variables associated with package installation
 rm(packages, installed_packages)
 
@@ -76,17 +46,7 @@ source("shared_code/stepwiseCox.R", local = TRUE)
 ``` r
 # read data
 data <- read_csv("data/heart_failure.csv")
-```
 
-    ## Rows: 299 Columns: 13
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: ","
-    ## dbl (13): TIME, Event, Gender, Smoking, Diabetes, BP, Anaemia, Age, Ejection...
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-``` r
 # # data cleaning
 data <- data |>
   arrange(TIME) |>
@@ -174,17 +134,6 @@ summary(cox_model)
 
 ``` r
 stepwise_data <- read_csv("data/heart_failure.csv")
-```
-
-    ## Rows: 299 Columns: 13
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: ","
-    ## dbl (13): TIME, Event, Gender, Smoking, Diabetes, BP, Anaemia, Age, Ejection...
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
-``` r
 ## data cleaning for stepwiseCox, variables need to be all numeric
 stepwise_data <- stepwise_data |>
   arrange(TIME) |>
@@ -267,3 +216,56 @@ ggsurvplot(survfit(cox_model), data = data, conf.int = TRUE)
 ```
 
 ![](Cox_Model_files/figure-gfm/unnamed-chunk-4-11.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-4-12.png)<!-- -->
+
+``` r
+# refit a model with 7 selected variables 
+# bp, anaemia, age, ejection_fraction, sodium, creatinine, cpk
+step_model <- coxph(Surv(time, event) ~ bp + anaemia + age + ejection_fraction + sodium + creatinine + cpk, data = stepwise_data)
+summary(step_model)
+```
+
+    ## Call:
+    ## coxph(formula = Surv(time, event) ~ bp + anaemia + age + ejection_fraction + 
+    ##     sodium + creatinine + cpk, data = stepwise_data)
+    ## 
+    ##   n= 299, number of events= 96 
+    ## 
+    ##                         coef  exp(coef)   se(coef)      z Pr(>|z|)    
+    ## bp                 4.965e-01  1.643e+00  2.137e-01  2.324   0.0201 *  
+    ## anaemia            4.460e-01  1.562e+00  2.150e-01  2.074   0.0380 *  
+    ## age                4.357e-02  1.045e+00  8.831e-03  4.934 8.05e-07 ***
+    ## ejection_fraction -4.747e-02  9.536e-01  1.027e-02 -4.621 3.82e-06 ***
+    ## sodium            -4.569e-02  9.553e-01  2.336e-02 -1.956   0.0505 .  
+    ## creatinine         3.139e-01  1.369e+00  6.895e-02  4.552 5.31e-06 ***
+    ## cpk                2.101e-04  1.000e+00  9.825e-05  2.138   0.0325 *  
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ##                   exp(coef) exp(-coef) lower .95 upper .95
+    ## bp                   1.6430     0.6086    1.0808     2.498
+    ## anaemia              1.5621     0.6402    1.0249     2.381
+    ## age                  1.0445     0.9574    1.0266     1.063
+    ## ejection_fraction    0.9536     1.0486    0.9346     0.973
+    ## sodium               0.9553     1.0468    0.9126     1.000
+    ## creatinine           1.3688     0.7306    1.1957     1.567
+    ## cpk                  1.0002     0.9998    1.0000     1.000
+    ## 
+    ## Concordance= 0.738  (se = 0.027 )
+    ## Likelihood ratio test= 80.58  on 7 df,   p=1e-14
+    ## Wald test            = 88.43  on 7 df,   p=3e-16
+    ## Score (logrank) test = 87.66  on 7 df,   p=4e-16
+
+``` r
+# Check assumptions with model obtained from stepwiseCox
+cox_step <- cox.zph(step_model)
+plot(cox_step) # Residual plots
+```
+
+![](Cox_Model_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-5.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-6.png)<!-- -->
+
+``` r
+# Plot survival curves
+ggsurvplot(survfit(step_model), data = data, conf.int = TRUE)
+```
+
+![](Cox_Model_files/figure-gfm/unnamed-chunk-5-7.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-5-8.png)<!-- -->

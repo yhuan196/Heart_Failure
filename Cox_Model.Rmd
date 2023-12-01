@@ -6,10 +6,13 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE,
+                      warnings = FALSE,
+                      message = FALSE)
 ```
 
-## Preparation, install and read packages, read functions
+## Preparation
+install and read packages, read functions
 ```{r set up}
 #----------------------------------------------------------------
 # CLEAR ENVIRONMENT
@@ -119,5 +122,19 @@ plot(cox_zph) # Residual plots
 
 # Plot survival curves
 ggsurvplot(survfit(cox_model), data = data, conf.int = TRUE)
+```
+
+```{r}
+# refit a model with 7 selected variables 
+# bp, anaemia, age, ejection_fraction, sodium, creatinine, cpk
+step_model <- coxph(Surv(time, event) ~ bp + anaemia + age + ejection_fraction + sodium + creatinine + cpk, data = stepwise_data)
+summary(step_model)
+
+# Check assumptions with model obtained from stepwiseCox
+cox_step <- cox.zph(step_model)
+plot(cox_step) # Residual plots
+
+# Plot survival curves
+ggsurvplot(survfit(step_model), data = data, conf.int = TRUE)
 ```
 
