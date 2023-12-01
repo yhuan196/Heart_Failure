@@ -21,7 +21,9 @@ rm(list = ls())
 #----------------------------------------------------------------
 packages <- c("dplyr", "tidyverse", "readxl", 
               "survival", "KMsurv", 
-              #forstepwiseCox
+              # ggsurvplot()
+              "survminer",
+              # stepwiseCox()
               "StepReg")
 
 
@@ -59,51 +61,63 @@ data <- data |>
          bp = factor(bp),
          # event = factor(event),
          anaemia = factor(anaemia)) |>
-  rename(platelets = pletelets)
+  rename(pletelets = pletelets)
 ```
 
 ## Cox model
 
+**Full model**
 ```{r}
 # use survival to fit a cox model
-cox_model <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + platelets + cpk, data = data)
+cox_model <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + pletelets + cpk, data = data)
 summary(cox_model)
-
-# stepwiseCox
-stepwise_results <- stepwiseCox(formula, 
-                                selection = "bidirection", 
-                                data = data)
-
-# use stepwiseCox function
-formula = Surv(time, event) ~ . - event
-# Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia
-stepwiseCox(formula = formula,
-            data = data,
-            selection = "bidirection",
-            select = "HQ",
-            method = "efron")
 ```
 
 
+```{r example}
+# # stepwiseCox example
+# lung <- survival::lung
+# 
+# my.data <- na.omit(lung)
+# my.data$status
+# 
+# my.data$status1 <- ifelse(my.data$status==2,1,0)
+# 
+# data <- my.data
+# 
+# formula = Surv(time, status1) ~ . - status 
+# 
+# stepwiseCox(formula=formula,
+#             data=my.data,
+#             selection="bidirection",
+#             select="HQ",
+#             method="efron")
+```
+
+## Variable Selection
+
 ```{r}
-# example
-lung <- survival::lung
+stepwise_data <- read_csv("data/heart_failure.csv")
+## data cleaning for stepwiseCox, variables need to be all numeric
+stepwise_data <- stepwise_data |>
+  arrange(TIME) |>
+  janitor::clean_names()
 
-my.data <- na.omit(lung)
-my.data$status
+# Variable selection using stepwise Cox model
+stepwise_model <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + pletelets + cpk, data = stepwise_data)
 
-my.data$status1 <- ifelse(my.data$status==2,1,0)
-
-data <- my.data
-
-formula = Surv(time, status1) ~ . - status 
-
-stepwiseCox(formula=formula,
-            data=my.data,
-            selection="bidirection",
-            select="HQ",
-            method="efron")
+stepwise_model
 ```
 
 ## Check assumptions for Cox model
+
+```{r}
+# Check assumptions with cox.zph
+# full model
+cox_zph <- cox.zph(cox_model)
+plot(cox_zph) # Residual plots
+
+# Plot survival curves
+ggsurvplot(survfit(cox_model), data = data, conf.int = TRUE)
+```
 
