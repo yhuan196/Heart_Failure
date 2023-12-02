@@ -173,3 +173,20 @@ plot(cox_step4) # Residual plots
 ggsurvplot(survfit(step_model4), data = data, conf.int = TRUE)
 ```
 
+**Schoenfeld residuals**
+```{r}
+colon_coxph <- coxph(Surv(time, event)~ logcre+age + ejection_fraction + bp +
+                       anaemia + sodium, data = stepwise_data)
+ggcoxzph(cox.zph(colon_coxph), var = c("logcre"), df = 2, nsmo = 1000)
+
+ggcoxzph(cox.zph(colon_coxph), var = c("age"), df = 2, nsmo = 1000)
+
+ggcoxzph(cox.zph(colon_coxph), var = c("ejection_fraction"), df = 2, nsmo = 1000)
+
+ggcoxzph(cox.zph(colon_coxph), var = c("bp"), df = 2, nsmo = 1000)
+
+ggcoxzph(cox.zph(colon_coxph), var = c("anaemia"), df = 2, nsmo = 1000)
+
+ggcoxzph(cox.zph(colon_coxph), var = c("sodium"), df = 2, nsmo = 1000)
+```
+

@@ -395,3 +395,43 @@ ggsurvplot(survfit(step_model4), data = data, conf.int = TRUE)
 ```
 
 ![](Cox_Model_files/figure-gfm/unnamed-chunk-7-6.png)<!-- -->![](Cox_Model_files/figure-gfm/unnamed-chunk-7-7.png)<!-- -->
+
+**Schoenfeld residuals**
+
+``` r
+colon_coxph <- coxph(Surv(time, event)~ logcre+age + ejection_fraction + bp +
+                       anaemia + sodium, data = stepwise_data)
+ggcoxzph(cox.zph(colon_coxph), var = c("logcre"), df = 2, nsmo = 1000)
+```
+
+![](Cox_Model_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
+ggcoxzph(cox.zph(colon_coxph), var = c("age"), df = 2, nsmo = 1000)
+```
+
+![](Cox_Model_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
+
+``` r
+ggcoxzph(cox.zph(colon_coxph), var = c("ejection_fraction"), df = 2, nsmo = 1000)
+```
+
+![](Cox_Model_files/figure-gfm/unnamed-chunk-8-3.png)<!-- -->
+
+``` r
+ggcoxzph(cox.zph(colon_coxph), var = c("bp"), df = 2, nsmo = 1000)
+```
+
+![](Cox_Model_files/figure-gfm/unnamed-chunk-8-4.png)<!-- -->
+
+``` r
+ggcoxzph(cox.zph(colon_coxph), var = c("anaemia"), df = 2, nsmo = 1000)
+```
+
+![](Cox_Model_files/figure-gfm/unnamed-chunk-8-5.png)<!-- -->
+
+``` r
+ggcoxzph(cox.zph(colon_coxph), var = c("sodium"), df = 2, nsmo = 1000)
+```
+
+![](Cox_Model_files/figure-gfm/unnamed-chunk-8-6.png)<!-- -->
