@@ -17,7 +17,38 @@ dat <- read_csv("./data/heart_failure.csv") %>%
 dat
 ```
 
+# Fleming-Harrington Survival Estimate
+
+$\hat{S}_F(t) = \begin{cases} \prod_{t_i \leq t} exp\left( - \frac{d_i}{n_i} \right) & \text{if } t > t_1 \\1 & \text{otherwise}\end{cases}$
+
+```{r}
+surv_object <- Surv(time = dat$time, event = dat$event)
+
+# Calculate Fleming-Harrington table
+fh_table <- survfit(surv_object ~ 1)
+
+# Extract survival times and number of events
+time_points <- fh_table$time
+n_events <- fh_table$n.event
+n_at_risk <- fh_table$n.risk
+
+# Calculate Fleming-Harrington weights
+fh_weights <- cumprod(exp(n_events / n_at_risk))
+
+# Create a data frame for Fleming-Harrington statistics
+fh_stats <- data.frame(Time = time_points,
+                       N_events = n_events, N_at_risk = n_at_risk,
+                       FH_Weights = fh_weights)
+
+# Plotting the Fleming-Harrington survival curve
+plot(fh_table, xlab = "Time", ylab = "Survival Probability",
+     main = "Fleming-Harrington Survival Curve")
+```
+
 # Kaplan-Meier Survival Estimate
+
+$\hat{S}_K(t) = \begin{cases} \prod_{t_i \leq t} \left( 1 - \frac{d_i}{n_i} \right) & \text{if } t > t_1 \\1 & \text{otherwise}\end{cases}$
+
 ```{r}
 surv_object <- Surv(time = dat$time, event = dat$event)
 km_fit <- survfit(surv_object ~ 1)
@@ -25,6 +56,7 @@ summary(km_fit)
 ```
 
 # Life Table
+
 ```{r}
 surv_object <- Surv(time = dat$time, event = dat$event)
 life_table <- survfit(surv_object ~ 1)
@@ -37,7 +69,9 @@ ggsurvplot(km_fit, data = dat, title = "Kaplan-Meier Survival Curve",
 ```
 
 # Life Table Stratified by Gender
+
 ## Plot
+
 ```{r}
 surv_object <- Surv(time = dat$time, event = dat$event)
 km_fit_gender <- survfit(surv_object ~ gender, data = dat)
@@ -49,7 +83,9 @@ ggsurvplot(km_fit_gender, data = dat,
 ```
 
 ## Log Rank Test
+
 We would like to test if there is difference in survival between genders.
+
 ```{r}
 logrank_test <- survdiff(surv_object ~ gender, data = dat)
 print(logrank_test)
@@ -58,11 +94,13 @@ print(logrank_test)
 With a p-value of 0.9, there is no sufficient evidence to reject the null hypothesis. In this case, there is no difference in survival between the two genders based on this dataset.
 
 # Life Table Stratified by Smoking Status
+
 ## Plot
+
 ```{r}
 surv_object <- Surv(time = dat$time, event = dat$event)
-km_fit_gender <- survfit(surv_object ~ smoking, data = dat)
-ggsurvplot(km_fit_gender, data = dat, 
+km_fit_smoking <- survfit(surv_object ~ smoking, data = dat)
+ggsurvplot(km_fit_smoking, data = dat, 
            title = "Kaplan-Meier Survival Curve by Smoking Status",
            xlab = "Time (months)", ylab = "Survival Probability",
            risk.table = TRUE, risk.table.y.text = FALSE, 
@@ -70,7 +108,9 @@ ggsurvplot(km_fit_gender, data = dat,
 ```
 
 ## Log Rank Test
+
 We would like to test if there is difference in survival between smoking status.
+
 ```{r}
 logrank_test <- survdiff(surv_object ~ smoking, data = dat)
 print(logrank_test)
