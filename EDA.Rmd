@@ -111,5 +111,25 @@ cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
 cate_barplot
 ```
 
+Based on the Histograms, two continuous variables -- CPK and Creatinine -- are not symmetric (right-skewed), so we log-transformed both of it and check the distributions again:
+
+```{r}
+# log-transformation:
+cont_dat_log = 
+  cont_dat %>% 
+  mutate(cpk = log(cpk + 1),
+         creatinine = log(creatinine + 1))
+# Long format 
+cont_dat_log.long = cont_dat_log %>% 
+  pivot_longer(cols = c(age, EF, sodium, creatinine, platelets, cpk))
+# Plot the continuous variable histograms
+cont_hist_log = ggplot(data = cont_dat_log.long, aes(x = value)) +
+  geom_histogram(aes(fill = name), bins = 30) +
+  facet_wrap(~name, scales = "free") +
+  labs(x = "Value", y = "Count", title = "Histograms of Continuous Covariates") +
+  theme_bw() +
+  theme(legend.position = "none")
+cont_hist_log
+```
 
 
