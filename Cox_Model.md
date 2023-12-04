@@ -139,10 +139,10 @@ stepwise_data <- stepwise_data |>
   arrange(TIME) |>
   janitor::clean_names()
 
-# Variable selection using stepwise Cox model
-stepwise_model <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + pletelets + cpk, data = stepwise_data)
+# Variable selection using stepwise Cox model using Sl
+stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + pletelets + cpk, data = stepwise_data)
 
-stepwise_model
+stepwise_model1
 ```
 
     ##           Table 1. Summary of Parameters          
@@ -199,6 +199,77 @@ stepwise_model
     ## sodium             -0.0456907483452765   0.955337356171037  0.0233585301861612    -1.95606264525779  0.0504577748881677     
     ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
 
+``` r
+# 7 variables are selected: age, ejection_fraction, creatinine, bp, anaemia, cpk, sodium   
+
+# # Variable selection using stepwise Cox model using AIC
+# stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + pletelets + cpk, select = "AIC", data = stepwise_data)
+# stepwise_model2
+# same as SL, 7 variables: age, ejection_fraction, creatinine, bp, anaemia, cpk, sodium   
+
+stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + pletelets + cpk, select = "AICc", data = stepwise_data)
+stepwise_model3
+```
+
+    ##        Table 1. Summary of Parameters       
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##         Paramters               Value       
+    ## ————————————————————————————————————————————
+    ## Response Variable        Surv(time, event)   
+    ## Included Variable        NULL                
+    ## Selection Method         forward             
+    ## Select Criterion         AICc                
+    ## Method                   efron               
+    ## Multicollinearity Terms  NULL                
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                                        Table 2. Variables Type                                       
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##    class                                            variable                                         
+    ## —————————————————————————————————————————————————————————————————————————————————————————————————————
+    ## nmatrix.2  Surv(time, event)                                                                          
+    ## numeric    gender smoking diabetes bp anaemia age ejection_fraction sodium creatinine pletelets cpk   
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                      Table 3. Process of Selection                      
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##  Step    EnteredEffect    RemovedEffect  DF  NumberIn        AICc       
+    ## ————————————————————————————————————————————————————————————————————————
+    ## 1     age                               1   1         994.937602832907   
+    ## 2     ejection_fraction                 1   2         970.240960412782   
+    ## 3     creatinine                        1   3         952.161508339985   
+    ## 4     bp                                1   4         947.543535730665   
+    ## 5     anaemia                           1   5         945.247044012968   
+    ## 6     cpk                               1   6         942.336538050341   
+    ## 7     sodium                            1   7         939.100392487579   
+    ## 8     gender                            1   8         938.816678046656   
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                                       Table 4. Selected Varaibles                                      
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##  variables1     variables2      variables3  variables4  variables5  variables6  variables7  variables8 
+    ## ———————————————————————————————————————————————————————————————————————————————————————————————————————
+    ## age         ejection_fraction  creatinine  bp          anaemia     cpk         sodium      gender       
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                                       Table 5. Coefficients of the Selected Variables                                       
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##      Variable               coef              exp(coef)            se(coef)                z                 Pr(>|z|)       
+    ## ————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+    ## age                0.0443478623916164    1.04534592818268   0.00886373828574522   5.00329104514934    5.63597512435079e-07   
+    ## ejection_fraction  -0.0489345323951675   0.952243468757005  0.0104472640821526    -4.68395668094232   2.81389502185893e-06   
+    ## creatinine         0.314161877214093     1.36911134654065   0.0687004808063813    4.57292108478099    4.80971325244378e-06   
+    ## bp                 0.47498672100622      1.60799284481703   0.215345509645011     2.20569596175568    0.0274052948613976     
+    ## anaemia            0.454708120224179     1.57571339703387   0.215535324007572     2.10966866947622    0.0348869049533196     
+    ## cpk                0.000220294490030447  1.00022031875664   9.91832292359842e-05  2.22108608206641    0.0263451315283099     
+    ## sodium             -0.0466035038416729   0.954465764583797  0.0233169534882998    -1.99869609316921   0.0456412459841202     
+    ## gender             -0.183201088691266    0.832600712314579  0.222766772632833     -0.822389652307891  0.410855166710747      
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+
+``` r
+# AICc 8 variables: age, ejection_fraction, creatinine, bp, anaemia, cpk, sodium, gender   
+```
+
 **consider transformation on left-skewed predictors**
 
 ``` r
@@ -206,11 +277,11 @@ stepwise_data <- stepwise_data %>%
   mutate(logcpk = log(cpk+1),
          logcre=log(creatinine+1))
 
-# Variable selection using stepwise Cox model
-stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+# Variable selection using stepwise Cox model using SL
+stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
                                 anaemia + age + ejection_fraction + sodium + logcre + 
                                 pletelets + logcpk, data = stepwise_data)
-stepwise_model2
+stepwise_model4
 ```
 
     ##           Table 1. Summary of Parameters          
@@ -264,6 +335,71 @@ stepwise_model2
     ## anaemia            0.414916745814877    1.51424466823816   0.209598507238112    1.97957872545111   0.0477508854851059     
     ## sodium             -0.0366399594020293  0.96402316034887   0.0240870312129267   -1.52114883225484  0.128222492476848      
     ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+
+``` r
+# 6 avriables: logcre, age, ejection_fraction, bp, anaemia, sodium  
+
+# Variable selection using stepwise Cox model using SL
+stepwise_model5 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                anaemia + age + ejection_fraction + sodium + logcre + 
+                                pletelets + logcpk, select = "AIC", data = stepwise_data)
+stepwise_model5
+```
+
+    ##        Table 1. Summary of Parameters       
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##         Paramters               Value       
+    ## ————————————————————————————————————————————
+    ## Response Variable        Surv(time, event)   
+    ## Included Variable        NULL                
+    ## Selection Method         forward             
+    ## Select Criterion         AIC                 
+    ## Method                   efron               
+    ## Multicollinearity Terms  NULL                
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                                       Table 2. Variables Type                                       
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##    class                                           variable                                         
+    ## ————————————————————————————————————————————————————————————————————————————————————————————————————
+    ## nmatrix.2  Surv(time, event)                                                                         
+    ## numeric    gender smoking diabetes bp anaemia age ejection_fraction sodium logcre pletelets logcpk   
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                      Table 3. Process of Selection                      
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##  Step    EnteredEffect    RemovedEffect  DF  NumberIn        AIC        
+    ## ————————————————————————————————————————————————————————————————————————
+    ## 1     logcre                            1   1         993.048326864199   
+    ## 2     age                               1   2         975.495411177225   
+    ## 3     ejection_fraction                 1   3         956.300370091503   
+    ## 4     bp                                1   4         952.539110881546   
+    ## 5     anaemia                           1   5         951.230331424551   
+    ## 6     sodium                            1   6         951.024200746901   
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                           Table 4. Selected Varaibles                          
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##  variables1  variables2     variables3      variables4  variables5  variables6 
+    ## ———————————————————————————————————————————————————————————————————————————————
+    ## logcre      age         ejection_fraction  bp          anaemia     sodium       
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ## 
+    ##                                      Table 5. Coefficients of the Selected Variables                                     
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+    ##      Variable              coef              exp(coef)           se(coef)                z                Pr(>|z|)       
+    ## —————————————————————————————————————————————————————————————————————————————————————————————————————————————————————————
+    ## logcre             1.30763101581221     3.69740423676436   0.293778646211065    4.45107577653123   8.54411832970726e-06   
+    ## age                0.0416644317595133   1.04254457519706   0.00904436952880791  4.60667066143248   4.09167266089582e-06   
+    ## ejection_fraction  -0.0429559987808823  0.957953540263324  0.0101497273424933   -4.23223179612333  2.31383757283858e-05   
+    ## bp                 0.50744191505745     1.66103668263713   0.21181836595948     2.39564644339916   0.0165910851849217     
+    ## anaemia            0.414916745814877    1.51424466823816   0.209598507238112    1.97957872545111   0.0477508854851059     
+    ## sodium             -0.0366399594020293  0.96402316034887   0.0240870312129267   -1.52114883225484  0.128222492476848      
+    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
+
+``` r
+# same as SL 6 avriables: logcre, age, ejection_fraction, bp, anaemia, sodium  
+```
 
 ## Check assumptions for Cox model
 
@@ -345,7 +481,7 @@ ggsurvplot(survfit(step_model), data = data, conf.int = TRUE)
 on left-skewed predictors
 
 ``` r
-# refit a model with 5 selected variables 
+# refit a model with 6 selected variables 
 # logcre,age, ejection_fraction, bp, anaemia, sodium
 step_model4 <- coxph(Surv(time, event) ~ log(creatinine+1)+age + ejection_fraction + bp +
                        anaemia + sodium, data = stepwise_data)

@@ -106,11 +106,23 @@ stepwise_data <- stepwise_data |>
   arrange(TIME) |>
   janitor::clean_names()
 
-# Variable selection using stepwise Cox model
-stepwise_model <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + pletelets + cpk, data = stepwise_data)
+# Variable selection using stepwise Cox model using Sl
+stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + pletelets + cpk, data = stepwise_data)
 
-stepwise_model
+stepwise_model1
+# 7 variables are selected: age, ejection_fraction, creatinine, bp, anaemia, cpk, sodium   
+
+# # Variable selection using stepwise Cox model using AIC
+# stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + pletelets + cpk, select = "AIC", data = stepwise_data)
+# stepwise_model2
+# same as SL, 7 variables: age, ejection_fraction, creatinine, bp, anaemia, cpk, sodium   
+
+stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + pletelets + cpk, select = "AICc", data = stepwise_data)
+stepwise_model3
+# AICc 8 variables: age, ejection_fraction, creatinine, bp, anaemia, cpk, sodium, gender   
 ```
+
+
 
 **consider transformation on left-skewed predictors**
 
@@ -119,11 +131,19 @@ stepwise_data <- stepwise_data %>%
   mutate(logcpk = log(cpk+1),
          logcre=log(creatinine+1))
 
-# Variable selection using stepwise Cox model
-stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+# Variable selection using stepwise Cox model using SL
+stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
                                 anaemia + age + ejection_fraction + sodium + logcre + 
                                 pletelets + logcpk, data = stepwise_data)
-stepwise_model2
+stepwise_model4
+# 6 avriables: logcre, age, ejection_fraction, bp, anaemia, sodium  
+
+# Variable selection using stepwise Cox model using SL
+stepwise_model5 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                anaemia + age + ejection_fraction + sodium + logcre + 
+                                pletelets + logcpk, select = "AIC", data = stepwise_data)
+stepwise_model5
+# same as SL 6 avriables: logcre, age, ejection_fraction, bp, anaemia, sodium  
 ```
 
 
@@ -159,7 +179,7 @@ ggsurvplot(survfit(step_model), data = data, conf.int = TRUE)
 **Refit model with variables selected from stepwiseCox**
 log transform on left-skewed predictors
 ```{r}
-# refit a model with 5 selected variables 
+# refit a model with 6 selected variables 
 # logcre,age, ejection_fraction, bp, anaemia, sodium
 step_model4 <- coxph(Surv(time, event) ~ log(creatinine+1)+age + ejection_fraction + bp +
                        anaemia + sodium, data = stepwise_data)
