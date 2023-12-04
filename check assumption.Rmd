@@ -1,0 +1,48 @@
+---
+title: "check assumption"
+author: "Jiahe Deng"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(survival)
+library(survminer)
+library(tidyverse)
+```
+
+```{r}
+data <- read_csv("./data/heart_failure.csv") %>% 
+  arrange(TIME) %>% janitor::clean_names() %>%
+  mutate(gender = factor(gender),
+         smoking = factor(smoking),
+         diabetes = factor(diabetes),
+         bp = factor(bp),
+         # event = factor(event),
+         anaemia = factor(anaemia)) %>%
+  rename(pletelets = pletelets)
+```
+
+```{r} 
+km.fit=survfit(Surv(time, event)~ gender, data)
+plot(km.fit, fun="cumhaz", col=c("blue", "red"),
+     xlab = "Time", ylab = "-log(S(t))",
+     main = "Negative Log of Estimated Survival Functions")
+legend("topleft", legend = c("gender=0", "gender=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
+plot(km.fit, fun="cloglog", col=c("blue", "red"), xlab="Log(time)", ylab="log(-log(S(t)))",
+     main="Log of Negative log of estimated survival function")
+legend("topleft", legend = c("gender=0", "gender=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
+```
+```{r}
+ph.fit = coxph(Surv(time, event)~ gender, data=data)
+plot(km.fit, col = c("blue", "darkgreen"),
+     xlab = "Time (days)", ylab = "Survival Function",
+     main = "Observed vs. Fitted")
+lines(survfit(ph.fit, newdata = data.frame(gender = 0)),
+      col = "red", conf.int = FALSE)
+lines(survfit(ph.fit, newdata = data.frame(gender = 1)),
+      col = "black", conf.int = FALSE)
+legend("bottomleft", legend = c("Observed Female", "Observed Male",
+                                "Fitted Female", "Fitted Male"),
+       col = c("blue", "darkgreen", "red", "black"), lty = 1, cex = 0.8)
+```
+
