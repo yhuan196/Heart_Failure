@@ -65,11 +65,11 @@ data <- data |>
          # event = factor(event),
          anaemia = factor(anaemia)) |>
   rename(pletelets = pletelets)|>
-  mutate(ef_cat = case_when(
+  mutate(ef_cat = factor(case_when(
     ejection_fraction <= 30 ~ "Low",
     ejection_fraction > 30 & ejection_fraction < 45 ~ "Medium",
     ejection_fraction >= 45 ~ "High"
-  ))
+  )))
 ```
 
 ## Cox model
