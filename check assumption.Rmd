@@ -27,10 +27,10 @@ km.fit=survfit(Surv(time, event)~ gender, data)
 plot(km.fit, fun="cumhaz", col=c("blue", "red"),
      xlab = "Time", ylab = "-log(S(t))",
      main = "Negative Log of Estimated Survival Functions")
-legend("topleft", legend = c("gender=0", "gender=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
+legend("topleft", legend = c("Female", "Male"), col=c("blue", "red"), lty = 1, cex = 0.8)
 plot(km.fit, fun="cloglog", col=c("blue", "red"), xlab="Log(time)", ylab="log(-log(S(t)))",
      main="Log of Negative log of estimated survival function")
-legend("topleft", legend = c("gender=0", "gender=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
+legend("topleft", legend = c("Female", "Male"), col=c("blue", "red"), lty = 1, cex = 0.8)
 ```
 ```{r}
 ph.fit = coxph(Surv(time, event)~ gender, data=data)
@@ -50,13 +50,21 @@ km.fit1=survfit(Surv(time, event)~ bp, data)
 plot(km.fit1, fun="cumhaz", col=c("blue", "red"),
      xlab = "Time", ylab = "-log(S(t))",
      main = "Negative Log of Estimated Survival Functions")
-legend("topleft", legend = c("gender=0", "gender=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
+legend("topleft", legend = c("Female", "Male"), col=c("blue", "red"), lty = 1, cex = 0.8)
 plot(km.fit, fun="cloglog", col=c("blue", "red"), xlab="Log(time)", ylab="log(-log(S(t)))",
      main="Log of Negative log of estimated survival function")
-legend("topleft", legend = c("gender=0", "gender=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
+legend("topleft", legend = c("Female", "Male"), col=c("blue", "red"), lty = 1, cex = 0.8)
 ```
 ```{r}
+library(broom)
 aft.fit <- survreg(Surv(time, event) ~ gender, data, dist = "exponential")
-summary(aft.fit)
+tidy(aft.fit)
 ```
+The Cox Proportional Hazards (PH) Model operates under two primary assumptions:
+  1)Survival Cures for different strata must have proportional hazard function over time
+  2)The relationship between log hazard and each covariate is linear.
+By graphical approach, first assume that gender is the only covariate in the model, then take log of survival function and plot against time to estimate cumulative hazard function. From the figure(), The log survival function for the two genders that was estimated by the KM estimator are almost a straight line. From the figure(), the log log of survival function and plot against log time demonstrates a reasonable straight line with slope is 1. It can be concluded that the model with gender as the only covariates are likely to be exponential distributed. From the figure(), a plot that shows the differences between the observed KM estimates and fitted survival function for the PH model that has only gender. 
+
+Fitting Parametric Regression Models
+
 
