@@ -70,7 +70,7 @@ The present study focuses on 299 heart failure patients, including 105 women and
 - **platelets**: Platelets in mcL
 - **cpk**: Creatinine phosphokinase in U/L
 
-This study falls into the category of Overall Survival (OS), where `event = 1` indicates the death of the subject and is the endpoint of survival. Specifically, 203 subjects were right-censored and 96 subjects have event. Detailed descriptive statistics table stratified by survival status are presented below. 
+This study falls into the category of Overall Survival (OS), where event indicator equals 1 indicates the death of the subject and is the endpoint of survival. Specifically, 203 subjects were right-censored and 96 subjects have event. Detailed descriptive statistics table stratified by survival status are presented below. 
 
 ```{r}
 data = read_csv("./data/heart_failure.csv") 
@@ -131,12 +131,12 @@ pvalue <- function(x, ...) {
     # The initial empty string places the output on the line below the variable label.
     c("", sub("<", "<", format.pval(p, digits = 3, eps = 0.001)))
 }
-footnote = "Table 1: Descriptive Statistics Table"
+caption = "Table 1: Descriptive Statistics Table"
 
-cat("\\begingroup\\small")  # Adjust the font size command as needed 
-table1(~ time + age + gender + smoking + diabetes + bp + EF_cat + anemia + sodium + creatinine + cpk + platelets | event,
-                  data = dat_table, extra.col = list(`P-value` = pvalue), footnote = footnote)
-cat("\\endgroup")
+table1 = table1(~ time + age + gender + smoking + diabetes + bp + EF_cat + 
+                  anemia + sodium + creatinine + cpk + platelets | event,
+                  data = dat_table, extra.col = list(`P-value` = pvalue), caption = caption)
+t1kable(table1) %>% kable_styling(font_size = 8, latex_options = "HOLD_position")
 ```
 
 According to the descriptive table, we can observe the mean survival times for censored and event are 158 and 70.9 days, respectively. Since we have complete dataset and we do not need to concern the missingness issue. The p-values of the variables are also presented in the table. Some variables have relatively larger p-values. However, we still need to check distribution of each variable^[Use histograms for continuous variables and bar charts for categorical variables] and determine which one need to be transformed.
@@ -175,7 +175,7 @@ cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
 cate_barplot
 ```
 
-After checking the histograms, two continuous variables `cpk` and `cretinine` are right-skewed. We decide to log-transformed both of them for further model fitting.
+After checking the histograms, two continuous variables creatinine phosphokinase (cpk) and serum creatinine are right-skewed. We decide to log-transformed both of them for further model fitting.
 
 ```{r}
 dat_log = dat %>% 
