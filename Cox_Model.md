@@ -3,44 +3,6 @@ P8108 Survival Analysis Heart Failure
 Yi Huang
 2023-11-10
 
-## Preparation
-
-install and read packages, read functions
-
-``` r
-#----------------------------------------------------------------
-# CLEAR ENVIRONMENT
-#----------------------------------------------------------------
-rm(list = ls())
-
-#----------------------------------------------------------------
-# INSTALL PACKAGES
-#----------------------------------------------------------------
-packages <- c("dplyr", "tidyverse", "readxl", 
-              "survival", "KMsurv", 
-              # ggsurvplot()
-              "survminer",
-              # stepwiseCox()
-              "StepReg")
-
-
-# Install missing packages
-installed_packages <- packages %in% rownames(installed.packages())
-if (any(installed_packages == FALSE)) {
-  install.packages(packages[!installed_packages], dependencies = TRUE)
-}
-
-# Load packages invisibly
-invisible(lapply(packages, library, character.only = TRUE))
-
-# Remove variables associated with package installation
-rm(packages, installed_packages)
-
-# Read function
-source("shared_code/stepwiseCox.R", local = TRUE)
-# source("shared_code/stepwiseCox.R", local = TRUE)$value
-```
-
 ## Load data
 
 ``` r

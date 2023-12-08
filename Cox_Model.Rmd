@@ -9,11 +9,8 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE,
                       warnings = FALSE,
                       message = FALSE)
-```
 
-## Preparation
-install and read packages, read functions
-```{r set up}
+#install and read packages, read functions
 #----------------------------------------------------------------
 # CLEAR ENVIRONMENT
 #----------------------------------------------------------------
