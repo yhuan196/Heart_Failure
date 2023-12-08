@@ -139,7 +139,7 @@ table1 = table1(~ time + age + gender + smoking + diabetes + bp + EF_cat +
 t1kable(table1) %>% kable_styling(font_size = 8, latex_options = "HOLD_position")
 ```
 
-According to the descriptive table, we can observe the mean survival times for censored and event are 158 and 70.9 days, respectively. Since we have complete dataset and we do not need to concern the missingness issue. The p-values of the variables are also presented in the table. Some variables have relatively larger p-values. However, we still need to check distribution of each variable^[Use histograms for continuous variables and bar charts for categorical variables] and determine which one need to be transformed.
+Based on the descriptive table, we can observe that the mean survival time for deletions and events is 158 days and 70.9 days, respectively. Since we have the complete dataset, there is no need to worry about missingness issue. The table also lists the p-values for each variable. Some variables have relatively large p-values. However, we still need to check the distribution of each variable ^[Histograms for continuous variables and bar charts for categorical variables] and determine which variables need to be transformed.
 
 ```{r fig.align='center', fig.height=5, fig.width=8}
 # Data contains the continuous vars only
@@ -152,7 +152,7 @@ cont_dat.long = cont_dat %>%
 cont_hist = ggplot(data = cont_dat.long, aes(x = value)) +
   geom_histogram(aes(fill = name), bins = 30) +
   facet_wrap(~name, scales = "free") +
-  labs(x = "Value", y = "Count", title = "Figure 1.1: Histogram of Continuous Covariates") +
+  labs(x = "Value", y = "Count", title = "Figure 1.1: Histograms of Continuous Variables") +
   theme_bw() +
   theme(legend.position = "none")
 cont_hist
@@ -168,7 +168,7 @@ cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
   geom_bar() +
   geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5) +
   facet_wrap(~name, scales = "free") +
-  labs(x = "Category", y = "Count", fill = "Category", title = "Figure 1.2: Bar Chart of Categorical Covariates") +
+  labs(x = "Category", y = "Count", fill = "Category", title = "Figure 1.2: Bar Charts of Categorical Variables") +
   theme_bw() +
   theme(legend.position = "none") +
   ylim(0, 240)
