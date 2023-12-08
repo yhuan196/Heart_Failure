@@ -1,0 +1,29 @@
+---
+title: "**Heart Failure Survival Study**"
+subtitle: "**Mailman School of Public Health at Columbia University**"
+date: "Dec 7, 2023"
+author: 
+  - "P8108 Final Project Report: Group 6"
+  - "Huanyu Chen, Runze Cui, Jiahe Deng, Yi Huang, Xuesen Zhao"
+output: 
+  pdf_document:
+    number_section: true
+    extra_dependencies: ["float"]
+header-includes:
+- \usepackage{caption}
+- \usepackage{makecell} 
+- \captionsetup[figure]{labelformat=empty}
+- \captionsetup[table]{labelformat=empty}
+abstract: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+---
+\thispagestyle{empty}
+\newpage
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\setcounter{page}{1}
+
+# Introduction
+
+
+
