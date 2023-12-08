@@ -31,10 +31,13 @@ library(tidyverse)
 library(knitr)
 library(kableExtra)
 library(survival)
+library(survminer)
 library(writexl)
 library(readxl)
 library(table1)
 library(rmarkdown)
+library(KMsurv)
+library(StepReg)
 ```
 
 # Introduction
@@ -53,26 +56,27 @@ Our project aims to assess the influence of key physiological and clinical facto
 
 The present study focuses on 299 heart failure patients, including 105 women and 194 men. All participants were over 40 years old and diagnosed with left ventricular systolic dysfunction, classified under NYHA classes III and IV. The follow-up duration ranged from 4 to 285 days, with an average of 130 days. Diagnosis of the disease was confirmed through cardiac echocardiogram reports or physician's notes. A brief description of variables in the dataset is shown below:
 
-- age: Age in years 
-- time: Survival time in days
-- event: Event binary indicator (0 = Censored, 1 = Event)
-- gender: Sex binary indicator (0 = Female, 1 = Male)
-- smoking: Smoking status (0 = No smoking, 1 = Smoking)
-- diabetes: Diabetes status (0 = No diabetes, 1 = Diabetes)
-- bp: Blood pressure status (0 = Normal, 1 = Hypertension)
-- anemia: Anemia status (0 = No anemia, 1 = Anemia: patients with haematocrit $<36$)
-- EF: Ejection fraction (Low: $\text{EF} \leq 30$, Medium: $30 < \text{EF} \leq 45$ and High: $\text{EF} >45$)
-- sodium: Sodium in mEq/L
-- creatinine: Serum creatinine in mg/dL 
-- platelets: Platelets in mcL
-- cpk: Creatinine phosphokinase in U/L
+- **age**: Age in years 
+- **time**: Survival time in days
+- **event**: Event binary indicator (0 = Censored, 1 = Event)
+- **gender**: Sex binary indicator (0 = Female, 1 = Male)
+- **smoking**: Smoking status (0 = No smoking, 1 = Smoking)
+- **diabetes**: Diabetes status (0 = No diabetes, 1 = Diabetes)
+- **bp**: Blood pressure status (0 = Normal, 1 = Hypertension)
+- **anemia**: Anemia status (0 = No anemia, 1 = Anemia: patients with haematocrit $<36$)
+- **EF_cat**: Ejection fraction (Low: $\text{EF} \leq 30$, Medium: $30 < \text{EF} \leq 45$ and High: $\text{EF} >45$)
+- **sodium**: Sodium in mEq/L
+- **creatinine**: Serum creatinine in mg/dL 
+- **platelets**: Platelets in mcL
+- **cpk**: Creatinine phosphokinase in U/L
 
 This study falls into the category of Overall Survival (OS), where `event = 1` indicates the death of the subject and is the endpoint of survival. Specifically, 203 subjects were right-censored and 96 subjects have event. Detailed descriptive statistics table stratified by survival status are presented below. 
 
 ```{r}
-dat <- read_csv("./data/heart_failure.csv") %>% 
+data = read_csv("./data/heart_failure.csv") 
+dat <- data %>% 
   arrange(TIME) %>% janitor::clean_names() %>%
-  mutate(ejection_fraction = case_when(ejection_fraction <= 30 ~ "Low",
+  mutate(ejection_fraction_cat = case_when(ejection_fraction <= 30 ~ "Low",
                                       ejection_fraction > 30 & ejection_fraction <= 45 ~ "Medium",
                                       ejection_fraction > 45 ~ "High")) %>% 
   mutate(gender = factor(gender), 
@@ -81,10 +85,11 @@ dat <- read_csv("./data/heart_failure.csv") %>%
          bp = factor(bp),
          event = factor(event),
          anaemia = factor(anaemia),
-         ejection_fraction = factor(ejection_fraction, levels = c("Low", "Medium", "High"))) %>% 
+         ejection_fraction_cat = factor(ejection_fraction_cat, levels = c("Low", "Medium", "High"))) %>% 
   rename(platelets = pletelets,
          anemia = anaemia,
-         EF = ejection_fraction)
+         EF = ejection_fraction,
+         EF_cat = ejection_fraction_cat)
 
 # Calculate the number of right-censored:
 number_censored <- sum(dat$event == 0)
@@ -102,7 +107,7 @@ label(dat_table$diabetes) = "Diabetes"
 label(dat_table$bp) = "Blood Pressure"
 label(dat_table$anemia) = "Anemia"
 label(dat_table$age) = "Age (years)"
-label(dat_table$EF) = "Ejection Fraction (EF)"
+label(dat_table$EF_cat) = "Ejection Fraction (EF_cat)"
 label(dat_table$sodium) = "Serum Sodium (mEq/L)"
 label(dat_table$creatinine) = "Serum creatinine (mg/dL)"
 label(dat_table$platelets) = "Plateletes (mcL)"
@@ -129,12 +134,12 @@ pvalue <- function(x, ...) {
 footnote = "Table 1: Descriptive Statistics Table"
 
 cat("\\begingroup\\small")  # Adjust the font size command as needed 
-table1(~ time + age + gender + smoking + diabetes + bp + EF + anemia + sodium + creatinine + cpk + platelets | event,
+table1(~ time + age + gender + smoking + diabetes + bp + EF_cat + anemia + sodium + creatinine + cpk + platelets | event,
                   data = dat_table, extra.col = list(`P-value` = pvalue), footnote = footnote)
 cat("\\endgroup")
 ```
 
-According to the descriptive table, we can observe the mean survival times for censored and event are 158 and 70.9 days, respectively. Since our dataset is completed, we do not need to concern the missingness issue. The p-values of the variables are also presented in the table. Some variables have relatively larger p-values. However, we still need to check distribution of each variable^[Use histograms for continuous variables and bar charts for categorical variables] and perform model selection to determine which variables to ultimately use for the analysis.
+According to the descriptive table, we can observe the mean survival times for censored and event are 158 and 70.9 days, respectively. Since we have complete dataset and we do not need to concern the missingness issue. The p-values of the variables are also presented in the table. Some variables have relatively larger p-values. However, we still need to check distribution of each variable^[Use histograms for continuous variables and bar charts for categorical variables] and determine which one need to be transformed.
 
 ```{r fig.align='center', fig.height=5, fig.width=8}
 # Data contains the continuous vars only
@@ -154,10 +159,10 @@ cont_hist
 
 # Data contains the categorical vars only
 cate_data = dat %>% 
-  select(event, gender, smoking, diabetes, bp, anemia, EF)
+  select(event, gender, smoking, diabetes, bp, anemia, EF_cat)
 # Long format 
 cate_dat.long = cate_data %>% 
-  pivot_longer(cols = c(event, gender, smoking, diabetes, bp, anemia, EF))
+  pivot_longer(cols = c(event, gender, smoking, diabetes, bp, anemia, EF_cat))
 # Plot the categorical variable barplots
 cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
   geom_bar() +
@@ -170,20 +175,40 @@ cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
 cate_barplot
 ```
 
+After checking the histograms, two continuous variables `cpk` and `cretinine` are right-skewed. We decide to log-transformed both of them for further model fitting.
+
+```{r}
+dat_log = dat %>% 
+  mutate(cpk_log = log(cpk + 1),
+         creatinine_log = log(creatinine + 1))
+```
 
 
+## Nonparametric Estimate
 
+(Life table separated by gender, KM and FH comparing)
 
+## Hypothesis Testing
 
+(Log-Rank test and Wilcoxon test)
 
+## Semi-parametric Estimate
 
+(model selection (survival tree - optional), and model checking???, fitting the model)
 
+## Parametric Estimate
 
+(Model checking, fitting the model)
 
+## Model Validation
 
+()
 
+# Results
 
+# Discussion
 
+# Conclusions
 
 
 
@@ -194,6 +219,10 @@ cate_barplot
 1. Ahmad, T., Munir, A., Bhatti, S. H., Aftab, M., & Raza, M. A. (2017). Survival analysis of heart failure patients: A case study. PLOS ONE, 12(7), e0181001. https://doi.org/10.1371/journal.pone.0181001
 
 2. Jones, N., Ak, R., Adoki, I., Fdr, H., & Cj, T. (2019). Survival of patients with chronic heart failure in the community: a systematic review and meta‐analysis. European Journal of Heart Failure, 21(11), 1306–1325. https://doi.org/10.1002/ejhf.1594
+
+
+
+
 \newpage
 
 # Appendix
