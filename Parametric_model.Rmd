@@ -1,0 +1,119 @@
+---
+title: "Paramatric Model"
+author: "Yi Huang"
+date: "2023-12-08"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warnings = FALSE,
+                      message = FALSE)
+
+#----------------------------------------------------------------
+# CLEAR ENVIRONMENT
+#----------------------------------------------------------------
+rm(list = ls())
+
+#----------------------------------------------------------------
+# INSTALL PACKAGES
+#----------------------------------------------------------------
+packages <- c("dplyr", "tidyverse", "readxl", 
+              "survival", "KMsurv", 
+              "survminer","flexsurv",
+              "eha")
+
+
+# Install missing packages
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages], dependencies = TRUE)
+}
+
+# Load packages invisibly
+invisible(lapply(packages, library, character.only = TRUE))
+
+# Remove variables associated with package installation
+rm(packages, installed_packages)
+
+# Theme set
+theme_set(theme_minimal())
+```
+
+
+```{r, include=FALSE}
+# read data
+raw_data <- read_csv("data/heart_failure.csv")
+
+# clean variable names
+raw_data <- raw_data |>
+  arrange(TIME) |>
+  janitor::clean_names()
+
+## data cleaning, create data frame for model
+model_data <- raw_data |>
+  mutate(gender = factor(gender),
+         smoking = factor(smoking),
+         diabetes = factor(diabetes),
+         bp = factor(bp),
+         # event = factor(event),
+         anaemia = factor(anaemia),
+         logcre=log(creatinine+1),
+         logcpk = log(cpk+1)) |>
+  rename(pletelets = pletelets)|>
+  mutate(ef_cat = factor(case_when(
+    ejection_fraction <= 30 ~ "Low",
+    ejection_fraction > 30 & ejection_fraction < 45 ~ "Medium",
+    ejection_fraction >= 45 ~ "High"),
+    levels = c("Low", "Medium", "High")))
+
+```
+
+
+## Weibull
+
+Weibull\
+model selection:\
+       Df    AIC\
+<none>    1273.2\
+sodium  1 1273.5\
+bp      1 1277.8\
+logcre  1 1282.9\
+ef_cat  2 1294.7\
+age     1 1298.1\
+
+```{r}
+fit_weibull = phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
+                  age + ef_cat+ sodium + pletelets + logcre + logcpk, 
+                data = model_data, dist = "weibull")
+summary(fit_weibull)
+
+# AIC Both direction
+library(MASS)
+stepAIC(fit_weibull)
+```
+
+
+## Gompertz
+
+Gompertz\
+model selection: DF AIC\
+<none>       1273.6\
+- anaemia  1 1273.6\
+- sodium   1 1274.5\
+- bp       1 1278.2\
+- logcre   1 1283.6\
+- ef_cat   2 1294.8\
+- age      1 1298.9\
+
+```{r}
+fit_gompertz = phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
+                  age + ef_cat+ sodium + pletelets + logcre + logcpk, 
+                data = model_data, dist = "gompertz")
+fit_gompertz
+
+# AIC Both direction
+stepAIC(fit_gompertz)
+```
+
+
