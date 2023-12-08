@@ -32,6 +32,7 @@ plot(km.fit, fun="cloglog", col=c("blue", "red"), xlab="Log(time)", ylab="log(-l
      main="Log of Negative log of estimated survival function")
 legend("topleft", legend = c("gender=0", "gender=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
 ```
+
 ```{r}
 ph.fit = coxph(Surv(time, event)~ gender, data=data)
 plot(km.fit, col = c("blue", "darkgreen"),
