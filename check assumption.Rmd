@@ -46,4 +46,18 @@ legend("bottomleft", legend = c("Observed Female", "Observed Male",
                                 "Fitted Female", "Fitted Male"),
        col = c("blue", "darkgreen", "red", "black"), lty = 1, cex = 0.8)
 ```
+```{r}
+km.fit1=survfit(Surv(time, event)~ bp, data)
+plot(km.fit1, fun="cumhaz", col=c("blue", "red"),
+     xlab = "Time", ylab = "-log(S(t))",
+     main = "Negative Log of Estimated Survival Functions")
+legend("topleft", legend = c("gender=0", "gender=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
+plot(km.fit, fun="cloglog", col=c("blue", "red"), xlab="Log(time)", ylab="log(-log(S(t)))",
+     main="Log of Negative log of estimated survival function")
+legend("topleft", legend = c("gender=0", "gender=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
+```
+```{r}
+aft.fit <- survreg(Surv(time, event) ~ gender, data, dist = "exponential")
+summary(aft.fit)
+```
 

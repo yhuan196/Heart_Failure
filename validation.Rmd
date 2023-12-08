@@ -9,11 +9,19 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Methods
+### ROC Curves and AUC
+In our analysis, we employed time-dependent Receiver Operating Characteristic (ROC) curves and Area Under the Curve (AUC) values to evaluate the discriminative ability of our Cox proportional hazards model over time. Specifically, we focused on two clinically relevant time points: 50 days and 250 days. The ROC curve is a graphical representation that illustrates the diagnostic ability of a binary classifier system by plotting the true positive rate (sensitivity) against the false positive rate (1 - specificity) at various threshold settings. AUC, a key summary measure of the ROC curve, quantifies the overall ability of the model to discriminate between individuals who will experience the event and those who will not, irrespective of the chosen probability threshold. Higher AUC values indicate better discriminative ability.
 
-## Bootstrap
+### C-Index
+The concordance index (C-index) was calculated to assess the predictive accuracy of our model. This metric is a measure of the model's ability to correctly rank the survival times of pairs of individuals, considering censored data. The C-index is calculated through pairwise comparisons, where a pair is concordant if the individual predicted to have a shorter survival time indeed experiences the event earlier than the other individual in the pair. A C-index of 0.5 suggests no better predictive accuracy than random chance, while a value of 1 indicates perfect prediction.
+
+### Calibration Metrics
+To evaluate the calibration of our model, we focused on two metrics: calibration slope and calibration-in-the-large. Calibration reflects the agreement between observed outcomes and predicted probabilities. The calibration slope assesses whether the predicted risks are of the correct magnitude. A slope of 1 indicates perfect calibration, meaning the model's predicted probabilities are accurately scaled. Calibration-in-the-large measures systematic bias in predictions, where a value close to 0 implies no bias. These metrics were calculated using logistic regression within a bootstrap framework to capture the variability in model predictions and provide robust estimates.
+
+## ROC curve
 
 ```{r}
-# Use the same model from the Cox_model.rmd for consistency
 # read data
 data <- read_csv("data/heart_failure.csv")
 
@@ -27,7 +35,12 @@ data <- data |>
          bp = factor(bp),
          # event = factor(event),
          anaemia = factor(anaemia)) |>
-  rename(platelets = pletelets)
+  rename(pletelets = pletelets)|>
+  mutate(ef_cat = factor(case_when(
+    ejection_fraction <= 30 ~ "Low",
+    ejection_fraction > 30 & ejection_fraction < 45 ~ "Medium",
+    ejection_fraction >= 45 ~ "High"
+  )))
 ```
 
 
@@ -39,42 +52,12 @@ library(rms)
 library(survivalROC)
 library(ggplot2)
 library(timeROC)
+library(rms)
 
 
 # Your Cox model
-cox_model <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + platelets + log(cpk), data = data)
-
-summary(cox_model)
-# Define a function for bootstrapping
-boot_function <- function(data, indices) {
-  # Create a bootstrap sample
-  boot_data <- data[indices, ]
-  
-  # Fit the Cox model to the bootstrap sample
-  fit <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + platelets + log(cpk), data = boot_data)
-  
-  # Predict risks on the bootstrap sample
-  predicted_risks <- predict(fit, newdata = boot_data, type = "risk")
-  
-  # Fit a linear model for calibration slope
-  calibration_model <- lm(boot_data$event ~ predicted_risks)
-  
-  # Return the calibration slope
-  return(coef(calibration_model)["predicted_risks"])
-}
-
-# Perform bootstrapping
-set.seed(123) # for reproducibility
-boot_results <- boot(data = data, statistic = boot_function, R = 200)
-
-# Calculate the average calibration slope
-mean_calibration_slope <- mean(boot_results$t)
-print(mean_calibration_slope)
-
-
-
-# Fit the Cox model
-cox_model <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ejection_fraction + sodium + creatinine + platelets + log(cpk), data = data)
+cox_model <- coxph(Surv(time, event) ~ log(creatinine+1)+age + ef_cat + bp +
+                       anaemia + sodium, data = data)
 
 # Calculate predicted risks
 predicted_risks <- predict(cox_model, newdata = data, type = "risk")
@@ -102,4 +85,109 @@ abline(0, 1, col = "black", lty = 2)
 ```
 
 
+## C-statistics 
 
+```{r}
+# Define the function for calculating C-statistic
+boot_c_statistic <- function(original_data, indices) {
+  # Creating a bootstrap sample
+  boot_data <- original_data[indices, ]
+  
+  # Fit the Cox model to the bootstrap sample
+  fit <- coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp + anaemia + sodium, data = boot_data)
+  
+  # Calculate the concordance statistic using the updated function
+  concordance <- concordance(fit)$concordance
+  return(concordance)
+}
+
+# Perform bootstrapping for C-statistic
+set.seed(123) # for reproducibility
+boot_results_c_stat <- boot(data = data, statistic = boot_c_statistic, R = 400)
+
+# Calculate the average C-statistic
+mean_c_stat <- mean(boot_results_c_stat$t)
+print(mean_c_stat)
+```
+
+
+## Calibration slope
+
+```{r}
+# Define the bootstrap function for calibration metrics using logistic regression
+boot_calibration_logistic <- function(original_data, indices) {
+  boot_data <- original_data[indices, ]
+  fit <- coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp + anaemia + sodium, data = boot_data)
+  
+  # Predicted risks for the original dataset
+  predicted_risks <- predict(fit, newdata = original_data, type = "risk")
+  
+  # Fit a logistic model for calibration
+  calibration_model_logistic <- glm(event ~ predicted_risks, data = original_data, family = "binomial")
+  
+  # Calibration-in-the-large (intercept) and calibration slope (coefficient of predicted_risks)
+  calibration_in_the_large <- coef(calibration_model_logistic)[1]
+  calibration_slope_logistic <- coef(calibration_model_logistic)["predicted_risks"]
+  
+  return(c(calibration_in_the_large, calibration_slope_logistic))
+}
+
+# Perform bootstrap
+set.seed(123)
+boot_results_logistic <- boot(data = data, statistic = boot_calibration_logistic, R = 400)
+
+# Calculate the average calibration-in-the-large and calibration slope
+mean_calibration_in_the_large <- mean(boot_results_logistic$t[, 1])
+mean_calibration_slope_logistic <- mean(boot_results_logistic$t[, 2])
+
+print(paste("Mean Calibration-in-the-Large:", mean_calibration_in_the_large))
+print(paste("Mean Calibration Slope:", mean_calibration_slope_logistic))
+
+```
+```{r}
+# Define the bootstrap function for calibration metrics using logistic regression
+boot_calibration_logistic <- function(original_data, indices) {
+  boot_data <- original_data[indices, ]
+  fit <- coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp + anaemia + sodium, data = boot_data)
+  
+  # Predicted risks for the original dataset
+  predicted_risks <- predict(fit, newdata = original_data, type = "risk")
+  
+  # Fit a logistic model for calibration
+  calibration_model_logistic <- glm(event ~ predicted_risks, data = original_data, family = "binomial")
+  
+  # Calibration slope (coefficient of predicted_risks)
+  calibration_slope_logistic <- coef(calibration_model_logistic)["predicted_risks"]
+  
+  return(calibration_slope_logistic)
+}
+
+# Perform bootstrap
+set.seed(123)
+boot_results_logistic <- boot(data = data, statistic = boot_calibration_logistic, R = 200)
+
+# Calculate the average calibration slope
+mean_calibration_slope_logistic <- mean(boot_results_logistic$t)
+print(mean_calibration_slope_logistic)
+
+```
+
+## Results
+### ROC Curves and AUC
+Our time-dependent ROC analysis at 50 days yielded an AUC of approximately 0.74, while at 250 days, the AUC was around 0.94. These values indicate that the model's ability to discriminate between those who will experience the event and those who will not improves over time. The ROC curves further visually demonstrate this improvement, with the curve for 250 days being closer to the top left corner, indicating better performance.
+
+### C-Index
+The average C-index calculated through bootstrapping (n = 400) was about 0.75. This suggests that in 75% of pairwise comparisons, our model correctly ranks the survival times. A C-index of 0.75 is generally indicative of good predictive ability, especially in clinical settings where accurate risk stratification is crucial for treatment planning.
+
+### Calibration Metrics
+The mean calibration slope obtained was approximately 0.371, indicating that the model might be underestimating risks. This value suggests that while the model is effective in ranking individuals by risk, it may not provide accurate probability estimates for the occurrence of events. This discrepancy points to a potential need for model refinement to improve calibration.
+
+
+
+## Discussion
+
+The findings from our analysis present a nuanced picture of the model's performance. While the model demonstrates strong discriminative ability (as evidenced by the AUC values and C-index), the calibration assessment reveals areas for improvement. The low calibration slope, in particular, suggests that the model's predicted probabilities may not align well with the observed frequencies, potentially leading to conservative risk estimates. This underestimation of risk could have significant implications in clinical settings, where over- or underestimation of risk can impact treatment decisions.
+
+The improvement in discriminative ability over time, as indicated by the increasing AUC values from 50 to 250 days, might reflect the evolving nature of risk factors and their impact on patient outcomes over the course of the disease. However, the calibration results highlight the importance of not solely relying on discriminative metrics but also considering how well the predicted probabilities reflect reality.
+
+In light of these findings, future work may involve revisiting the model's complexity and variable selection, exploring alternative modeling approaches, or applying more advanced calibration techniques. External validation on a separate dataset could also provide further insights into the model's generalizability and real-world applicability.
