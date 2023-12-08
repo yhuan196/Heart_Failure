@@ -38,6 +38,11 @@ library(table1)
 library(rmarkdown)
 library(KMsurv)
 library(StepReg)
+library(ggplot2)
+library(timeROC)
+library(boot)
+library(rms)
+library(survivalROC)
 ```
 
 # Introduction
@@ -202,11 +207,123 @@ dat_log = dat %>%
 
 ## Model Validation
 
-()
+### ROC Curves and AUC
+
+In our analysis, we employed time-dependent Receiver Operating Characteristic (ROC) curves and Area Under the Curve (AUC) values to evaluate the discriminative ability of our Cox proportional hazards model over time. Specifically, we focused on two clinically relevant time points: 50 days and 250 days (Ahmad et al., 2017). The ROC curve is a graphical representation that illustrates the diagnostic ability of a binary classifier system by plotting the true positive rate (sensitivity) against the false positive rate (1 - specificity) at various threshold settings. AUC, a key summary measure of the ROC curve, quantifies the overall ability of the model to discriminate between individuals who will experience the event and those who will not, irrespective of the chosen probability threshold (Heagerty & Zheng, 2005). Higher AUC values indicate better discriminative ability.
+
+### C-Index
+
+The concordance index (C-index) was calculated to assess the predictive accuracy of our model. This metric is a measure of the model's ability to correctly rank the survival times of pairs of individuals, considering censored data (Steyerberg & Vergouwe, 2014). The C-index is calculated through pairwise comparisons, where a pair is concordant if the individual predicted to have a shorter survival time indeed experiences the event earlier than the other individual in the pair (Steyerberg & Vergouwe, 2014). A C-index of 0.5 suggests no better predictive accuracy than random chance, while a value of 1 indicates perfect prediction.
+
+### Calibration Slope
+
+To evaluate the calibration of our model, we focused on the calibration slope. Calibration reflects the agreement between observed outcomes and predicted probabilities and the calibration slope assesses whether the predicted risks are of the correct magnitude (Steyerberg & Vergouwe, 2014). A slope of 1 indicates perfect calibration, meaning the model's predicted probabilities are accurately scaled. We calculated the calibration slope using logistic regression within a bootstrap framework, which allowed us to robustly assess the scale of the predicted risks relative to the actual event occurrences. The bootstrap approach, involving resampling the dataset 400 times, provided a more comprehensive understanding of the model's calibration under varying sample conditions.
 
 # Results
 
+
+## Model Validation 
+### ROC Curves and AUC
+
+```{r, fig.align='center', fig.height=5, fig.width=8}
+# Calculate predicted risks
+predicted_risks <- predict(step_model, newdata = model_data, type = "risk")
+
+# Time points for ROC analysis
+time_points <- c(50, 250)
+
+# Calculate ROC curves at specified times
+roc_50 <- timeROC(T = model_data$time, delta = model_data$event, marker = predicted_risks, times = 50, cause = 1)
+roc_250 <- timeROC(T = model_data$time, delta = model_data$event, marker = predicted_risks, times = 250, cause = 1)
+
+# Extract AUC values
+auc_50 <- roc_50$AUC
+auc_250 <- roc_250$AUC
+
+# Print AUC values
+print(paste("AUC at 50 days:", auc_50))
+print(paste("AUC at 250 days:", auc_250))
+
+# Plot ROC curves
+plot(roc_50$FP, roc_50$TP, type = "l", col = "red", xlab = "1 - Specificity", ylab = "Sensitivity", main = "Time-Dependent ROC Curves")
+lines(roc_250$FP, roc_250$TP, type = "l", col = "blue")
+legend("bottomright", legend = c("50 days", "250 days"), col = c("red", "blue"), lty = 1)
+abline(0, 1, col = "black", lty = 2)
+```
+
+
+Our time-dependent ROC analysis at 50 days yielded an AUC of approximately 0.738, while at 250 days, the AUC was 0.935. These values indicate that the model's ability to discriminate between those who will experience the event and those who will not improves over time. The ROC curves further visually demonstrate this improvement, with the curve for 250 days being closer to the top left corner, indicating better performance.
+
+### C-Index
+
+```{r}
+# Define the function for calculating C-statistic
+boot_c_statistic <- function(original_data, indices) {
+  # Creating a bootstrap sample
+  boot_data <- original_data[indices, ]
+
+  # Fit the Cox model to the bootstrap sample
+  fit <-   coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp +
+                      sodium, data = boot_data)
+  
+  # Calculate the concordance statistic using the updated function
+  concordance <- concordance(fit)$concordance
+  return(concordance)
+}
+
+# Perform bootstrapping for C-statistic
+set.seed(123) # for reproducibility
+boot_results_c_stat <- boot(data = model_data, statistic = boot_c_statistic, R = 400)
+
+# Calculate the average C-statistic
+mean_c_stat <- mean(boot_results_c_stat$t)
+print(mean_c_stat)
+```
+
+The average C-index calculated through bootstrapping (n = 400) was 0.746. This suggests that in about 75% of pairwise comparisons, our model correctly ranks the survival times. A C-index of around 0.75 is generally indicative of good predictive ability, especially in clinical settings where accurate risk stratification is crucial for treatment planning.
+
+### Calibration Slope
+
+```{r, warning= FALSE}
+# Define the bootstrap function for calibration metrics using logistic regression
+boot_calibration_logistic <- function(original_data, indices) {
+  boot_data <- original_data[indices, ]
+  fit <-  coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp +
+                      sodium, data = boot_data)
+  
+  
+  # Predicted risks for the original dataset
+  predicted_risks <- predict(fit, newdata = original_data, type = "risk")
+  
+  # Fit a logistic model for calibration
+  calibration_model_logistic <- glm(event ~ predicted_risks, data = original_data, family = "binomial")
+  
+  # Calibration slope (coefficient of predicted_risks)
+  calibration_slope_logistic <- coef(calibration_model_logistic)["predicted_risks"]
+  
+  return(calibration_slope_logistic)
+}
+
+# Perform bootstrap
+set.seed(123)
+boot_results_logistic <- boot(data = model_data, statistic = boot_calibration_logistic, R = 400)
+
+# Calculate the average calibration slope
+mean_calibration_slope_logistic <- mean(boot_results_logistic$t)
+print(mean_calibration_slope_logistic)
+```
+
+Our calculated mean calibration slope came to approximately 1.1529. This value, slightly above the ideal of 1, is significant in understanding the model's performance. The calibration slope measures the extent to which the model's predicted risks are proportionate to the observed risks. A value of 1 would indicate perfect calibration, meaning the model's predictions are perfectly aligned with the actual observed risks. Our finding of a calibration slope above 1 suggests that our model may be mildly overfitting the data, predicting slightly higher risks than what is observed.
+
 # Discussion
+
+The nuanced findings from our analysis provide a comprehensive view of our Cox model's performance. While the model exhibits strong discriminative ability, as indicated by the AUC values and C-index, our calibration assessment, particularly the calibration slope, suggests areas where improvement is needed. Notably, the calibration slope, slightly over the ideal value of 1, implies a mild overestimation in risk predictions. This indicates a complex calibration scenario where the model might be overfitting to some extent.
+
+Such overestimation, although modest, is critical in clinical settings. Accurate risk prediction is vital for informed decision-making and effective patient management. Overestimated risks might lead to more aggressive interventions than necessary, affecting patient care and resource allocation. Conversely, underestimating risks could result in missed opportunities for timely intervention. This highlights the importance of achieving a balance in predictive accuracy, ensuring that the model neither overestimates nor underestimates risks.
+
+The observed improvement in the model's discriminative ability over time, with increasing AUC values from 50 to 250 days, underscores the dynamic nature of risk factors and their evolving impact on patient outcomes. However, the calibration results emphasize the need to focus not just on the model's ability to discriminate but also on the accuracy of its probability predictions.
+
+Future work should, therefore, focus on refining the model's complexity and variable selection. Re-evaluating the model's components and considering alternative modeling approaches might help in aligning the predicted probabilities more closely with actual outcomes. Applying more advanced calibration techniques could also address the observed overfitting, enhancing the model's reliability. Additionally, external validation on an independent dataset is essential to confirm the model's effectiveness and applicability in different clinical contexts. Such efforts will be crucial in enhancing the model's utility and ensuring its robustness in real-world clinical applications, where precise risk assessment directly informs patient care strategies.
 
 # Conclusions
 
@@ -219,6 +336,15 @@ dat_log = dat %>%
 1. Ahmad, T., Munir, A., Bhatti, S. H., Aftab, M., & Raza, M. A. (2017). Survival analysis of heart failure patients: A case study. PLOS ONE, 12(7), e0181001. https://doi.org/10.1371/journal.pone.0181001
 
 2. Jones, N., Ak, R., Adoki, I., Fdr, H., & Cj, T. (2019). Survival of patients with chronic heart failure in the community: a systematic review and meta‐analysis. European Journal of Heart Failure, 21(11), 1306–1325. https://doi.org/10.1002/ejhf.1594
+
+
+Steyerberg, E. W., & Vergouwe, Y. (2014). Towards better clinical prediction models: Seven steps for development and an ABCD for validation. European Heart Journal, 35(29), 1925–1931. https://doi.org/10.1093/eurheartj/ehu207
+
+
+Pavlou, M., Ambler, G., Seaman, S. R., Guttmann, O., Elliott, P., King, M., & Omar, R. Z. (2015). How to develop a more accurate risk prediction model when there are few events. BMJ, h3868. https://doi.org/10.1136/bmj.h3868
+
+
+Heagerty, P. J., & Zheng, Y. (2005). Survival Model Predictive Accuracy and ROC Curves. Biometrics, 61(1), 92–105. https://doi.org/10.1111/j.0006-341X.2005.030814.x
 
 
 

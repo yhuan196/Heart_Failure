@@ -55,19 +55,20 @@ library(timeROC)
 library(rms)
 
 
-# Your Cox model
-cox_model <- coxph(Surv(time, event) ~ log(creatinine+1)+age + ef_cat + bp +
-                       anaemia + sodium, data = data)
+# Cox model
+step_model <- coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp +
+                      sodium, data = model_data)
+
 
 # Calculate predicted risks
-predicted_risks <- predict(cox_model, newdata = data, type = "risk")
+predicted_risks <- predict(step_model, newdata = model_data, type = "risk")
 
 # Time points for ROC analysis
 time_points <- c(50, 250)
 
 # Calculate ROC curves at specified times
-roc_50 <- timeROC(T = data$time, delta = data$event, marker = predicted_risks, times = 50, cause = 1)
-roc_250 <- timeROC(T = data$time, delta = data$event, marker = predicted_risks, times = 250, cause = 1)
+roc_50 <- timeROC(T = model_data$time, delta = model_data$event, marker = predicted_risks, times = 50, cause = 1)
+roc_250 <- timeROC(T = model_data$time, delta = model_data$event, marker = predicted_risks, times = 250, cause = 1)
 
 # Extract AUC values
 auc_50 <- roc_50$AUC
@@ -92,9 +93,10 @@ abline(0, 1, col = "black", lty = 2)
 boot_c_statistic <- function(original_data, indices) {
   # Creating a bootstrap sample
   boot_data <- original_data[indices, ]
-  
+
   # Fit the Cox model to the bootstrap sample
-  fit <- coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp + anaemia + sodium, data = boot_data)
+  fit <-   coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp +
+                      sodium, data = boot_data)
   
   # Calculate the concordance statistic using the updated function
   concordance <- concordance(fit)$concordance
@@ -103,7 +105,7 @@ boot_c_statistic <- function(original_data, indices) {
 
 # Perform bootstrapping for C-statistic
 set.seed(123) # for reproducibility
-boot_results_c_stat <- boot(data = data, statistic = boot_c_statistic, R = 400)
+boot_results_c_stat <- boot(data = model_data, statistic = boot_c_statistic, R = 400)
 
 # Calculate the average C-statistic
 mean_c_stat <- mean(boot_results_c_stat$t)
@@ -117,7 +119,8 @@ print(mean_c_stat)
 # Define the bootstrap function for calibration metrics using logistic regression
 boot_calibration_logistic <- function(original_data, indices) {
   boot_data <- original_data[indices, ]
-  fit <- coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp + anaemia + sodium, data = boot_data)
+  fit <-  coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp +
+                      sodium, data = boot_data)
   
   # Predicted risks for the original dataset
   predicted_risks <- predict(fit, newdata = original_data, type = "risk")
@@ -134,7 +137,7 @@ boot_calibration_logistic <- function(original_data, indices) {
 
 # Perform bootstrap
 set.seed(123)
-boot_results_logistic <- boot(data = data, statistic = boot_calibration_logistic, R = 400)
+boot_results_logistic <- boot(data = model_data, statistic = boot_calibration_logistic, R = 400)
 
 # Calculate the average calibration-in-the-large and calibration slope
 mean_calibration_in_the_large <- mean(boot_results_logistic$t[, 1])
@@ -148,7 +151,9 @@ print(paste("Mean Calibration Slope:", mean_calibration_slope_logistic))
 # Define the bootstrap function for calibration metrics using logistic regression
 boot_calibration_logistic <- function(original_data, indices) {
   boot_data <- original_data[indices, ]
-  fit <- coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp + anaemia + sodium, data = boot_data)
+  fit <-  coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp +
+                      sodium, data = boot_data)
+  
   
   # Predicted risks for the original dataset
   predicted_risks <- predict(fit, newdata = original_data, type = "risk")
@@ -164,7 +169,7 @@ boot_calibration_logistic <- function(original_data, indices) {
 
 # Perform bootstrap
 set.seed(123)
-boot_results_logistic <- boot(data = data, statistic = boot_calibration_logistic, R = 200)
+boot_results_logistic <- boot(data = model_data, statistic = boot_calibration_logistic, R = 400)
 
 # Calculate the average calibration slope
 mean_calibration_slope_logistic <- mean(boot_results_logistic$t)
