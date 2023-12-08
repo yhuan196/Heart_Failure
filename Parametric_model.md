@@ -3,17 +3,29 @@ Paramatric Model
 Yi Huang
 2023-12-08
 
-## Weibull
+## Parametric models
 
-Weibull  
-model selection:  
+Weibull model selection:  
 Df AIC  
-<none> 1273.2  
-sodium 1 1273.5  
-bp 1 1277.8  
-logcre 1 1282.9  
-ef_cat 2 1294.7  
-age 1 1298.1  
+- \<none\>  1273.2  
+- sodium 1 1273.5  
+- bp 1 1277.8  
+- logcre 1 1282.9  
+- ef_cat 2 1294.7  
+- age 1 1298.1  
+  
+  
+Gompertz model selection:  
+DF AIC  
+- \<none\>  1273.6  
+- anaemia 1 1273.6  
+- sodium 1 1274.5  
+- bp 1 1278.2  
+- logcre 1 1283.6  
+- ef_cat 2 1294.8  
+- age 1 1298.9  
+
+## Weibull
 
 ``` r
 fit_weibull = phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
@@ -191,16 +203,6 @@ stepAIC(fit_weibull)
     ## Overall p-value           5.55112e-16
 
 ## Gompertz
-
-Gompertz  
-model selection: DF AIC  
-<none> 1273.6  
-- anaemia 1 1273.6  
-- sodium 1 1274.5  
-- bp 1 1278.2  
-- logcre 1 1283.6  
-- ef_cat 2 1294.8  
-- age 1 1298.9  
 
 ``` r
 fit_gompertz = phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
