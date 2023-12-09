@@ -286,6 +286,8 @@ where $\lambda$ is the Scale parameter, and $\eta$ is the Rate of increase or de
 ## Model Selection
 (model selection (survival tree - optional), and model checking, fitting the model)
 
+In model selection process, we incorporated bidirectional stepwise selection, alongside using various model assessment criteria such as Akaike Information Criterion (AIC), Corrected Akaike Information Criterion (AICc), and Schwarz Bayesian Criterion (SBC). This comprehensive approach enhanced our ability to identify the most appropriate model for our data.
+
 $$
 h(t) = h_0(t)\exp[\beta_1X_{age} + \beta_2X_{EF_{Medium}} + \beta_3X_{EF_{High}} + \beta_4X_{bp}+\beta_5X_{sodium} + \beta_6\log(X_{creatinine}+1)]
 $$
