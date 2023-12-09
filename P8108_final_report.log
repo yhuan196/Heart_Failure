@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.18)  9 DEC 2023 03:00
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.18)  9 DEC 2023 08:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -618,7 +618,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has b
                    \relax 
 l.242 
        [1{c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
-<P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf, id=152, 578.16pt x 361.35pt>
+<P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf, id=188, 578.16pt x 361.35pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf>
 Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf  used on input line 315.
@@ -629,66 +629,71 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has b
                    \relax 
 l.315 ...ure-latex/unnamed-chunk-4-1} \end{center}
                                                    [2]
-<P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf, id=162, 578.16pt x 361.35pt>
+<P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf, id=198, 578.16pt x 361.35pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf>
 Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf  used on input line 317.
 (pdftex.def)             Requested size: 469.75385pt x 293.59616pt.
+[3 <./P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf> <./P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf>] [4{c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}]
+Underfull \hbox (badness 10000) in paragraph at lines 413--417
 
-Overfull \hbox (5.46564pt too wide) in paragraph at lines 334--353
+ []
+
+[5] [6]
+Overfull \hbox (5.46564pt too wide) in paragraph at lines 572--591
  [][] 
  []
 
-[3 <./P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf> <./P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf>]
-Overfull \hbox (5.46564pt too wide) in paragraph at lines 360--379
+
+Overfull \hbox (5.46564pt too wide) in paragraph at lines 598--617
  [][] 
  []
 
-<P8108_final_report_files/figure-latex/KM_FH-1.pdf, id=179, 867.24pt x 361.35pt>
+<P8108_final_report_files/figure-latex/KM_FH-1.pdf, id=255, 867.24pt x 361.35pt>
 File: P8108_final_report_files/figure-latex/KM_FH-1.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/KM_FH-1.pdf>
-Package pdftex.def Info: P8108_final_report_files/figure-latex/KM_FH-1.pdf  used on input line 381.
+Package pdftex.def Info: P8108_final_report_files/figure-latex/KM_FH-1.pdf  used on input line 623.
 (pdftex.def)             Requested size: 469.75827pt x 195.7326pt.
-[4 <./P8108_final_report_files/figure-latex/KM_FH-1.pdf>] [5{c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}] [6] [7] [8]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 619.
+[7] [8 <./P8108_final_report_files/figure-latex/KM_FH-1.pdf>] [9] [10]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 758.
 (c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 678.
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 699.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 817.
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 838.
 (c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [9]
-Underfull \vbox (badness 10000) detected at line 833
+) [11]
+Underfull \vbox (badness 10000) detected at line 972
  []
 
 
-Underfull \vbox (badness 10000) detected at line 833
- []
-
-[10]
-Underfull \vbox (badness 10000) detected at line 833
- []
-
-
-Underfull \vbox (badness 10000) detected at line 833
- []
-
-[11]
-Underfull \vbox (badness 10000) detected at line 833
- []
-
-
-Underfull \vbox (badness 10000) detected at line 833
+Underfull \vbox (badness 10000) detected at line 972
  []
 
 [12]
+Underfull \vbox (badness 10000) detected at line 972
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 972
+ []
+
+[13]
+Underfull \vbox (badness 10000) detected at line 972
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 972
+ []
+
+[14]
 
 Package caption Warning: Unused \captionsetup[figure] on input line 96.
 See the caption package documentation for explanation.
 
-[13] (./P8108_final_report.aux)
+[15] (./P8108_final_report.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-10-10>
@@ -697,21 +702,21 @@ L3 programming layer <2023-10-10>
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `P8108_final_report.out' has not changed.
-(rerunfilecheck)             Checksum: B14E09F380330EA754B7B228C2B5BAFD;3079.
+(rerunfilecheck)             Checksum: 12FD00FCE46FCF5B5F4002FC7F7E01E8;4223.
  ) 
 Here is how much of TeX's memory you used:
- 14786 strings out of 476469
- 238094 string characters out of 5800337
- 1952043 words of memory out of 5000000
- 36162 multiletter control sequences out of 15000+600000
+ 14823 strings out of 476469
+ 238761 string characters out of 5800337
+ 1953043 words of memory out of 5000000
+ 36178 multiletter control sequences out of 15000+600000
  629025 words of font info for 88 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 75i,9n,79p,431b,511s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx8.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on P8108_final_report.pdf (15 pages, 428278 bytes).
+ 75i,10n,79p,431b,511s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx8.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
+Output written on P8108_final_report.pdf (17 pages, 471857 bytes).
 PDF statistics:
- 376 PDF objects out of 1000 (max. 8388607)
- 309 compressed objects within 4 object streams
- 69 named destinations out of 1000 (max. 500000)
- 208 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 455 PDF objects out of 1000 (max. 8388607)
+ 380 compressed objects within 4 object streams
+ 90 named destinations out of 1000 (max. 500000)
+ 264 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -3,7 +3,7 @@ title: "**Heart Failure Survival Study**"
 subtitle: "**Mailman School of Public Health at Columbia University**"
 date: "Dec 7, 2023"
 author: 
-  - "Huanyu Chen, Runze Cui, Jiahe Deng, Yi Huang, Xuesen Zhao"
+  - "Yi Huang, Runze Cui, Xuesen Zhao, Huanyu Chen, Jiahe Deng"
   - "P8108 Final Project Report: Group 6"
 output: 
   pdf_document:
@@ -195,30 +195,53 @@ dat_log = dat %>%
 # Methods
 ## Nonparametric Methods
 
-In our analysis, we applied both life table and Kaplan-Meier Curve to estimate the survival function. Both approaches can handle censored data. 
+In our analysis, we applied life table, Kaplan-Meier and Fleming-Harrington Curves to estimate the survival function. All three approaches can handle censored data. 
 
-The life table is particularly useful for larger sample sizes and when the data are grouped into intervals. The survival probability at each interval is calculated as:
+The life table is particularly useful for larger sample sizes and when the data are grouped into intervals. The survival probability at each interval is estimated as:
+
 $$
-S(t)=\prod_{t_i\le t}(1-\frac{d_i}{n_i})
+\hat{S}_L(t_i)=\hat{S}_L(t_{i-1})(1-\frac{d_{i}}{{n_{i}'}})
 $$
 
-where $d_i$ is the number of events in interval $i$ and $n_i$ is the number at risk at the start of interval $i$.
+where $d_i$ is the number of events in interval^[This is the survival function at the end of interval. However, R often reports the survival function at the beginning of the interval] $[t_{i-1}, t_i]$, $n_i'$ is the average number at risk in the interval $[t_{i-1}, t_i]$.
 
-The Kaplan-Meier Curve allows for varying follow-up times and censored data, making it versatile for smaller samples and individual subject data. The Kaplan-Meier provides a visual representation of the survival experience of the cohort over time.
+The Kaplan-Meier curve allows for varying follow-up times and censored data, making it versatile for smaller samples and individual subject data. It provides a visual representation of the survival experience of the cohort over time. The K-M estimator^[Also known as product-limit estimator] can be mathematically expressed as: 
+
+$$ 
+\hat S_K(t)= \begin{cases}
+1 & \text { if } t< t_1  \\ 
+\prod_{t_i \le t} [1-\frac{d_i}{n_i}] = \prod_{t_i \le t} [1-h_i]& \text { if }   t \ge t_1
+\end{cases}
+$$
+where $d_i$ is the number of events at time $t_i$ and $n_i$ is the number at risk at $t_i^-$, and $c_i$ is the number of censored during the interval $[t_i, t_{i+1}]$  
+
+Unlike the Kaplan-Meier estimator, the Fleming-Harrington estimator^[Also known as Nelson-Aalen estimator] is designed to weight events differently over time in survival analysis. It focuses on estimating the cumulative hazard function. The estimated survival probability can be computed as:
+
+$$ 
+\hat S_F(t)= \begin{cases}
+1 & \text { if } t< t_1  \\ 
+\prod_{t_i \le t} \exp[-\frac{d_i}{n_i}] = \prod_{t_i \le t} \exp[-h_i] & \text { if }   t \ge t_1
+\end{cases}
+$$
+where the $d_i$, $n_i$ and $c_i$ conditions are the same as K-M estimator above, It is true that $\hat S_F(t) \geq \hat S_K(t)$ because $\exp{[-\frac{d_i}{n_i}]}$ is always great and equal to $1 - \frac{d_i}{n_i}$. 
+
+Both K-M and F-H survival curves are presented in the **Result** section for further comparison.
 
 ## Hypothesis Testing
 Log-Rank test and Wilcoxon test
 
-The Log-Rank test focuses on comparing the number of observed to expected events across the groups at each time point. The test statistic is calculated as:
+The Log-Rank test focuses on comparing the number of observed to expected events across the groups at each time point. The test statistic^[This is the test statistics with tie] is calculated as:
 
 $$
-\chi^2_{\text{Log-Rank}} = \sum_{i=1}^{k} \frac{(O_{i1} - E_{i1})^2}{E_{i1}} + \frac{(O_{i2} - E_{i2})^2}{E_{i2}}
+\chi^2_{\text{LR}} = \frac{\sum_{i=1}^{k}(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i^2(n_i-1)}}}
 $$
 
-The Wilcoxon test, also known as the Breslow test in the context of survival analysis, gives more weight to events at earlier time points. The test statistic is calculated as:
+The Gehan's Wilcoxon test^[Also known as the Breslow test] gives more weight to events at earlier time points. The test statistic is calculated as:
+
 $$
-\chi^2_{\text{Wilcoxon}} = \sum_{i=1}^{k} \frac{(O_{i1} - E_{i1})^2}{V_{i1}} + \frac{(O_{i2} - E_{i2})^2}{V_{i2}}
+\chi^2_{\text{GW}} = \frac{\sum_{i=1}^{k}n_i(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i-1}}}
 $$
+Obviously, the Gehan's Wilcoxon test is actually a special case of weighted log-rank test with weight equals $n_i$.
 
 ## Proportional Hazard Models
 
@@ -226,7 +249,7 @@ We use three propositional hazard models to evaluate the effect of several facto
 
 Proportional hazard model is the primary regression model to investigate the effectiveness of treatment $X$ over survival time $T$, where the $i_{th}$ patient at a time $t$ \
 is\
-$$h_i(t) = h_0(t)\exp({\beta_1X_{i1}+\beta_2X_{i2}+\ldots+\beta_p X_{ip}})$$
+$$h_i(t) = h_0(t)\exp[{\beta_1X_{i1}+\beta_2X_{i2}+\ldots+\beta_p X_{ip}}]$$
 
 where
 
@@ -246,11 +269,12 @@ $$\frac{h(t|x)}{h(t|x')} = e^{\beta({x-x'})}$$
 
 There are different ways to formulate the baseline hazard function $h_0(t)$, which lead to different models and estimations. 
 
-### Cox Model
+### Cox PH Model
 
-The Cox model does not assume a particular baseline hazard function.
+The Cox PH model is a semi-parametric model which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model looks simiar and can be expressed as:
+
 $$
-h_i(t) = h_0(t) \exp(\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}) \\
+h_i(t) = \tilde{h}_0(t) \exp(\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}) \\
 $$
 
 ### Weibull Model
@@ -267,9 +291,9 @@ where
 
 \begin{itemize}
 
-\item $\lambda \text{is the Scale parameter}$ 
+\item $\lambda =  \text{Scale parameter}$ 
 
-\item $\gamma \text{is the Shape parameter}$ 
+\item $\gamma = \text{Shape parameter}$ 
 
 \end{itemize}
 
@@ -318,7 +342,8 @@ To evaluate the calibration of our model, we focused on the calibration slope. C
 
 # Results
 
-## Life Table and Kaplan-Meier Curve
+## Nonparametric Methods
+### Life Table
 
 ```{r}
 nonpara_dat = dat_log %>% 
@@ -338,6 +363,8 @@ life_table_female %>% kable(booktabs = T, caption = "Table 2.2: Heart Failure Li
   kable_styling(latex_options = c("HOLD_position"), font_size = 6)
 ```
 
+### The Kaplan-Meier and Fleming-Harrington Model
+
 ```{r KM_FH, fig.width=12, fig.height=5}
 km = survfit(Surv(time, event) ~ gender, data = nonpara_dat)
 fh <- survfit(Surv(time, event) ~ gender, data = nonpara_dat, type = "fh")
@@ -356,11 +383,11 @@ fh_plot =
 km_plot + fh_plot
 ```
 
-## Modeling
+## Semi-parametric Models
 
 The final model obtained from Stepwise Selection using AIC contains creatinine, age, ejection fraction, blood pressure status, sodium covariates.
 
-## Parametric Estimate
+## Parametric Model
 (Model checking, fitting the model)
 
 ## Model Validation 
