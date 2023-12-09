@@ -193,7 +193,122 @@ dat_log = dat %>%
 ```
 
 # Methods
-## Nonparametric Estimate
+## Nonparametric Methods
+
+
+## Hypothesis Testing
+Log-Rank test and Wilcoxon test
+
+The Log-Rank test focuses on comparing the number of observed to expected events across the groups at each time point. The test statistic is calculated as:
+
+$$
+\chi^2_{\text{Log-Rank}} = \sum_{i=1}^{k} \frac{(O_{i1} - E_{i1})^2}{E_{i1}} + \frac{(O_{i2} - E_{i2})^2}{E_{i2}}
+$$
+
+The Wilcoxon test, also known as the Breslow test in the context of survival analysis, gives more weight to events at earlier time points. The test statistic is calculated as:
+$$
+\chi^2_{\text{Wilcoxon}} = \sum_{i=1}^{k} \frac{(O_{i1} - E_{i1})^2}{V_{i1}} + \frac{(O_{i2} - E_{i2})^2}{V_{i2}}
+$$
+
+## Proportional Hazard Models
+
+We use three propositional hazard models to evaluate the effect of several factors on survival time. It allows us to examine how specified factors influence the rate of the event that we are interested in at a particular point in time. This rate is the hazard rate. 
+
+Proportional hazard model is the primary regression model to investigate the effectiveness of treatment $X$ over survival time $T$, where the $i_{th}$ patient at a time $t$ \
+is\
+$$h_i(t) = h_0(t)\exp({\beta_1X_{i1}+\beta_2X_{i2}+\ldots+\beta_p X_{ip}})$$
+
+where
+
+\begin{itemize}
+
+\item $h_0(t)$ is the baseline hazard function
+
+\item $h(t)$ is the hazard function determined by a set of $p$ covariates $(x_1,\ x_2,\ ...,\ x_p)$
+
+\item $(\beta_1,\ \beta_2,\ ...,\ \beta_p)$ are the coefficients which measure the impact of covariates.
+
+\end{itemize}
+
+The **proportional hazard** can be expressed as ratio of two hazard functions at time t in two individuals or groups with covariates $X$ and $X'$, and does not depend on $t$. 
+
+$$\frac{h(t|x)}{h(t|x')} = e^{\beta({x-x'})}$$
+
+There are different ways to formulate the baseline hazard function $h_0(t)$, which lead to different models and estimations. 
+
+### Cox Model
+
+The Cox model does not assume a particular baseline hazard function.
+$$
+h_i(t) = h_0(t) \exp(\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}) \\
+$$
+
+### Weibull Model
+
+Assumes a specific functional form for the hazard rate, which can either increase or decrease over time.
+
+$$
+\begin{aligned}
+h_i(t) &= \lambda \gamma t^{\gamma - 1} \exp(\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}) \\
+\end{aligned}
+$$
+
+where
+
+\begin{itemize}
+
+\item $\lambda \text{is the Scale parameter}$ 
+
+\item $\gamma \text{is the Shape parameter}$ 
+
+\end{itemize}
+
+### Gompertz Model
+
+The Gompertz model assumes a hazard function that either increases or decreases exponentially over time.
+
+$$
+\begin{aligned}
+h_i(t) &= \lambda \exp(\eta t + \beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}) \\
+\end{aligned}
+$$
+
+where
+
+\begin{itemize}
+
+\item $\lambda = \text{Scale parameter}$ 
+
+\item $\eta = \text{Rate of increase or decrease in hazard}$ 
+
+\end{itemize}
+
+
+## Model Selection
+(model selection (survival tree - optional), and model checking???, fitting the model)
+
+$$
+h(t) = h_0(t)\exp[\beta_1X_{age} + \beta_2X_{EF_{Medium}} + \beta_3X_{EF_{High}} + \beta_4X_{bp}+\beta_5X_{sodium} + \beta_6\log(X_{creatinine}+1)]
+$$
+
+
+## Model Validation
+
+### ROC Curves and AUC
+
+In our analysis, we employed time-dependent Receiver Operating Characteristic (ROC) curves and Area Under the Curve (AUC) values to evaluate the discriminative ability of our Cox proportional hazards model over time. Specifically, we focused on two clinically relevant time points: 50 days and 250 days (Ahmad et al., 2017). The ROC curve is a graphical representation that illustrates the diagnostic ability of a binary classifier system by plotting the true positive rate (sensitivity) against the false positive rate (1 - specificity) at various threshold settings. AUC, a key summary measure of the ROC curve, quantifies the overall ability of the model to discriminate between individuals who will experience the event and those who will not, irrespective of the chosen probability threshold (Heagerty & Zheng, 2005). Higher AUC values indicate better discriminative ability.
+
+### C-Index
+
+The concordance index (C-index) was calculated to assess the predictive accuracy of our model. This metric is a measure of the model's ability to correctly rank the survival times of pairs of individuals, considering censored data (Steyerberg & Vergouwe, 2014). The C-index is calculated through pairwise comparisons, where a pair is concordant if the individual predicted to have a shorter survival time indeed experiences the event earlier than the other individual in the pair (Steyerberg & Vergouwe, 2014). A C-index of 0.5 suggests no better predictive accuracy than random chance, while a value of 1 indicates perfect prediction.
+
+### Calibration Slope
+
+To evaluate the calibration of our model, we focused on the calibration slope. Calibration reflects the agreement between observed outcomes and predicted probabilities and the calibration slope assesses whether the predicted risks are of the correct magnitude (Steyerberg & Vergouwe, 2014). A slope of 1 indicates perfect calibration, meaning the model's predicted probabilities are accurately scaled. We calculated the calibration slope using logistic regression within a bootstrap framework, which allowed us to robustly assess the scale of the predicted risks relative to the actual event occurrences. The bootstrap approach, involving resampling the dataset 400 times, provided a more comprehensive understanding of the model's calibration under varying sample conditions.
+
+# Results
+
+## Non-parametric
 
 ```{r}
 nonpara_dat = dat_log %>% 
@@ -231,62 +346,12 @@ fh_plot =
 km_plot + fh_plot
 ```
 
-## Hypothesis Testing
-
-(Log-Rank test and Wilcoxon test)
-
-## Semi-parametric Estimate
-
-Suppose that there is a true survival time, T, as well as a true censoring time, C. The survival time represents the time at which the event of interest occurs: in this dataset, the time at which the patient die. The censoring time is the time at which the patient drop out of the study or survived until the last day of the study.
-
-We observed the Survival Time T and Censoring Time C. Suppose there is a random variable Y
-
-$$Y = min(T,C)$$
-
-In other words, if the event occurs before the censoring such that T $<$ C, then we observed the true survival time T. If censoring occurs before the event such as T $>$ C, then we observe the censoring time. The status indicator as, 
-
-$$\delta =  \left\{
-\begin{array}{ll} 
-     1 &  T\leq C \\
-     0 & T > C \\
-   \end{array}
-   \right. $$
-   
-Thus, $\delta$ = 1 if we observe the true survival time, and $\delta$ = 0 if we observe the censoring.
-
-We use the Cox-propositional hazard model to evaluate the effect of several factors on survival time. It allows us to examine how specified factors influence the rate of the event that we are interested in at a particular point in time. This rate is the hazard rate. The final model obtained from Stepwise Selection using AIC contains creatinine, age, ejection fraction, blood pressure status, sodium covariates.
-
-The Cox model is expressed by the hazard function denoted by h(t). Briefly, the hazard function can be interpreted as the risk of death at time t. The final model as follows:
-
-$$
-h(t) = h_0(t)\exp[\beta_1X_{age} + \beta_2X_{EF_{Medium}} + \beta_3X_{EF_{High}} + \beta_4X_{bp}+\beta_5X_{sodium} + \beta_6\log(X_{creatinine}+1)]
-$$
-
-where, \ 
-
-## Cox Model Selection
-(model selection (survival tree - optional), and model checking???, fitting the model)
+## Modeling
+###
+The final model obtained from Stepwise Selection using AIC contains creatinine, age, ejection fraction, blood pressure status, sodium covariates.
 
 ## Parametric Estimate
-
 (Model checking, fitting the model)
-
-## Model Validation
-
-### ROC Curves and AUC
-
-In our analysis, we employed time-dependent Receiver Operating Characteristic (ROC) curves and Area Under the Curve (AUC) values to evaluate the discriminative ability of our Cox proportional hazards model over time. Specifically, we focused on two clinically relevant time points: 50 days and 250 days (Ahmad et al., 2017). The ROC curve is a graphical representation that illustrates the diagnostic ability of a binary classifier system by plotting the true positive rate (sensitivity) against the false positive rate (1 - specificity) at various threshold settings. AUC, a key summary measure of the ROC curve, quantifies the overall ability of the model to discriminate between individuals who will experience the event and those who will not, irrespective of the chosen probability threshold (Heagerty & Zheng, 2005). Higher AUC values indicate better discriminative ability.
-
-### C-Index
-
-The concordance index (C-index) was calculated to assess the predictive accuracy of our model. This metric is a measure of the model's ability to correctly rank the survival times of pairs of individuals, considering censored data (Steyerberg & Vergouwe, 2014). The C-index is calculated through pairwise comparisons, where a pair is concordant if the individual predicted to have a shorter survival time indeed experiences the event earlier than the other individual in the pair (Steyerberg & Vergouwe, 2014). A C-index of 0.5 suggests no better predictive accuracy than random chance, while a value of 1 indicates perfect prediction.
-
-### Calibration Slope
-
-To evaluate the calibration of our model, we focused on the calibration slope. Calibration reflects the agreement between observed outcomes and predicted probabilities and the calibration slope assesses whether the predicted risks are of the correct magnitude (Steyerberg & Vergouwe, 2014). A slope of 1 indicates perfect calibration, meaning the model's predicted probabilities are accurately scaled. We calculated the calibration slope using logistic regression within a bootstrap framework, which allowed us to robustly assess the scale of the predicted risks relative to the actual event occurrences. The bootstrap approach, involving resampling the dataset 400 times, provided a more comprehensive understanding of the model's calibration under varying sample conditions.
-
-# Results
-
 
 ## Model Validation 
 ### ROC Curves and AUC
