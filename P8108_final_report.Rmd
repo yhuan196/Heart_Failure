@@ -187,20 +187,9 @@ dat_log = dat %>%
   mutate(cpk_log = log(cpk + 1),
          creatinine_log = log(creatinine + 1))
 ```
-- **age**: Age in years 
-- **time**: Survival time in days
-- **event**: Event binary indicator (0 = Censored, 1 = Event)
-- **gender**: Sex binary indicator (0 = Female, 1 = Male)
-- **smoking**: Smoking status (0 = No smoking, 1 = Smoking)
-- **diabetes**: Diabetes status (0 = No diabetes, 1 = Diabetes)
-- **bp**: Blood pressure status (0 = Normal, 1 = Hypertension)
-- **anemia**: Anemia status (0 = No anemia, 1 = Anemia: patients with haematocrit $<36$)
-- **EF_cat**: Ejection fraction (Low: $\text{EF} \leq 30$, Medium: $30 < \text{EF} \leq 45$ and High: $\text{EF} >45$)
-- **sodium**: Sodium in mEq/L
-- **creatinine**: Serum creatinine in mg/dL 
-- **platelets**: Platelets in mcL
-- **cpk**: Creatinine phosphokinase in U/L
+
 # Methods
+
 ## Nonparametric Estimate
 
 (Life table separated by gender, KM and FH comparing)
@@ -233,7 +222,7 @@ We use the Cox-propositional hazard model to evaluate the effect of several fact
 The Cox model is expressed by the hazard function denoted by h(t). Briefly, the hazard function can be interpreted as the risk of death at time t. The final model as follows:
 
 $$
-h(t) = h_0(t)\exp(\beta_0 + x_1\beta_{age} + x_2\beta_{EF_{medium}} + x_3\beta_{EF_{high}} + x_4\beta_{bp}+x_5\beta_{sodium} + \log(x_6+1)\beta_{creatinine})
+h(t) = h_0(t)\exp[\beta_0 + X_1\beta_{age} + X_2\beta_{EF_{medium}} + X_3\beta_{EF_{high}} + X_4\beta_{bp}+X_5\beta_{sodium} + \log(x_6+1)\beta_{creatinine}]
 $$
 
 where, \ 
