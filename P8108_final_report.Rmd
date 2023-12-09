@@ -259,7 +259,7 @@ We use the Cox-propositional hazard model to evaluate the effect of several fact
 The Cox model is expressed by the hazard function denoted by h(t). Briefly, the hazard function can be interpreted as the risk of death at time t. The final model as follows:
 
 $$
-h(t) = h_0(t)\exp[\beta_0 + X_1\beta_{age} + X_2\beta_{EF_{medium}} + X_3\beta_{EF_{high}} + X_4\beta_{bp}+X_5\beta_{sodium} + \log(x_6+1)\beta_{creatinine}]
+h(t) = h_0(t)\exp[\beta_1X_{age} + \beta_2X_{EF_{Medium}} + \beta_3X_{EF_{High}} + \beta_4X_{bp}+\beta_5X_{sodium} + \beta_6\log(X_6+1)]
 $$
 
 where, \ 
