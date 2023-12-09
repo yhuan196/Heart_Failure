@@ -263,15 +263,8 @@ h_i(t) &= \lambda \gamma t^{\gamma - 1} \exp(\beta_1 X_{i1} + \beta_2 X_{i2} + \
 \end{aligned}
 $$
 
-where
+where $\lambda \text{is the Scale parameter}$ and $\gamma \text{is the Shape parameter}$.
 
-\begin{itemize}
-
-\item $\lambda \text{is the Scale parameter}$ 
-
-\item $\gamma \text{is the Shape parameter}$ 
-
-\end{itemize}
 
 ### Gompertz Model
 
@@ -283,15 +276,7 @@ h_i(t) &= \lambda \exp(\eta t + \beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta
 \end{aligned}
 $$
 
-where
-
-\begin{itemize}
-
-\item $\lambda = \text{Scale parameter}$ 
-
-\item $\eta = \text{Rate of increase or decrease in hazard}$ 
-
-\end{itemize}
+where $\lambda = \text{Scale parameter}$, and $\eta = \text{Rate of increase or decrease in hazard}$.
 
 
 ## Model Selection
