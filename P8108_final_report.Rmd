@@ -280,7 +280,7 @@ h_i(t) &= \lambda \exp(\eta t + \beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta
 \end{aligned}
 $$
 
-where $\lambda = \text{Scale parameter}$, and $\eta = \text{Rate of increase or decrease in hazard}$.
+where $\lambda$ is the Scale parameter, and $\eta$ is the Rate of increase or decrease in hazard.
 
 
 ## Model Selection
