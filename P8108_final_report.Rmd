@@ -215,7 +215,7 @@ $$
 \chi^2_{\text{Log-Rank}} = \sum_{i=1}^{k} \frac{(O_{i1} - E_{i1})^2}{E_{i1}} + \frac{(O_{i2} - E_{i2})^2}{E_{i2}}
 $$
 
-where $O_{ij}$ is the observed number of events (e.g., deaths) in group  j at time i, $E_{ij}$ is the expected number of events in group  $j$ at time  $i$,  $n_{ij}$ is the number of individuals at risk in group j at time $i$, $O_i$ is the total number of events at time $i$, and $n_i$ is the total number at risk at time $i$.
+where $O_{ij}$ is the observed number of events in group  j at time i, $E_{ij}$ is the expected number of events in group  $j$ at time  $i$,  $n_{ij}$ is the number of individuals at risk in group j at time $i$, $O_i$ is the total number of events at time $i$, and $n_i$ is the total number at risk at time $i$.
 
 The Wilcoxon test achieves a greater sensitivity to differences in survival that manifest at the beginning of the observation period. The test statistic is calculated as:
 $$
