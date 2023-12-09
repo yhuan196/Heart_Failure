@@ -27,11 +27,15 @@ editor_options:
 
 ```{r include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(biostat3)
 library(tidyverse)
 library(knitr)
 library(kableExtra)
 library(survival)
 library(survminer)
+library(ggfortify)
+library(ggsurvfit)
+library(patchwork)
 library(writexl)
 library(readxl)
 library(table1)
@@ -189,10 +193,43 @@ dat_log = dat %>%
 ```
 
 # Methods
-
 ## Nonparametric Estimate
 
-(Life table separated by gender, KM and FH comparing)
+```{r}
+nonpara_dat = dat_log %>% 
+  dplyr::select(-c(EF, cpk, creatinine)) %>% 
+  relocate(time, event, EF_cat, smoking, everything()) %>% 
+  mutate(event = as.numeric(event) - 1)
+nonpara_male = nonpara_dat %>% filter(gender == 1)
+nonpara_female = nonpara_dat %>% filter(gender == 0)
+```
+
+```{r lifetable}
+life_table_male <- lifetab2(Surv(time, event) ~ 1, data = nonpara_male, breaks = seq(0, 300, 30))
+life_table_female <- lifetab2(Surv(time, event) ~ 1, data = nonpara_female, breaks = seq(0, 300, 30))
+life_table_male %>% kable(booktabs = T, caption = "Table 2.1: Heart Failure Life table (Male)") %>% 
+  kable_styling(latex_options = c("HOLD_position"), font_size = 6) 
+life_table_female %>% kable(booktabs = T, caption = "Table 2.2: Heart Failure Life table (Female)") %>% 
+  kable_styling(latex_options = c("HOLD_position"), font_size = 6)
+```
+
+```{r KM_FH, fig.width=12, fig.height=5}
+km = survfit(Surv(time, event) ~ gender, data = nonpara_dat)
+fh <- survfit(Surv(time, event) ~ gender, data = nonpara_dat, type = "fh")
+km_plot = 
+  km %>% autoplot() +
+  labs(y = "S(t)",
+       x = "Time",
+       subtitle = "Figure 2.1. Kaplan-Meier Survival Curve By Gender",
+       color = "Gender", fill = 'Gender') + theme(legend.position = "none")
+fh_plot = 
+  fh %>% autoplot() +
+  labs(y = "S(t)",
+       x = "Time",
+       subtitle = "Figure 2.2. Fleming-Harrington Survival Curve By Gender",
+       color = "Gender", fill = 'Gender')
+km_plot + fh_plot
+```
 
 ## Hypothesis Testing
 
