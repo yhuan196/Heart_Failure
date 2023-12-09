@@ -40,64 +40,199 @@ model_data
 
 
 ```{r} 
-par(mfrow = c(3, 2))
 km.fit.gender=survfit(Surv(time, event)~ gender, data=model_data)
-plot(km.fit.gender, fun="cumhaz", col=c("blue", "red"),
-     xlab = "Time", ylab = "-log(S(t))",
-     main = "Negative Log of Estimated Survival Functions for Gender")
-legend("topleft", legend = c("Female", "Male"), col=c("blue", "red"), lty = 1, cex = 0.8)
-plot(km.fit.gender, fun="cloglog", col=c("blue", "red"), xlab="Log(time)", ylab="log(-log(S(t)))",
-     main="Log of Negative log of estimated survival function for Gender")
-legend("topleft", legend = c("Female", "Male"), col=c("blue", "red"), lty = 1, cex = 0.8)
 
 km.fit.bp=survfit(Surv(time, event)~ bp, data=model_data)
-plot(km.fit.bp, fun="cumhaz", col=c("blue", "red"),
-     xlab = "Time", ylab = "-log(S(t))",
-     main = "Negative Log of Estimated Survival Functions for Blood Pressure")
-legend("topleft", legend = c("bp=0", "bp=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
-plot(km.fit.bp, fun="cloglog", col=c("blue", "red"), xlab="Log(time)", ylab="log(-log(S(t)))",
-     main="Log of Negative log of estimated survival function for Blood Pressure")
-legend("topleft", legend = c("bp=0", "bp=1"), col=c("blue", "red"), lty = 1, cex = 0.8)
 
 km.fit.smoke=survfit(Surv(time, event)~ smoking, model_data)
-plot(km.fit.smoke, fun="cumhaz", col=c("blue", "red"),
-     xlab = "Time", ylab = "-log(S(t))",
-     main = "Negative Log of Estimated Survival Functions for Smoking")
-legend("topleft", legend = c("No smoking", "Smoking"), col=c("blue", "red"), lty = 1, cex = 0.8)
-plot(km.fit.smoke, fun="cloglog", col=c("blue", "red"), xlab="Log(time)", ylab="log(-log(S(t)))",
-     main="Log of Negative log of estimated survival function for Smoking")
-legend("topleft", legend = c("No smoking", "Smoking"), col=c("blue", "red"), lty = 1, cex = 0.8)
 
-par(mfrow = c(3, 2))
 km.fit.diabetes=survfit(Surv(time, event)~ diabetes, model_data)
-plot(km.fit.diabetes, fun="cumhaz", col=c("blue", "red"),
-     xlab = "Time", ylab = "-log(S(t))",
-     main = "Negative Log of Estimated Survival Functions for Diabetes")
-legend("topleft", legend = c("No Diabetes", "With Diabetes"), col=c("blue", "red"), lty = 1, cex = 0.8)
-plot(km.fit.diabetes, fun="cloglog", col=c("blue", "red"), xlab="Log(time)", ylab="log(-log(S(t)))",
-     main="Log of Negative log of estimated survival function for Diabetes")
-legend("topleft", legend = c("No Diabetes", "With Diabetes"), col=c("blue", "red"), lty = 1, cex = 0.8)
 
 km.fit.anaemia=survfit(Surv(time, event)~ anaemia, model_data)
-plot(km.fit.anaemia, fun="cumhaz", col=c("blue", "red"),
-     xlab = "Time", ylab = "-log(S(t))",
-     main = "Negative Log of Estimated Survival Functions for Anaemia")
-legend("topleft", legend = c("No Anaemia", "With Anaemia"), col=c("blue", "red"), lty = 1, cex = 0.8)
-plot(km.fit.anaemia, fun="cloglog", col=c("blue", "red"), xlab="Log(time)", ylab="log(-log(S(t)))",
-     main="Log of Negative log of estimated survival function for Anaemia")
-legend("topleft", legend = c("No Anaemia", "With Anaemia"), col=c("blue", "red"), lty = 1, cex = 0.8)
 
 km.fit.ef_cat=survfit(Surv(time, event)~ ef_cat, model_data)
-plot(km.fit.ef_cat, fun="cumhaz", col=c("blue", "red","green"),
-     xlab = "Time", ylab = "-log(S(t))",
-     main = "Negative Log of Estimated Survival Functions for Ejection Fraction")
-legend("topleft", legend = c("Low", "Mediun","High"), col=c("blue", "red","green"), lty = 1, cex = 0.8)
-plot(km.fit.ef_cat, fun="cloglog", col=c("blue", "red","green"), xlab="Log(time)", ylab="log(-log(S(t)))",
-     main="Log of Negative log of estimated survival function for Anaemia")
-legend("topleft", legend = c("Low", "Mediun","High"), col=c("blue", "red","green"), lty = 1, cex = 0.8)
 
+km.fit.age=survfit(Surv(time, event)~ age, model_data)
+
+km.fit.pletelets=survfit(Surv(time, event)~ pletelets, model_data)
+
+km.fit.logcre=survfit(Surv(time, event)~ logcre, model_data)
+
+km.fit.logcpk=survfit(Surv(time, event)~ logcpk, model_data)
 ```
-age+sodium + pletelets + logcre + logcpk
+```{r}
+ggsurvplot(
+  km.fit.gender,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for Gender"
+)
+ggsurvplot(
+  km.fit.gender,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for Gender"
+)
+
+ggsurvplot(
+  km.fit.bp,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for Blood Pressure"
+)
+ggsurvplot(
+  km.fit.bp,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for Blood Pressure"
+)
+
+ggsurvplot(
+  km.fit.smoke,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for Diabetes"
+)
+ggsurvplot(
+  km.fit.smoke,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for Diabetes"
+)
+
+ggsurvplot(
+  km.fit.diabetes,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for Diabetes"
+)
+ggsurvplot(
+  km.fit.diabetes,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for Diabetes"
+)
+
+ggsurvplot(
+  km.fit.anaemia,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for Anaemia"
+)
+ggsurvplot(
+  km.fit.anaemia,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for Anaemia"
+)
+
+ggsurvplot(
+  km.fit.ef_cat,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for Ejection Fraction"
+)
+ggsurvplot(
+  km.fit.ef_cat,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for Ejection Fraction"
+)
+
+ggsurvplot(
+  km.fit.age,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for Ejection Fraction"
+)
+ggsurvplot(
+  km.fit.age,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for Ejection Fraction"
+)
+```
+```{r}
+ggsurvplot(
+  km.fit.age,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for Age"
+)
+ggsurvplot(
+  km.fit.age,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for Age"
+)
+
+ggsurvplot(
+  km.fit.pletelets,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for Pletelets"
+)
+ggsurvplot(
+  km.fit.pletelets,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for Pletelets"
+)
+
+ggsurvplot(
+  km.fit.logcre,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for log(cre)"
+)
+ggsurvplot(
+  km.fit.logcre,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for log(cre)"
+)
+
+ggsurvplot(
+  km.fit.logcpk,
+  fun = "cumhaz",
+  xlab = "Time",
+  ylab = "-log(S(t))",
+  title = "Negative Log of Estimated Survival Functions for log(cpk)"
+)
+ggsurvplot(
+  km.fit.logcpk,
+  fun = "cloglog",
+  xlab = "Log(time)",
+  ylab = "log(-log(S(t)))",
+  title = "Log of Negative Log of Estimated Survival Function for log(cpk)"
+)
+```
+
+```{r}
+library(patchwork)
+```
+
+
 
 
 The Cox Proportional Hazards (PH) Model operates under two primary assumptions:
