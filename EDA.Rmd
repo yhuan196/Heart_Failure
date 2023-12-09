@@ -32,7 +32,9 @@ dat <- read_csv("./data/heart_failure.csv") %>%
          bp = factor(bp),
          event = factor(event),
          anaemia = factor(anaemia)) %>% 
-  rename(platelets = pletelets)
+  rename(platelets = pletelets,
+         anemia = anaemia,
+         ejection_fraction = EF)
 # write_xlsx(dat, "./data/dat.xlsx")
 # read_excel("./data/dat.xlsx")
 dat_overview = head(dat)
