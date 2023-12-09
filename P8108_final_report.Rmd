@@ -230,7 +230,7 @@ Both K-M and F-H survival curves are presented in the **Result** section for fur
 
 ## Hypothesis Testing
 
-The Log-Rank test focuses on comparing the number of observed to expected events across the groups at each time point. The test statistic^[This is the log-rank test stattistics with tie] is calculated as:
+The Log-Rank test focuses on comparing the number of observed to expected events across the groups at each time point. The test statistic^[This is the log-rank test statistics with tie] is calculated as:
 
 $$
 \frac{L}{\sqrt{\text{Var}(L)}} = \frac{\sum_{i=1}^{k}(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i^2(n_i-1)}}} \sim N(0, 1)
@@ -350,9 +350,9 @@ nonpara_female = nonpara_dat %>% filter(gender == 0)
 ```{r lifetable}
 life_table_male <- lifetab2(Surv(time, event) ~ 1, data = nonpara_male, breaks = seq(0, 300, 30))
 life_table_female <- lifetab2(Surv(time, event) ~ 1, data = nonpara_female, breaks = seq(0, 300, 30))
-life_table_male %>% kable(booktabs = T, caption = "Table 2.1: Heart Failure Life table (Male)") %>% 
+life_table_male %>% kable(booktabs = T, caption = "Table 2.1: Heart Failure Life Table (Male)") %>% 
   kable_styling(latex_options = c("HOLD_position"), font_size = 6) 
-life_table_female %>% kable(booktabs = T, caption = "Table 2.2: Heart Failure Life table (Female)") %>% 
+life_table_female %>% kable(booktabs = T, caption = "Table 2.2: Heart Failure Life Table (Female)") %>% 
   kable_styling(latex_options = c("HOLD_position"), font_size = 6)
 ```
 
