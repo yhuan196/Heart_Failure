@@ -47,6 +47,7 @@ library(timeROC)
 library(boot)
 library(rms)
 library(survivalROC)
+library(rpart)
 ```
 
 # Introduction
@@ -228,20 +229,20 @@ where the $d_i$, $n_i$ and $c_i$ conditions are the same as K-M estimator above,
 Both K-M and F-H survival curves are presented in the **Result** section for further comparison.
 
 ## Hypothesis Testing
-Log-Rank test and Wilcoxon test
 
-The Log-Rank test focuses on comparing the number of observed to expected events across the groups at each time point. The test statistic^[This is the test statistics with tie] is calculated as:
-
-$$
-\chi^2_{\text{LR}} = \frac{\sum_{i=1}^{k}(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i^2(n_i-1)}}}
-$$
-
-The Gehan's Wilcoxon test^[Also known as the Breslow test] gives more weight to events at earlier time points. The test statistic is calculated as:
+The Log-Rank test focuses on comparing the number of observed to expected events across the groups at each time point. The test statistic^[This is the log-rank test stattistics with tie] is calculated as:
 
 $$
-\chi^2_{\text{GW}} = \frac{\sum_{i=1}^{k}n_i(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i-1}}}
+\frac{L}{\sqrt{\text{Var}(L)}} = \frac{\sum_{i=1}^{k}(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i^2(n_i-1)}}} \sim N(0, 1)
+$$
+
+The Gehan's Wilcoxon test^[Also known as the Breslow test] gives more weight to events at earlier time points. It achieves a greater sensitivity to differences in survival that manifest at the beginning of the observation period. The test statistic is calculated as:
+
+$$
+\frac{L}{\sqrt{\text{Var}(L)}} = \frac{\sum_{i=1}^{k}n_i(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i-1}}}
 $$
 Obviously, the Gehan's Wilcoxon test is actually a special case of weighted log-rank test with weight equals $n_i$.
+
 
 ## Proportional Hazard Models
 
@@ -265,16 +266,16 @@ where
 
 The **proportional hazard** can be expressed as ratio of two hazard functions at time t in two individuals or groups with covariates $X$ and $X'$, and does not depend on $t$. 
 
-$$\frac{h(t|x)}{h(t|x')} = e^{\beta({x-x'})}$$
+$$\frac{h(t|X = x)}{h(t|X = x')} = e^{\beta({x-x'})}$$
 
 There are different ways to formulate the baseline hazard function $h_0(t)$, which lead to different models and estimations. 
 
 ### Cox PH Model
 
-The Cox PH model is a semi-parametric model which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model looks simiar and can be expressed as:
+The Cox PH model is a semi-parametric model which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model looks as parametric PH and can be expressed as:
 
 $$
-h_i(t) = \tilde{h}_0(t) \exp(\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}) \\
+h_i(t) = \tilde{h}_0(t) \exp[\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}] \\
 $$
 
 ### Weibull Model
@@ -287,15 +288,7 @@ h_i(t) &= \lambda \gamma t^{\gamma - 1} \exp(\beta_1 X_{i1} + \beta_2 X_{i2} + \
 \end{aligned}
 $$
 
-where
-
-\begin{itemize}
-
-\item $\lambda =  \text{Scale parameter}$ 
-
-\item $\gamma = \text{Shape parameter}$ 
-
-\end{itemize}
+where $\lambda$ is the Scale parameter, and $\gamma$ is the Shape parameter.
 
 ### Gompertz Model
 
@@ -307,19 +300,19 @@ h_i(t) &= \lambda \exp(\eta t + \beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta
 \end{aligned}
 $$
 
-where
-
-\begin{itemize}
-
-\item $\lambda = \text{Scale parameter}$ 
-
-\item $\eta = \text{Rate of increase or decrease in hazard}$ 
-
-\end{itemize}
+where $\lambda$ is the Scale parameter, and $\eta$ is the rate of increase or decrease in hazard.
 
 
 ## Model Selection
-(model selection (survival tree - optional), and model checking, fitting the model)
+### Survival Tree
+
+The survival tree method is a non-parametric approach used in survival analysis for model selection and identifying significant predictors of time-to-event outcomes. It involves segmenting the data into homogeneous subgroups based on the values of explanatory variables. The method constructs a tree structure where each node represents a subset of the dataset, and each split is based on the value of a predictor variable that best separates the data in terms of survival. Mathematically, this process involves recursively partitioning the data to maximize a criterion like the log-rank statistic. At each node, the split is chosen to maximize the difference in survival between the resulting subgroups. This can be represented as:
+
+$$\text{Max}_{v,s}[\chi^2_{LR}(v, s)]$$
+where $\chi^2_{LR}(v, s)$ is the log-rank test statistic computed for a split $s$ on variable $v$. The process continues until a stopping criterion is met, typically based on the minimum number of observations in a node or a minimum improvement in the survival difference. The result is a tree where the paths from the root to the leaves represent rules for predicting survival, offering a visual and interpretable model of the factors affecting the time to an event like death in this study.
+
+### Stepwise Selection
+In model selection process, we incorporated bidirectional stepwise selection, alongside using various model assessment criteria such as Akaike Information Criterion (AIC), Corrected Akaike Information Criterion (AICc), and Schwarz Bayesian Criterion (SBC). This comprehensive approach enhanced our ability to identify the most appropriate model for our data.
 
 $$
 h(t) = h_0(t)\exp[\beta_1X_{age} + \beta_2X_{EF_{Medium}} + \beta_3X_{EF_{High}} + \beta_4X_{bp}+\beta_5X_{sodium} + \beta_6\log(X_{creatinine}+1)]
@@ -503,7 +496,9 @@ Future work should, therefore, focus on refining the model's complexity and vari
 
 1. Ahmad, T., Munir, A., Bhatti, S. H., Aftab, M., & Raza, M. A. (2017). Survival analysis of heart failure patients: A case study. PLOS ONE, 12(7), e0181001. https://doi.org/10.1371/journal.pone.0181001
 
-2. Jones, N., Ak, R., Adoki, I., Fdr, H., & Cj, T. (2019). Survival of patients with chronic heart failure in the community: a systematic review and meta‐analysis. European Journal of Heart Failure, 21(11), 1306–1325. https://doi.org/10.1002/ejhf.1594
+2. Collett, D. (1999). Modelling survival data in medical research. Chapman &amp; Hall/CRC. 
+
+3. Jones, N., Ak, R., Adoki, I., Fdr, H., & Cj, T. (2019). Survival of patients with chronic heart failure in the community: a systematic review and meta‐analysis. European Journal of Heart Failure, 21(11), 1306–1325. https://doi.org/10.1002/ejhf.1594
 
 
 Steyerberg, E. W., & Vergouwe, Y. (2014). Towards better clinical prediction models: Seven steps for development and an ABCD for validation. European Heart Journal, 35(29), 1925–1931. https://doi.org/10.1093/eurheartj/ehu207
