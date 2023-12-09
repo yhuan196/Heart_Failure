@@ -171,7 +171,7 @@ cate_dat.long = cate_data %>%
 # Plot the categorical variable barplots
 cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
   geom_bar() +
-  geom_text(stat = 'count', aes(label = ..count..), vjust = -0.5) +
+  geom_text(stat = 'count', aes(label = ..count..), vjust = -0.3) +
   facet_wrap(~name, scales = "free") +
   labs(x = "Category", y = "Count", fill = "Category", title = "Figure 1.2: Bar Charts of Categorical Variables") +
   theme_bw() +
@@ -187,7 +187,6 @@ dat_log = dat %>%
   mutate(cpk_log = log(cpk + 1),
          creatinine_log = log(creatinine + 1))
 ```
-
 
 ## Nonparametric Estimate
 
@@ -226,29 +225,29 @@ To evaluate the calibration of our model, we focused on the calibration slope. C
 ### ROC Curves and AUC
 
 ```{r, fig.align='center', fig.height=5, fig.width=8}
-# Calculate predicted risks
-predicted_risks <- predict(step_model, newdata = model_data, type = "risk")
-
-# Time points for ROC analysis
-time_points <- c(50, 250)
-
-# Calculate ROC curves at specified times
-roc_50 <- timeROC(T = model_data$time, delta = model_data$event, marker = predicted_risks, times = 50, cause = 1)
-roc_250 <- timeROC(T = model_data$time, delta = model_data$event, marker = predicted_risks, times = 250, cause = 1)
-
-# Extract AUC values
-auc_50 <- roc_50$AUC
-auc_250 <- roc_250$AUC
-
-# Print AUC values
-print(paste("AUC at 50 days:", auc_50))
-print(paste("AUC at 250 days:", auc_250))
-
-# Plot ROC curves
-plot(roc_50$FP, roc_50$TP, type = "l", col = "red", xlab = "1 - Specificity", ylab = "Sensitivity", main = "Time-Dependent ROC Curves")
-lines(roc_250$FP, roc_250$TP, type = "l", col = "blue")
-legend("bottomright", legend = c("50 days", "250 days"), col = c("red", "blue"), lty = 1)
-abline(0, 1, col = "black", lty = 2)
+# # Calculate predicted risks
+# predicted_risks <- predict(step_model, newdata = model_data, type = "risk")
+# 
+# # Time points for ROC analysis
+# time_points <- c(50, 250)
+# 
+# # Calculate ROC curves at specified times
+# roc_50 <- timeROC(T = model_data$time, delta = model_data$event, marker = predicted_risks, times = 50, cause = 1)
+# roc_250 <- timeROC(T = model_data$time, delta = model_data$event, marker = predicted_risks, times = 250, cause = 1)
+# 
+# # Extract AUC values
+# auc_50 <- roc_50$AUC
+# auc_250 <- roc_250$AUC
+# 
+# # Print AUC values
+# print(paste("AUC at 50 days:", auc_50))
+# print(paste("AUC at 250 days:", auc_250))
+# 
+# # Plot ROC curves
+# plot(roc_50$FP, roc_50$TP, type = "l", col = "red", xlab = "1 - Specificity", ylab = "Sensitivity", main = "Time-Dependent ROC Curves")
+# lines(roc_250$FP, roc_250$TP, type = "l", col = "blue")
+# legend("bottomright", legend = c("50 days", "250 days"), col = c("red", "blue"), lty = 1)
+# abline(0, 1, col = "black", lty = 2)
 ```
 
 
@@ -258,26 +257,26 @@ Our time-dependent ROC analysis at 50 days yielded an AUC of approximately 0.738
 
 ```{r}
 # Define the function for calculating C-statistic
-boot_c_statistic <- function(original_data, indices) {
-  # Creating a bootstrap sample
-  boot_data <- original_data[indices, ]
-
-  # Fit the Cox model to the bootstrap sample
-  fit <-   coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp +
-                      sodium, data = boot_data)
-  
-  # Calculate the concordance statistic using the updated function
-  concordance <- concordance(fit)$concordance
-  return(concordance)
-}
-
-# Perform bootstrapping for C-statistic
-set.seed(123) # for reproducibility
-boot_results_c_stat <- boot(data = model_data, statistic = boot_c_statistic, R = 400)
-
-# Calculate the average C-statistic
-mean_c_stat <- mean(boot_results_c_stat$t)
-print(mean_c_stat)
+# boot_c_statistic <- function(original_data, indices) {
+#   # Creating a bootstrap sample
+#   boot_data <- original_data[indices, ]
+# 
+#   # Fit the Cox model to the bootstrap sample
+#   fit <-   coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp +
+#                       sodium, data = boot_data)
+#   
+#   # Calculate the concordance statistic using the updated function
+#   concordance <- concordance(fit)$concordance
+#   return(concordance)
+# }
+# 
+# # Perform bootstrapping for C-statistic
+# set.seed(123) # for reproducibility
+# boot_results_c_stat <- boot(data = model_data, statistic = boot_c_statistic, R = 400)
+# 
+# # Calculate the average C-statistic
+# mean_c_stat <- mean(boot_results_c_stat$t)
+# print(mean_c_stat)
 ```
 
 The average C-index calculated through bootstrapping (n = 400) was 0.746. This suggests that in about 75% of pairwise comparisons, our model correctly ranks the survival times. A C-index of around 0.75 is generally indicative of good predictive ability, especially in clinical settings where accurate risk stratification is crucial for treatment planning.
@@ -285,32 +284,32 @@ The average C-index calculated through bootstrapping (n = 400) was 0.746. This s
 ### Calibration Slope
 
 ```{r, warning= FALSE}
-# Define the bootstrap function for calibration metrics using logistic regression
-boot_calibration_logistic <- function(original_data, indices) {
-  boot_data <- original_data[indices, ]
-  fit <-  coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp +
-                      sodium, data = boot_data)
-  
-  
-  # Predicted risks for the original dataset
-  predicted_risks <- predict(fit, newdata = original_data, type = "risk")
-  
-  # Fit a logistic model for calibration
-  calibration_model_logistic <- glm(event ~ predicted_risks, data = original_data, family = "binomial")
-  
-  # Calibration slope (coefficient of predicted_risks)
-  calibration_slope_logistic <- coef(calibration_model_logistic)["predicted_risks"]
-  
-  return(calibration_slope_logistic)
-}
-
-# Perform bootstrap
-set.seed(123)
-boot_results_logistic <- boot(data = model_data, statistic = boot_calibration_logistic, R = 400)
-
-# Calculate the average calibration slope
-mean_calibration_slope_logistic <- mean(boot_results_logistic$t)
-print(mean_calibration_slope_logistic)
+# # Define the bootstrap function for calibration metrics using logistic regression
+# boot_calibration_logistic <- function(original_data, indices) {
+#   boot_data <- original_data[indices, ]
+#   fit <-  coxph(Surv(time, event) ~ log(creatinine+1) + age + ef_cat + bp +
+#                       sodium, data = boot_data)
+#   
+#   
+#   # Predicted risks for the original dataset
+#   predicted_risks <- predict(fit, newdata = original_data, type = "risk")
+#   
+#   # Fit a logistic model for calibration
+#   calibration_model_logistic <- glm(event ~ predicted_risks, data = original_data, family = "binomial")
+#   
+#   # Calibration slope (coefficient of predicted_risks)
+#   calibration_slope_logistic <- coef(calibration_model_logistic)["predicted_risks"]
+#   
+#   return(calibration_slope_logistic)
+# }
+# 
+# # Perform bootstrap
+# set.seed(123)
+# boot_results_logistic <- boot(data = model_data, statistic = boot_calibration_logistic, R = 400)
+# 
+# # Calculate the average calibration slope
+# mean_calibration_slope_logistic <- mean(boot_results_logistic$t)
+# print(mean_calibration_slope_logistic)
 ```
 
 Our calculated mean calibration slope came to approximately 1.1529. This value, slightly above the ideal of 1, is significant in understanding the model's performance. The calibration slope measures the extent to which the model's predicted risks are proportionate to the observed risks. A value of 1 would indicate perfect calibration, meaning the model's predictions are perfectly aligned with the actual observed risks. Our finding of a calibration slope above 1 suggests that our model may be mildly overfitting the data, predicting slightly higher risks than what is observed.
