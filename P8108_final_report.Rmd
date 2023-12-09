@@ -56,8 +56,8 @@ According to the statistics, heart failure affects 1-2\% of adults in the genera
 
 Our project aims to assess the influence of key physiological and clinical factors on the outcomes of heart failure patients at the Institute of Cardiology and Allied Hospital, Faisalabad, Pakistan, during April-December 2015. We will examine variables such as creatinine levels, gender, age, ejection fraction, blood pressure, anemia, and serum sodium to determine their impact on patient prognosis. Utilizing a range of analytical techniques including exploratory data analysis, nonparametric methods, Kaplan-Meier curves, Cox proportional hazards modeling, parametric survival models, and validation procedures, our study is designed to identify crucial predictors of patient outcomes and their interrelationships. The insights gained from this analysis are expected to contribute significantly to the development of tailored treatment strategies and improved risk stratification models, thereby enhancing clinical decision-making and patient care for heart failure management.
 
-# Methods
-## Exploratory Data Analysis (EDA)
+
+# Exploratory Data Analysis (EDA)
 
 The present study focuses on 299 heart failure patients, including 105 women and 194 men. All participants were over 40 years old and diagnosed with left ventricular systolic dysfunction, classified under NYHA classes III and IV. The follow-up duration ranged from 4 to 285 days, with an average of 130 days. Diagnosis of the disease was confirmed through cardiac echocardiogram reports or physician's notes. A brief description of variables in the dataset is shown below:
 
@@ -188,6 +188,8 @@ dat_log = dat %>%
          creatinine_log = log(creatinine + 1))
 ```
 
+# Methods
+
 ## Nonparametric Estimate
 
 (Life table separated by gender, KM and FH comparing)
@@ -198,6 +200,34 @@ dat_log = dat %>%
 
 ## Semi-parametric Estimate
 
+Suppose that there is a true survival time, T, as well as a true censoring time, C. The survival time represents the time at which the event of interest occurs: in this dataset, the time at which the patient die. The censoring time is the time at which the patient drop out of the study or survived until the last day of the study.
+
+We observed the Survival Time T and Censoring Time C. Suppose there is a random variable Y
+
+$$Y = min(T,C)$$
+
+In other words, if the event occurs before the censoring such that T $<$ C, then we observed the true survival time T. If censoring occurs before the event such as T $>$ C, then we observe the censoring time. The status indicator as, 
+
+$$\delta =  \left\{
+\begin{array}{ll} 
+     1 &  T\leq C \\
+     0 & T > C \\
+   \end{array}
+   \right. $$
+   
+Thus, $\delta$ = 1 if we observe the true survival time, and $\delta$ = 0 if we observe the censoring.
+
+We use the Cox-propositional hazard model to evaluate the effect of several factors on survival time. It allows us to examine how specified factors influence the rate of the event that we are interested in at a particular point in time. This rate is the hazard rate. The final model obtained from Stepwise Selection using AIC contains creatinine, age, ejection fraction, blood pressure status, sodium covariates.
+
+The Cox model is expressed by the hazard function denoted by h(t). Briefly, the hazard function can be interpreted as the risk of death at time t. The final model as follows:
+
+$$
+h(t) = h_0(t)\exp[\beta_0 + X_1\beta_{age} + X_2\beta_{EF_{medium}} + X_3\beta_{EF_{high}} + X_4\beta_{bp}+X_5\beta_{sodium} + \log(x_6+1)\beta_{creatinine}]
+$$
+
+where, \ 
+
+## Cox Model Selection
 (model selection (survival tree - optional), and model checking???, fitting the model)
 
 ## Parametric Estimate
