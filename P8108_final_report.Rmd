@@ -398,6 +398,7 @@ The final model obtained from Stepwise Selection using AIC contains creatinine, 
 (Model checking, fitting the model)
 
 ## Model Validation 
+
 ### ROC Curves and AUC
 
 ```{r, fig.align='center', fig.height=5, fig.width=8}
