@@ -222,7 +222,7 @@ $$
 \chi^2_{\text{Wilcoxon}} = \sum_{i=1}^{k} \frac{(O_{i1} - E_{i1})^2}{V_{i1}} + \frac{(O_{i2} - E_{i2})^2}{V_{i2}}
 $$
 
-$V_{ij}$ represents the variance of the observed number of events in group $j$ at time $i$. The weight factor by $n_{ij}$ in $V_{ij}$ plays a crucial role. It ensures that the survival differences at earlier time points carry more weight in the overall analysis. 
+$V_{ij}$ represents the variance of the observed number of events in group $j$ at time $i$. The weight factor ensures that the survival differences at earlier time points carry more weight in the overall analysis. 
 
 ## Proportional Hazard Models
 
