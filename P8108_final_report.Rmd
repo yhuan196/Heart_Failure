@@ -865,6 +865,8 @@ The observed improvement in the model's discriminative ability over time, with i
 
 Future work should, therefore, focus on refining the model's complexity and variable selection. Re-evaluating the model's components and considering alternative modeling approaches might help in aligning the predicted probabilities more closely with actual outcomes. Applying more advanced calibration techniques could also address the observed overfitting, enhancing the model's reliability. Additionally, external validation on an independent dataset is essential to confirm the model's effectiveness and applicability in different clinical contexts. Such efforts will be crucial in enhancing the model's utility and ensuring its robustness in real-world clinical applications, where precise risk assessment directly informs patient care strategies.
 
+According to the Gompertz model and the Weibull model, there are three variables that have the smallest p-values in both models, namely age, ef_cat, and logcre. The results emphasize the importance of age, Ejection Fraction, and creatinine levels in predicting heart failure. A study published by Revista Española de Cardiología found that a n normal creatinine levels may mask pre-existing kidney failure, and kidney failure is an important prognostic factor in patients with heart failure. According to the results of the study, age, gender, cause of heart failure, left ventricular ejection fraction, diabetes mellitus, and hypertension were significant factors influencing mortality, while creatinine clearance remained an independent predictor of mortality (Zamora et al., 2007). Therefore, these results suggest the importance of considering age, Ejection Fraction, and creatinine levels in assessing the risk and prognosis of heart failure, possibly aiding in early identification, preventive measures, and targeted interventions in clinical practice.
+
 # Conclusions
 
 The non-parametric method showed that more than 50% of both genders (54% for males and 59% for females) can survive for over 300 days. This may indicate a high life expectancy and improved health care. Moreover, the non-parametric method showed no significant difference in survival probability between genders. This result was later consistent with the results of the model selection. Our Cox proportional hazard model
@@ -890,9 +892,9 @@ In conclusion, our comprehensive analysis of heart failure using the Cox proport
 
 6. Heagerty, P. J., & Zheng, Y. (2005). Survival Model Predictive Accuracy and ROC Curves. Biometrics, 61(1), 92–105. https://doi.org/10.1111/j.0006-341X.2005.030814.x
 
-7. Zhong, J., Gao, J., Luo, J. C., Zheng, J. L., Tu, G. W., & Xue, Y. (2021). Serum creatinine as a predictor of mortality in patients readmitted to the intensive care unit after cardiac surgery: a retrospective cohort study in China. Journal of thoracic disease, 13(3), 1728–1736. https://doi.org/10.21037/jtd-20-3205
+7. Zamora, E., Lupón, J., Urrutia, A., González, B., Mas, D., Díez, C., Altimir, S., &amp; Valle, V. (2007, December 1). Prognostic significance of creatinine clearance rate in patients with heart failure and normal serum creatinine: Revista Española de Cardiología. Revista Española de Cardiología (English Edition). https://www.revespcardiol.org/en-prognostic-significance-creatinine-clearance-rate-articulo-13114181 
 
-
+8. Zhong, J., Gao, J., Luo, J. C., Zheng, J. L., Tu, G. W., & Xue, Y. (2021). Serum creatinine as a predictor of mortality in patients readmitted to the intensive care unit after cardiac surgery: a retrospective cohort study in China. Journal of thoracic disease, 13(3), 1728–1736. https://doi.org/10.21037/jtd-20-3205
 \newpage
 
 # Appendix
