@@ -692,14 +692,16 @@ g4 = ggplot(cox_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat)) 
 g3 / g4
 ```
 
-```{r fig.align='center', fig.width=10, fig.cap="Figure 6.1: Schoenfeld Test For Log-transformed Creatinine"}
+```{r fig.align='center', fig.width=10, fig.height = 4, fig.cap="Figure 6.1: Schoenfeld Test For Log-transformed Creatinine"}
 scho <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodium, data = mc_dat)
 ggcoxzph(cox.zph(scho), var = c("creatinine_log"), df = 2, nsmo = 1000)
 ```
 
-```{r fig.align='center', fig.width=10, fig.cap="Figure 6.2: Schoenfeld Test For Age"}
+```{r fig.align='center', fig.width=10, fig.height = 4, fig.cap="Figure 6.2: Schoenfeld Test For Age"}
 ggcoxzph(cox.zph(scho), var = c("age"), df = 2, nsmo = 1000)
 ```
+
+\newpage
 
 Obviously, The curves in **Figure 4.1** and **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot (**Figure 5.1** and **Figure 5.2**), the straight curve and dashed curve are close to each other, which means the proportional hazard ratio is proportional for both age and creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots (**Figure 6.1** and **Figure 6.2**) of the fitted model. We chose to input `age` and `logcre` variables and found a regression lines with a slope close to zero for both.
 

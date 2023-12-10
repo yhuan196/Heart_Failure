@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.18)  10 DEC 2023 12:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.18)  10 DEC 2023 12:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -684,92 +684,92 @@ File: P8108_final_report_files/figure-latex/unnamed-chunk-12-2.pdf Graphic file 
 <use P8108_final_report_files/figure-latex/unnamed-chunk-12-2.pdf>
 Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-12-2.pdf  used on input line 906.
 (pdftex.def)             Requested size: 469.76045pt x 281.85628pt.
-<P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf, id=393, 722.7pt x 325.215pt>
+<P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf, id=393, 722.7pt x 289.08pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf>
 Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf  used on input line 910.
-(pdftex.def)             Requested size: 469.76045pt x 211.3922pt.
-<P8108_final_report_files/figure-latex/unnamed-chunk-14-1.pdf, id=394, 722.7pt x 325.215pt>
+(pdftex.def)             Requested size: 469.76045pt x 187.90417pt.
+<P8108_final_report_files/figure-latex/unnamed-chunk-14-1.pdf, id=394, 722.7pt x 289.08pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-14-1.pdf>
 Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-14-1.pdf  used on input line 919.
-(pdftex.def)             Requested size: 469.76045pt x 211.3922pt.
+(pdftex.def)             Requested size: 469.76045pt x 187.90417pt.
 [12 <./P8108_final_report_files/figure-latex/unnamed-chunk-12-1.pdf> <./P8108_final_report_files/figure-latex/unnamed-chunk-12-2.pdf>] [13 <./P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf> <./P8108_final_report_files/figure-latex/unnamed-chunk-14-1.pdf>]
 <P8108_final_report_files/figure-latex/unnamed-chunk-15-1.pdf, id=426, 722.7pt x 325.215pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-15-1.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-15-1.pdf>
-Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-15-1.pdf  used on input line 998.
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-15-1.pdf  used on input line 1000.
 (pdftex.def)             Requested size: 469.76045pt x 211.3922pt.
 <P8108_final_report_files/figure-latex/unnamed-chunk-15-2.pdf, id=427, 722.7pt x 325.215pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-15-2.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-15-2.pdf>
-Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-15-2.pdf  used on input line 999.
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-15-2.pdf  used on input line 1001.
 (pdftex.def)             Requested size: 469.76045pt x 211.3922pt.
 [14] [15 <./P8108_final_report_files/figure-latex/unnamed-chunk-15-1.pdf> <./P8108_final_report_files/figure-latex/unnamed-chunk-15-2.pdf>] [16] [17] [18]
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 1238.
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 1260.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 1240.
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 1262.
 (c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 
 LaTeX Font Warning: Font shape `T1/lmtt/bx/it' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/sl' tried instead on input line 1372.
+(Font)              Font shape `T1/lmtt/b/sl' tried instead on input line 1374.
 
 [19]
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 [20]
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 [21]
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 [22]
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 [23]
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 [24]
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 [25]
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1647
+Underfull \vbox (badness 10000) detected at line 1649
  []
 
 [26] [27] (./P8108_final_report.aux)
@@ -792,7 +792,7 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  75i,11n,79p,579b,513s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx8.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtko10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on P8108_final_report.pdf (30 pages, 652146 bytes).
+Output written on P8108_final_report.pdf (30 pages, 651558 bytes).
 PDF statistics:
  664 PDF objects out of 1000 (max. 8388607)
  558 compressed objects within 6 object streams
