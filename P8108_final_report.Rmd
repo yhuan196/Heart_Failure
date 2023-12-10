@@ -419,6 +419,27 @@ km_plot + fh_plot
 
 The Kaplan-Meier and Fleming-Harrington have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.9) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
 
+## Hypothesis Testing
+
+### Log-Rank test and Wilcoxon test
+
+```{r logrank}
+results <- data.frame(
+  Gender = c(0, 1),
+  Observed = c(105, 194),
+  Expected = c(34.3, 61.7),
+  Log.Rank = c(0.00254, 0.00141),
+  Wilcoxon = c(0.00397, 0.00397)
+)
+
+results_table <- kable(results, align = "c") %>%
+  kable_styling(latex_options = c("HOLD_position"), font_size = 8)
+
+results_table
+```
+
+According to the above table, we find that both Log-Rank test and the Wilcoxon test gave us a p-value of 0.9. Thus, we fail to reject the null hypothesis and conclude that there is no significant difference in survival experience between males and females.
+
 ## Semi-parametric Models
 
 The final model obtained from Stepwise Selection using AIC contains creatinine, age, ejection fraction, blood pressure status, sodium covariates.
