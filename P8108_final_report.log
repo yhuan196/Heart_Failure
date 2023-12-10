@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  10 DEC 2023 05:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  10 DEC 2023 06:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -807,11 +807,11 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 16295 strings out of 480608
- 243036 string characters out of 5903631
+ 16293 strings out of 480608
+ 243016 string characters out of 5903631
  603287 words of memory out of 5000000
  31652 multiletter control sequences out of 15000+600000
- 613494 words of font info for 135 fonts, out of 8000000 for 9000
+ 613411 words of font info for 134 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  41i,9n,42p,817b,388s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
@@ -840,7 +840,7 @@ s/type1/public/lm/lmtk10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/pu
 blic/lm/lmtko10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/l
 mtt10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmtti10.pfb
 >
-Output written on P8108_final_report.pdf (23 pages, 553838 bytes).
+Output written on P8108_final_report.pdf (23 pages, 553917 bytes).
 PDF statistics:
  515 PDF objects out of 1000 (max. 8388607)
  453 compressed objects within 5 object streams
