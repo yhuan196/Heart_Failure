@@ -1,21 +1,37 @@
 ---
-title: "**Heart Failure Survival Study**"
-subtitle: "**Mailman School of Public Health at Columbia University**"
+title: '**Heart Failure Survival Study**'
+author:
+"- Yi Huang, Runze Cui, Xuesen Zhao, Huanyu Chen, Jiahe Deng"
+- 'P8108 Final Project Report: Group 6'
 date: "Dec 7, 2023"
-author: 
-  - "Yi Huang, Runze Cui, Xuesen Zhao, Huanyu Chen, Jiahe Deng"
-  - "P8108 Final Project Report: Group 6"
-output: 
+output:
+  html_document:
+    df_print: paged
   pdf_document:
-    number_section: true
-    extra_dependencies: ["float"]
+    number_section: yes
+    extra_dependencies: float
+subtitle: '**Mailman School of Public Health at Columbia University**'
 header-includes:
 - \usepackage{caption}
-- \usepackage{makecell} 
+- \usepackage{makecell}
 - \captionsetup[figure]{labelformat=empty}
 - \captionsetup[table]{labelformat=empty}
-abstract: Heart failure (HF) results from weakened heart muscles, impairing blood pumping and causing symptoms like breathlessness (Ahmad et al., 2017). Statistics show HF affects 1-2% of adults, especially those over 70, potentially higher due to misdiagnosis (Jones et al., 2019). HF prevalence increased by 25% since 2002 due to aging, improved survival, and risk factors. This study utilizes data from the Institute of Cardiology and Allied Hospital in Faisalabad, Pakistan, which previously investigated the impact of key physiological and clinical factors on the prognosis of heart failure (HF) patients between April and December 2015. Our research employs a comprehensive range of statistical methodologies, including exploratory data analysis, nonparametric techniques, Kaplan-Meier curves, Cox proportional hazards models, and parametric survival models, aiming to ascertain the influence of important predictors such as creatinine levels, age, gender, ejection fraction, blood pressure, anemia, and serum sodium on HF. Our findings aim to refining risk assessment models, thereby strengthening clinical decision-making and optimizing patient care in the future. XXXX (conclusion)
-editor_options: 
+abstract: "Heart failure (HF) results from weakened heart muscles, impairing blood
+  pumping and causing symptoms like breathlessness (Ahmad et al., 2017). Statistics
+  show HF affects 1-2% of adults, especially those over 70, potentially higher due
+  to misdiagnosis (Jones et al., 2019). HF prevalence increased by 25% since 2002
+  due to aging, improved survival, and risk factors. This study utilizes data from
+  the Institute of Cardiology and Allied Hospital in Faisalabad, Pakistan, which previously
+  investigated the impact of key physiological and clinical factors on the prognosis
+  of heart failure (HF) patients between April and December 2015. Our research employs
+  a comprehensive range of statistical methodologies, including exploratory data analysis,
+  nonparametric techniques, Kaplan-Meier curves, Cox proportional hazards models,
+  and parametric survival models, aiming to ascertain the influence of important predictors
+  such as creatinine levels, age, gender, ejection fraction, blood pressure, anemia,
+  and serum sodium on HF. Our findings aim to refining risk assessment models, thereby
+  strengthening clinical decision-making and optimizing patient care in the future.
+  XXXX (conclusion)"
+editor_options:
   chunk_output_type: console
 ---
 \thispagestyle{empty}
@@ -307,6 +323,19 @@ h_i(t) &= \lambda \exp(\eta t + \beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta
 $$
 
 where $\lambda$ is the Scale parameter, and $\eta$ is the rate of increase or decrease in hazard.
+
+### AFT Model
+The Accelerated Failure Time (AFT) model is a parametric model assumes that the effect of covariates is to accelerate or decelerate the life course of a disease by some constant. In the AFT model, the key assumption is that the logarithm of survival time follows a linear relationship with the covariates. Mathematically, it can be expressed as:
+
+$$
+log(T) = \mu+\beta_1x_1+\beta_2x_2+ ... +\beta_px_p+\epsilon
+$$
+```{r}
+aft.fit <- survreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
+                  age + ef_cat+ sodium + pletelets + logcre + logcpk, 
+                data = model_data, dist = "exponential")
+summary(aft.fit)
+```
 
 
 ## Model Selection
