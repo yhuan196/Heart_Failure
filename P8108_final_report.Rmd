@@ -62,6 +62,7 @@ library(boot)
 library(rms)
 library(survivalROC)
 library(rpart)
+library(eha)
 ```
 
 # Introduction
@@ -691,13 +692,16 @@ g4 = ggplot(cox_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat)) 
 g3 / g4
 ```
 
-```{r fig.align='center', fig.width=10}
+```{r fig.align='center', fig.width=10, fig.cap="Figure 6.1: Schoenfeld Test For Log-transformed Creatinine"}
 scho <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodium, data = mc_dat)
 ggcoxzph(cox.zph(scho), var = c("creatinine_log"), df = 2, nsmo = 1000)
+```
+
+```{r fig.align='center', fig.width=10, fig.cap="Figure 6.2: Schoenfeld Test For Age"}
 ggcoxzph(cox.zph(scho), var = c("age"), df = 2, nsmo = 1000)
 ```
 
-Obviously, The curves in **Figure 4.1** and **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot (**Figure 5.1** and **Figure 5.2**), the straight curve and dashed curve are close to each other, which means the proportional hazard ratio is proportional for both age and creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots of the fitted model. We chose to input `age` and `logcre` variables and found a regression lines with a slope close to zero for both.
+Obviously, The curves in **Figure 4.1** and **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot (**Figure 5.1** and **Figure 5.2**), the straight curve and dashed curve are close to each other, which means the proportional hazard ratio is proportional for both age and creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots (**Figure 6.1** and **Figure 6.2**) of the fitted model. We chose to input `age` and `logcre` variables and found a regression lines with a slope close to zero for both.
 
 ### Model Fitting and Results
 
@@ -710,7 +714,7 @@ model_summary <- model_summary |>
         `exp(coef)` = as.numeric(`exp(coef)`),
         `se(coef)` = as.numeric(`se(coef)`),
         z = as.numeric(z),
-        `Pr(>|z|)`= as.numeric(`Pr(>|z|)`))
+        `Pr(>|z|)` = as.numeric(`Pr(>|z|)`))
 
 model_summary |> kable(booktabs = T,
       caption = "Table 5: Summary of Cox Proportional Hazard Model", 
@@ -733,9 +737,24 @@ Overall, this model provides a quantitative assessment of how each predictor inf
 ## Parametric Models
 ### Model Checking
 
+```{r fig.width=10}
+mc_surv_age = survfit(Surv(time, event == 1) ~ age_cat, data = mc_dat)
+mc_surv_cre = survfit(Surv(time, event == 1) ~ cre_cat, data = mc_dat)
 
+plot(mc_surv_age, col = c("red", "blue"), 
+     fun = "cumhaz", xlab = "Time(Days)", ylab = "-logS(t)", 
+     main = "Figure 7.1: Negative Log of Estimated Survival Functions For Age Groups")
+legend("topleft", legend = c("High", "Low"), 
+       title = "Age Group", col = c("red", "blue"), lty = 1)
 
+plot(mc_surv_age, col = c("red", "blue"), 
+     fun = "cumhaz", xlab = "Time(Days)", ylab = "-logS(t)", 
+     main = "Figure 7.2: Negative Log of Estimated Survival Functions For Creatinine Groups")
+legend("topleft", legend = c("High", "Low"), 
+       title = "Creatinine Group", col = c("red", "blue"), lty = 1)
+```
 
+Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **Figure 4.2**) for `age` and `logcre`, and the slopes do not strictly equal to 1. Now we also check the $-\log\hat{S}(t)$ plot (**Figure 7.1** and **Figure 7.2**) for same variables. The curves for both two plots seems not to be straight and nonlinear. We suggest Weibull distributions for parametric proportional hazard models. 
 
 
 ### Model Fitting
