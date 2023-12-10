@@ -626,6 +626,18 @@ model_summary |> kable(booktabs = T,
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
+For the `logcre`, the hazard ratio of 3.0573 suggests that as the logarithm of creatinine levels increases by one unit, the hazard, or the risk of the event occurring, is more than three times greater. This result is statistically significant, indicating a strong relationship between creatinine levels and survival.
+
+Concerning `age`, an HR of 1.0473 indicates that with each additional year of age, the hazard increases by approximately 4.73%. This relationship is highly significant, affirming age as a critical predictor in the survival model.
+
+For `EF_catMedium`, and  `EF_catHigh` the HR suggests that individuals with a medium ejection fraction or high fraction ejection have lower risks of the event occurring compared to the baseline low ejection fraction, which are statistically significant.
+
+The `bp` shows an HR of 1.7258, indicating that higher blood pressure status is associated with a 72.58% increase in hazard, and this predictor is statistically significant.
+
+Lastly, `sodium` presents an HR of 0.9628, suggesting a slight decrease in hazard with higher sodium levels. However, this effect is not statistically significant, implies this predictor is not a conclusive predictor in this model.
+
+Overall, this model provides a quantitative assessment of how each predictor influences the survival probability, with `logcre`, `age`, `EF_catMedium`, `EF_catHigh`, and `bp` being significant factors in predicting survival outcomes.
+
 ## Parametric Models
 (Model checking, fitting the model)
 
