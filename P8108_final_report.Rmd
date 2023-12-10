@@ -482,6 +482,8 @@ Our calculated mean calibration slope came to approximately 1.1529. This value, 
 
 # Discussion
 
+According to the life table, we find that there is a slight difference in survival probability between genders. However, the hypothesis test and model selection show that there is no difference. Similarities in heart failure presentation, treatment regimen, and sample size may explain the absence of sex-based differences in survival. Specifically, if the severity of heart failure was not related to gender or if patients received appropriate gender-based treatment and the sample size or characteristics of the study limited gender-specific analyses, potential differences could be masked.
+
 The nuanced findings from our analysis provide a comprehensive view of our Cox model's performance. While the model exhibits strong discriminative ability, as indicated by the AUC values and C-index, our calibration assessment, particularly the calibration slope, suggests areas where improvement is needed. Notably, the calibration slope, slightly over the ideal value of 1, implies a mild overestimation in risk predictions. This indicates a complex calibration scenario where the model might be overfitting to some extent.
 
 Such overestimation, although modest, is critical in clinical settings. Accurate risk prediction is vital for informed decision-making and effective patient management. Overestimated risks might lead to more aggressive interventions than necessary, affecting patient care and resource allocation. Conversely, underestimating risks could result in missed opportunities for timely intervention. This highlights the importance of achieving a balance in predictive accuracy, ensuring that the model neither overestimates nor underestimates risks.
@@ -492,7 +494,7 @@ Future work should, therefore, focus on refining the model's complexity and vari
 
 # Conclusions
 
-The non-parametric method showed that more than 50% of both genders (54% for males and 59% for females) can survive for over 300 days. This may indicate a high life expectancy and improved health care. Moreover, the non-parametric method showed no significant difference on survival probability between gender.
+The non-parametric method showed that more than 50% of both genders (54% for males and 59% for females) can survive for over 300 days. This may indicate a high life expectancy and improved health care. Moreover, the non-parametric method showed no significant difference in survival probability between genders. This result was later consistent with the results of the model selection.
 
 
 \newpage
