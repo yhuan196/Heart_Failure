@@ -87,7 +87,8 @@ data = read_csv("./data/heart_failure.csv")
 dat <- data %>% 
   arrange(TIME) %>% janitor::clean_names() %>%
   mutate(ejection_fraction_cat = case_when(ejection_fraction <= 30 ~ "Low",
-                                      ejection_fraction > 30 & ejection_fraction <= 45 ~ "Medium",
+                                      ejection_fraction > 30
+                                      & ejection_fraction <= 45 ~ "Medium",
                                       ejection_fraction > 45 ~ "High")) %>% 
   mutate(gender = factor(gender), 
          smoking = factor(smoking),
@@ -95,7 +96,8 @@ dat <- data %>%
          bp = factor(bp),
          event = factor(event),
          anaemia = factor(anaemia),
-         ejection_fraction_cat = factor(ejection_fraction_cat, levels = c("Low", "Medium", "High"))) %>% 
+         ejection_fraction_cat = factor(ejection_fraction_cat,
+                                        levels = c("Low", "Medium", "High"))) %>% 
   rename(platelets = pletelets,
          anemia = anaemia,
          EF = ejection_fraction,
@@ -122,7 +124,8 @@ label(dat_table$sodium) = "Serum Sodium (mEq/L)"
 label(dat_table$creatinine) = "Serum creatinine (mg/dL)"
 label(dat_table$platelets) = "Plateletes (mcL)"
 label(dat_table$cpk) = "Creatinine phosphokinase (U/L)"
-dat_table$event <- factor(dat$event, levels = c(0, 1), labels = c("Censored", "Event"))
+dat_table$event <- factor(dat$event, levels = c(0, 1),
+                          labels = c("Censored", "Event"))
 
 pvalue <- function(x, ...) {
   # Remove the "overall" column
@@ -145,7 +148,8 @@ caption = "Table 1: Descriptive Statistics Table"
 
 table1 = table1(~ time + age + gender + smoking + diabetes + bp + EF_cat + 
                   anemia + sodium + creatinine + cpk + platelets | event,
-                  data = dat_table, extra.col = list(`P-value` = pvalue), caption = caption)
+                  data = dat_table,
+                extra.col = list(`P-value` = pvalue), caption = caption)
 t1kable(table1) %>% kable_styling(font_size = 8, latex_options = "HOLD_position")
 ```
 
@@ -162,7 +166,8 @@ cont_dat.long = cont_dat %>%
 cont_hist = ggplot(data = cont_dat.long, aes(x = value)) +
   geom_histogram(aes(fill = name), bins = 30) +
   facet_wrap(~name, scales = "free") +
-  labs(x = "Value", y = "Count", title = "Figure 1.1: Histograms of Continuous Variables") +
+  labs(x = "Value", y = "Count",
+       title = "Figure 1.1: Histograms of Continuous Variables") +
   theme_bw() +
   theme(legend.position = "none")
 cont_hist
@@ -178,7 +183,8 @@ cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
   geom_bar() +
   geom_text(stat = 'count', aes(label = ..count..), vjust = -0.3) +
   facet_wrap(~name, scales = "free") +
-  labs(x = "Category", y = "Count", fill = "Category", title = "Figure 1.2: Bar Charts of Categorical Variables") +
+  labs(x = "Category", y = "Count", fill = "Category",
+       title = "Figure 1.2: Bar Charts of Categorical Variables") +
   theme_bw() +
   theme(legend.position = "none") +
   ylim(0, 240)
@@ -348,11 +354,15 @@ nonpara_female = nonpara_dat %>% filter(gender == 0)
 ```
 
 ```{r lifetable}
-life_table_male <- lifetab2(Surv(time, event) ~ 1, data = nonpara_male, breaks = seq(0, 300, 30))
-life_table_female <- lifetab2(Surv(time, event) ~ 1, data = nonpara_female, breaks = seq(0, 300, 30))
-life_table_male %>% kable(booktabs = T, caption = "Table 2.1: Heart Failure Life Table (Male)") %>% 
+life_table_male <- lifetab2(Surv(time, event) ~ 1, data = nonpara_male,
+                            breaks = seq(0, 300, 30))
+life_table_female <- lifetab2(Surv(time, event) ~ 1, data = nonpara_female,
+                              breaks = seq(0, 300, 30))
+life_table_male %>% kable(booktabs = T,
+                          caption = "Table 2.1: Heart Failure Life Table (Male)") %>% 
   kable_styling(latex_options = c("HOLD_position"), font_size = 6) 
-life_table_female %>% kable(booktabs = T, caption = "Table 2.2: Heart Failure Life Table (Female)") %>% 
+life_table_female %>% kable(booktabs = T,
+                            caption = "Table 2.2: Heart Failure Life Table (Female)") %>% 
   kable_styling(latex_options = c("HOLD_position"), font_size = 6)
 ```
 
