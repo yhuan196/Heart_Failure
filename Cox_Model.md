@@ -590,13 +590,13 @@ sodium
 ``` r
 # Create table using kable
 kable(stepwise_model2$`Coefficients of the Selected Variables`, 
-      caption = "Summary of Model Selection", 
+      caption = "Summary of Cox Model", 
       digits = 2, row.names = FALSE)
 ```
 
 <table>
 <caption>
-Summary of Model Selection
+Summary of Cox Model
 </caption>
 <thead>
 <tr>
