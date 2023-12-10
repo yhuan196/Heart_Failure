@@ -446,7 +446,7 @@ results_table1
 results_table2
 ```
 
-According to the above table, we find that both Log-Rank test and the Wilcoxon test gave us a p-value of 0.9. Thus, we fail to reject the null hypothesis and conclude that there is no significant difference in survival experience between males and females.
+According to the above tables, we find that both Log-Rank test and the Wilcoxon test gave us a p-value of 0.9. Thus, we fail to reject the null hypothesis and conclude that there is no significant difference in survival experience between males and females.
 
 ## Semi-parametric Models
 
