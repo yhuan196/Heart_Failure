@@ -343,11 +343,12 @@ where $\chi^2_{LR}(v, s)$ is the log-rank test statistic computed for a split $s
 ### Stepwise Selection
 In model selection process, we incorporated bidirectional stepwise selection, alongside using various model assessment criteria such as Akaike Information Criterion (AIC), Corrected Akaike Information Criterion (AICc), and Schwarz Bayesian Criterion (SBC). This comprehensive approach enhanced our ability to identify the most appropriate model for our data. 
 
-We chose the final model based on AIC in our survival analysis due to its effective balance between model complexity and fit, particularly valuable in preventing overfitting in complex models. Additionally, given our sufficiently large sample size, AIC provided a more appropriate measure compared to AICc, and its less stringent penalty compared to SBC was better suited for our data's scale and complexity. *Collett (1994)* suggested that the AIC for survival models should be: 
+We chose the final model based on AIC in our survival analysis due to its effective balance between model complexity and fit, particularly valuable in preventing overfitting in complex models. Additionally, given our sufficiently large sample size, AIC provided a more appropriate measure compared to AICc, and its less stringent penalty compared to SBC was better suited for our data's scale and complexity. *Collett (1994)* suggested that the AIC for survival models as follows:
 
+The formula for the Cox model being:
 
 $$
-AIC = -2\partial \log(likeligood) +2k
+AIC = -2\partial \log(likelihood) +2k
 $$
 
 In this equation, $k$ represents the number of parameters in the model. The term $2k$ serves as a penalty to discourage overfitting by complex models. 
@@ -355,7 +356,7 @@ In this equation, $k$ represents the number of parameters in the model. The term
 For different survival models, the AIC adapts as follows: 
 
 $$
-AIC = -2\log(likeligood) + 2(p+2+k)
+AIC = -2\log(likelihood) + 2(p+2+k)
 $$
 
 where $k = 0$ for the exponential model, $k = 1$ for the Weibull, log-logistic and log-normal models, and $k = 2$ for the generalized gamma model.
@@ -463,7 +464,7 @@ The Log-Rank test and the Wilcoxon test can be used to test for differences in s
 ## Model Selection
 
 $$
-h(t) = h_0(t)\exp[\beta_1{age} + \beta_2{EF_{Medium}} + \beta_3{EF_{High}} + \beta_4{bp}+\beta_5{sodium} + \beta_6\log({creatinine}+1)]
+h(t) = h_0(t)\exp[\beta_1{Age} + \beta_2{EF_{Medium}} + \beta_3{EF_{High}} + \beta_4{BP}+\beta_5{Sodium} + \beta_6\log({Creatinine}+1)]
 $$
 
 
@@ -594,10 +595,16 @@ model_selection[is.na(model_selection)] <- c("-")
 
 # Create table using kable
 model_selection |> kable(booktabs = T,
-                         caption = "Table 3: Summary of Model Selection", digits = 4) |>
+                         caption = "Table 5: Summary of Model Selection", digits = 4) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
+The Table 5 summarizes the Cox model selection process, indicating `logcre`, `age`, `EF` categories, and `BP` as persistent predictors across the top four models. The AIC favors `logcre` and `age` for their significant contributions to model fit relative to added complexity, emphasizing model fit over parameter count. 
+
+However, with large sample size, the AICc modification slightly adjusts these values, shifting the preference toward other variables like `diabetes`, which shows the lowest AICc, suggesting a strong impact on the model when accounting for sample size. The SBC, with its more substantial penalty for complexity, particularly at larger sample sizes, selects `BP` as the best variable, underscoring its contribution to the model's explanatory power without excessive complexity. 
+
+We choose AIC for model selection, given its consistency with SL findings, which jointly highlight `logcre` and `age` as key predictors. This consistent identification underscores their substantial impact on model accuracy while maintaining simplicity, justifying their selection.
+ 
 ## Semi-parametric Models
 
 The final model obtained from Stepwise Selection using AIC contains creatinine, age, ejection fraction, blood pressure status, sodium covariates.
@@ -614,7 +621,7 @@ model_summary <- model_summary |>
         `Pr(>|z|)`= as.numeric(`Pr(>|z|)`))
 
 model_summary |> kable(booktabs = T,
-      caption = "Table 4: Summary of Cox Model", 
+      caption = "Table 6: Summary of Cox Model", 
       digits = 4, row.names = TRUE) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
