@@ -1,6 +1,7 @@
 ---
 title: '**Heart Failure Survival Study**'
 author:
+-  "Yi Huang, Runze Cui, Xuesen Zhao, Huanyu Chen, Jiahe Deng"
 - 'P8108 Final Project Report: Group 6'
 date: "Dec 7, 2023"
 output:
@@ -447,7 +448,7 @@ results_table1
 results_table2
 ```
 
-According to the above tables, we find that both Log-Rank test and the Wilcoxon test gave us a p-value of 0.9. Thus, we fail to reject the null hypothesis and conclude that there is no significant difference in survival experience between males and females.
+The Log-Rank test and the Wilcoxon test can be used to test for differences in survival experience between genders. Reviewing the results from the table, we find that both the Log-Rank test and the Wilcoxon test have provided a similar result and gave a p-value of 0.9. This indicates that we failed to reject the null hypothesis. Therefore, we conclude that there is no statistically significant difference in survival experiences between males and females.
 
 ## Semi-parametric Models
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.11)  10 DEC 2023 01:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.11)  10 DEC 2023 02:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -467,7 +467,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 28
 )
 \Hy@SectionHShift=\skip66
 )
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 139.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 140.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
@@ -481,24 +481,24 @@ LaTeX Warning: Label `tab:unnamed-chunk-8' multiply defined.
 )
 \openout1 = `P8108_final_report.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 139.
-LaTeX Font Info:    ... okay on input line 139.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 140.
+LaTeX Font Info:    ... okay on input line 140.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 140.
+LaTeX Font Info:    ... okay on input line 140.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 140.
+LaTeX Font Info:    ... okay on input line 140.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 140.
+LaTeX Font Info:    ... okay on input line 140.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 140.
+LaTeX Font Info:    ... okay on input line 140.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 140.
+LaTeX Font Info:    ... okay on input line 140.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 140.
+LaTeX Font Info:    ... okay on input line 140.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 140.
+LaTeX Font Info:    ... okay on input line 140.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 140.
+LaTeX Font Info:    ... okay on input line 140.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -549,38 +549,38 @@ Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 Package caption Info: threeparttable package is loaded.
 Package caption Info: wrapfig package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 139.
+Package hyperref Info: Link coloring OFF on input line 140.
 (./P8108_final_report.out) (./P8108_final_report.out)
 \@outlinefile=\write4
 \openout4 = `P8108_final_report.out'.
 
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 141.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 142.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 141.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 142.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 141.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 142.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 141.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 142.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 141.
+(Font)              <12> on input line 142.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 141.
+(Font)              <8> on input line 142.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 141.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 141.
+(Font)              <6> on input line 142.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 142.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 141.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 142.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
@@ -597,48 +597,48 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 \openout5 = `P8108_final_report.toc'.
 
 [3]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 227.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 228.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.261 
+l.262 
        [1{/Users/huanyu/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/Users/huanyu/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/Users/huanyu/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/Users/huanyu/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
 <P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf, id=217, 573.14125pt x 349.305pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf>
-Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf  used on input line 334.
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf  used on input line 335.
 (pdftex.def)             Requested size: 469.76022pt x 286.29869pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.334 ...ure-latex/unnamed-chunk-4-1} \end{center}
+l.335 ...ure-latex/unnamed-chunk-4-1} \end{center}
                                                    [2]
 <P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf, id=227, 568.1225pt x 351.3125pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf>
-Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf  used on input line 336.
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf  used on input line 337.
 (pdftex.def)             Requested size: 469.7731pt x 290.49573pt.
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.3}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.352 T
+l.353 T
        he life table is particularly useful for larger sample sizes and when [3 <./P8108_final_report_files/figure-latex/unnamed-chunk-4-1.pdf> <./P8108_final_report_files/figure-latex/unnamed-chunk-4-2.pdf>] [4{/Users/huanyu/Library/TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}]
-Underfull \hbox (badness 10000) in paragraph at lines 431--435
+Underfull \hbox (badness 10000) in paragraph at lines 432--436
 
  []
 
 [5] [6]
-Overfull \hbox (5.46564pt too wide) in paragraph at lines 621--640
+Overfull \hbox (5.46564pt too wide) in paragraph at lines 622--641
  [][] 
  []
 
 
-Overfull \hbox (5.46564pt too wide) in paragraph at lines 647--666
+Overfull \hbox (5.46564pt too wide) in paragraph at lines 648--667
  [][] 
  []
 
@@ -646,40 +646,40 @@ Overfull \hbox (5.46564pt too wide) in paragraph at lines 647--666
 <P8108_final_report_files/figure-latex/unnamed-chunk-9-1.pdf, id=299, 841.1425pt x 338.26375pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-9-1.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-9-1.pdf>
-Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-9-1.pdf  used on input line 682.
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-9-1.pdf  used on input line 683.
 (pdftex.def)             Requested size: 469.75311pt x 188.91025pt.
 [8 <./P8108_final_report_files/figure-latex/unnamed-chunk-9-1.pdf>] [9] [10] [11]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 882.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 886.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 883.
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 967.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 887.
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 971.
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [12]
-Underfull \vbox (badness 10000) detected at line 1135
+Underfull \vbox (badness 10000) detected at line 1139
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1135
+Underfull \vbox (badness 10000) detected at line 1139
  []
 
 [13]
-Underfull \vbox (badness 10000) detected at line 1135
+Underfull \vbox (badness 10000) detected at line 1139
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1135
+Underfull \vbox (badness 10000) detected at line 1139
  []
 
 [14]
-Underfull \vbox (badness 10000) detected at line 1135
+Underfull \vbox (badness 10000) detected at line 1139
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1135
+Underfull \vbox (badness 10000) detected at line 1139
  []
 
 [15]
@@ -707,7 +707,7 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  75i,10n,79p,413b,511s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx8.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on P8108_final_report.pdf (19 pages, 515628 bytes).
+Output written on P8108_final_report.pdf (19 pages, 518163 bytes).
 PDF statistics:
  506 PDF objects out of 1000 (max. 8388607)
  425 compressed objects within 5 object streams
