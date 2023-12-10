@@ -61,14 +61,14 @@ km.fit.logcre=survfit(Surv(time, event)~ logcre, model_data)
 km.fit.logcpk=survfit(Surv(time, event)~ logcpk, model_data)
 ```
 ```{r}
-ggsurvplot(
+plot1=ggsurvplot(
   km.fit.gender,
   fun = "cumhaz",
   xlab = "Time",
   ylab = "-log(S(t))",
   title = "Negative Log of Estimated Survival Functions for Gender"
 )
-ggsurvplot(
+plot2=ggsurvplot(
   km.fit.gender,
   fun = "cloglog",
   xlab = "Log(time)",
@@ -76,14 +76,14 @@ ggsurvplot(
   title = "Log of Negative Log of Estimated Survival Function for Gender"
 )
 
-ggsurvplot(
+plot3=ggsurvplot(
   km.fit.bp,
   fun = "cumhaz",
   xlab = "Time",
   ylab = "-log(S(t))",
   title = "Negative Log of Estimated Survival Functions for Blood Pressure"
 )
-ggsurvplot(
+plot4=ggsurvplot(
   km.fit.bp,
   fun = "cloglog",
   xlab = "Log(time)",
@@ -91,14 +91,14 @@ ggsurvplot(
   title = "Log of Negative Log of Estimated Survival Function for Blood Pressure"
 )
 
-ggsurvplot(
+plot5=ggsurvplot(
   km.fit.smoke,
   fun = "cumhaz",
   xlab = "Time",
   ylab = "-log(S(t))",
   title = "Negative Log of Estimated Survival Functions for Diabetes"
 )
-ggsurvplot(
+plot6=ggsurvplot(
   km.fit.smoke,
   fun = "cloglog",
   xlab = "Log(time)",
@@ -106,14 +106,14 @@ ggsurvplot(
   title = "Log of Negative Log of Estimated Survival Function for Diabetes"
 )
 
-ggsurvplot(
+plot7=ggsurvplot(
   km.fit.diabetes,
   fun = "cumhaz",
   xlab = "Time",
   ylab = "-log(S(t))",
   title = "Negative Log of Estimated Survival Functions for Diabetes"
 )
-ggsurvplot(
+plot8=ggsurvplot(
   km.fit.diabetes,
   fun = "cloglog",
   xlab = "Log(time)",
@@ -121,14 +121,14 @@ ggsurvplot(
   title = "Log of Negative Log of Estimated Survival Function for Diabetes"
 )
 
-ggsurvplot(
+plot9=ggsurvplot(
   km.fit.anaemia,
   fun = "cumhaz",
   xlab = "Time",
   ylab = "-log(S(t))",
   title = "Negative Log of Estimated Survival Functions for Anaemia"
 )
-ggsurvplot(
+plot10=ggsurvplot(
   km.fit.anaemia,
   fun = "cloglog",
   xlab = "Log(time)",
@@ -136,14 +136,14 @@ ggsurvplot(
   title = "Log of Negative Log of Estimated Survival Function for Anaemia"
 )
 
-ggsurvplot(
+plot11=ggsurvplot(
   km.fit.ef_cat,
   fun = "cumhaz",
   xlab = "Time",
   ylab = "-log(S(t))",
   title = "Negative Log of Estimated Survival Functions for Ejection Fraction"
 )
-ggsurvplot(
+plot12=ggsurvplot(
   km.fit.ef_cat,
   fun = "cloglog",
   xlab = "Log(time)",
@@ -151,14 +151,14 @@ ggsurvplot(
   title = "Log of Negative Log of Estimated Survival Function for Ejection Fraction"
 )
 
-ggsurvplot(
+plot13=ggsurvplot(
   km.fit.age,
   fun = "cumhaz",
   xlab = "Time",
   ylab = "-log(S(t))",
   title = "Negative Log of Estimated Survival Functions for Ejection Fraction"
 )
-ggsurvplot(
+plot14=ggsurvplot(
   km.fit.age,
   fun = "cloglog",
   xlab = "Log(time)",
@@ -166,6 +166,10 @@ ggsurvplot(
   title = "Log of Negative Log of Estimated Survival Function for Ejection Fraction"
 )
 ```
+```{r}
+library(patchwork)
+```
+
 ```{r}
 ggsurvplot(
   km.fit.age,
@@ -229,9 +233,12 @@ ggsurvplot(
 ```
 
 ```{r}
-library(patchwork)
+library(broom)
+aft.fit <- survreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
+                  age + ef_cat+ sodium + pletelets + logcre + logcpk, 
+                data = model_data, dist = "exponential")
+tidy(aft.fit)
 ```
-
 
 
 
