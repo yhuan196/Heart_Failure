@@ -464,6 +464,18 @@ results_table2
 The Log-Rank test and the Gehan's Wilcoxon test can be used to test for differences in survival experience between genders. Reviewing the results from the table, we find that both the Log-Rank test and the Gehan's Wilcoxon test have provided a similar result and gave a p-value greater than 0.05. This indicates that we failed to reject the null hypothesis at the significance level of 0.05, and we can state there is no statistically significant difference in survival experiences between males and females.
 
 ## Model Selection
+### Survival Tree
+
+```{r fig.align='center', fig.width=10, fig.height=6}
+surv_obj <- Surv(time = nonpara_dat$time, event = nonpara_dat$event)
+surv_tree <- rpart(surv_obj ~ gender + smoking + diabetes + bp + anemia + age + EF_cat + sodium + creatinine_log + platelets + cpk_log,
+                   data = nonpara_dat, method = "exp")
+rpart.plot::rpart.plot(surv_tree, main = "Figure 3: Results of Survival Tree")
+```
+
+The survival tree depicted in the image stratifies patients based on factors affecting survival. At the first level, patients are divided by `EF_cat`, suggesting that EF is a significant factor in survival. For patients with medium to high EF, age is the next discriminator, indicating its importance in survival for this subgroup. Among those with lower EF, log-transformed creatinine levels further split the cohort, underscoring renal function's role in survival. The tree branches into additional factors such as log-transformed cpk levels, the presence of diabetes, and sodium levels, highlighting their contribution to survival outcomes. Terminal nodes provide risk ratios and the proportion of patients experiencing the event, illustrating the combined effect of these variables on patient survival. This tree model, therefore, offers a nuanced view of patient risk profiles, emphasizing the multifactorial nature of survival in this patient population.
+
+### Stepwise Selection
 
 $$
 h(t) = h_0(t)\exp[\beta_1{Age} + \beta_2{EF_{Medium}} + \beta_3{EF_{High}} + \beta_4{BP}+\beta_5{Sodium} + \beta_6\log({Creatinine}+1)]
@@ -613,7 +625,7 @@ The final model obtained from Stepwise Selection using AIC contains creatinine, 
 
 ### Model Checking
 
-Before fitting the Cox proportional hazard model, we need to check whether our variables hold the PH assumption^[See the Method Section for details]. The $\log(-\log\hat{S}(t|Z = z))$ over $\log t$ plot and observed survival versus estimated survival curves are provided below. We have multiple variables remained after model selection, so we randomly took two of them (`age` and `logcre`) for the PH assumption check. Since both `age` and `logcre`^[Since 1.5 mg/dL is the clinical threshold of creatinine, so we categorized log(creatinine + 1) > log(2.5) as "High", otherwise, it's in "Low" group] are continuous variable, we categorized it into two groups and recoded as "Low" and "High", respectively. 
+Before fitting the Cox proportional hazard model, we need to check whether our variables hold the PH assumption^[See the Method Section for details]. The $\log(-\log\hat{S}(t|Z = z))$ over $\log t$ plot and observed survival versus estimated survival curves are provided below. We have multiple variables remained after model selection, so we randomly took two of them (`age` and `logcre`) for the PH assumption check. Since both `age` and `logcre`^[Since 1.5 mg/dL is the clinical threshold of creatinine, so we categorized log(creatinine + 1) > log(2.5) as "High", otherwise, it's in "Low" group. And prople in "High" group should be regarded as renal dysfunction.] are continuous variable, we categorized it into two groups and recoded as "Low" and "High", respectively. 
 
 ```{r fig.align='center', fig.width=10, fig.height=6}
 mc_dat = nonpara_dat %>% mutate(age_cat = case_when(age <= mean(age) ~ "Low", age > mean(age) ~ "High")) %>% 
@@ -630,11 +642,11 @@ mc_cre_surv_log = survfit(Surv(log(time + 1), event == 1) ~ cre_cat, data = mc_d
 g1 = ggsurvplot(mc_age_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
                 xlab = "log(time)", ylab = "log[-log(Survival Probability)]",
                 ggtheme = theme_minimal(), xlim = c(1.5, 6)) +
-  labs(title = "Figure 3.1: Log of Negative Log of Estimated Survival Functions \nby Age Group")
+  labs(title = "Figure 4.1: Log of Negative Log of Estimated Survival Functions \nby Age Group")
 g2 = ggsurvplot(mc_cre_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
                 xlab = "log(time)", ylab = "log[-log(Survival Probability)]",
                 ggtheme = theme_minimal(), xlim = c(1.5,6)) +
-  labs(title = "Figure 3.2: Log of Negative Log of Estimated Survival Functions \nby Log-transformed Creatinine Group")
+  labs(title = "Figure 4.2: Log of Negative Log of Estimated Survival Functions \nby Log-transformed Creatinine Group")
 gridExtra::grid.arrange(g1$plot, g2$plot, nrow = 2)
 
 g3.1 = ggsurvplot(mc_surv_age, data = mc_dat, risk.table = FALSE, ggtheme = theme_minimal())
@@ -646,7 +658,7 @@ cox_fit$age_cat = cox_fit$variable
 
 g3 = ggplot(cox_fit, aes(x = time, y = surv, group = age_cat, color = age_cat)) + geom_step() +
   geom_step(data = km_fit, aes(x = time, y = surv, group = age_cat, color = age_cat), lty = 3) + 
-  labs(title = "Figure 4.1: Plot of Observed vs. Fitted Survival By Age Group", y = "Survival Distribution Function Estimate", 
+  labs(title = "Figure 5.1: Plot of Observed vs. Fitted Survival By Age Group", y = "Survival Distribution Function Estimate", 
   caption = "Straight line: Fitted Survival \nDashed line: Observed Survival") +
   theme_minimal() +
   theme(legend.position = "top") +
@@ -666,7 +678,7 @@ cox_fit$cre_cat = cox_fit$variable
 
 g4 = ggplot(cox_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat)) + geom_step() +
   geom_step(data = km_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat), lty = 3) + 
-  labs(title = "Figure 4.2: Plot of Observed vs. Fitted Survival By Creatinine Group", y = "Survival Distribution Function Estimate", 
+  labs(title = "Figure 5.2: Plot of Observed vs. Fitted Survival By Creatinine Group", y = "Survival Distribution Function Estimate", 
   caption = "Straight line: Fitted Survival \nDashed line: Observed Survival") +
   theme_minimal() +
   theme(legend.position = "top") +
@@ -685,7 +697,7 @@ ggcoxzph(cox.zph(scho), var = c("creatinine_log"), df = 2, nsmo = 1000)
 ggcoxzph(cox.zph(scho), var = c("age"), df = 2, nsmo = 1000)
 ```
 
-Obviously, The curves in **Figure 3.1** and **Figure 3.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot (**Figure 4.1** and **Figure 4.2**), the straight curve and dashed curve are close to each other, which means the proportional hazard ratio is proportional for both age and creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots of the fitted model. We chose to input `age` and `logcre` variables and found a regression lines with a slope close to zero for both.
+Obviously, The curves in **Figure 4.1** and **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot (**Figure 5.1** and **Figure 5.2**), the straight curve and dashed curve are close to each other, which means the proportional hazard ratio is proportional for both age and creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots of the fitted model. We chose to input `age` and `logcre` variables and found a regression lines with a slope close to zero for both.
 
 ### Model Fitting and Results
 
@@ -720,6 +732,13 @@ Overall, this model provides a quantitative assessment of how each predictor inf
 
 ## Parametric Models
 ### Model Checking
+
+
+
+
+
+
+### Model Fitting
 
 
 ## Model Validation 
