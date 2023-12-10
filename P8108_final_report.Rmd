@@ -1,12 +1,9 @@
 ---
 title: '**Heart Failure Survival Study**'
 author:
-"- Yi Huang, Runze Cui, Xuesen Zhao, Huanyu Chen, Jiahe Deng"
 - 'P8108 Final Project Report: Group 6'
 date: "Dec 7, 2023"
 output:
-  html_document:
-    df_print: paged
   pdf_document:
     number_section: yes
     extra_dependencies: float
@@ -331,10 +328,10 @@ $$
 log(T) = \mu+\beta_1x_1+\beta_2x_2+ ... +\beta_px_p+\epsilon
 $$
 ```{r}
-aft.fit <- survreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
-                     age + ef_cat+ sodium + pletelets + logcre + logcpk,
-                   data = model_data, dist = "exponential")
-summary(aft.fit)
+# aft.fit <- survreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
+#                      age + ef_cat+ sodium + pletelets + logcre + logcpk,
+#                    data = model_data, dist = "exponential")
+# summary(aft.fit)
 ```
 
 
@@ -382,7 +379,7 @@ nonpara_male = nonpara_dat %>% filter(gender == 1)
 nonpara_female = nonpara_dat %>% filter(gender == 0)
 ```
 
-```{r lifetable}
+```{r}
 life_table_male <- lifetab2(Surv(time, event) ~ 1, data = nonpara_male,
                             breaks = seq(0, 300, 30))
 life_table_female <- lifetab2(Surv(time, event) ~ 1, data = nonpara_female,
@@ -399,7 +396,7 @@ Table 2.1 and Table 2.2 represent the lifetable with a time break of 30 days (on
 
 ### The Kaplan-Meier and Fleming-Harrington Model
 
-```{r KM_FH, fig.width=12, fig.height=5}
+```{r fig.width=12, fig.height=5}
 km = survfit(Surv(time, event) ~ gender, data = nonpara_dat)
 fh <- survfit(Surv(time, event) ~ gender, data = nonpara_dat, type = "fh")
 km_plot = 
