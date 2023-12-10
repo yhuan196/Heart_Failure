@@ -98,12 +98,12 @@ This study falls into the category of Overall Survival (OS), where event indicat
 
 ```{r}
 data = read_csv("./data/heart_failure.csv") 
-dat <- data %>% 
-  arrange(TIME) %>% janitor::clean_names() %>%
+dat <- data |> 
+  arrange(TIME) |> janitor::clean_names() |>
   mutate(ejection_fraction_cat = case_when(ejection_fraction <= 30 ~ "Low",
                                       ejection_fraction > 30
                                       & ejection_fraction <= 45 ~ "Medium",
-                                      ejection_fraction > 45 ~ "High")) %>% 
+                                      ejection_fraction > 45 ~ "High")) |> 
   mutate(gender = factor(gender), 
          smoking = factor(smoking),
          diabetes = factor(diabetes),
@@ -111,7 +111,7 @@ dat <- data %>%
          event = factor(event),
          anaemia = factor(anaemia),
          ejection_fraction_cat = factor(ejection_fraction_cat,
-                                        levels = c("Low", "Medium", "High"))) %>% 
+                                        levels = c("Low", "Medium", "High"))) |> 
   rename(platelets = pletelets,
          anemia = anaemia,
          EF = ejection_fraction,
@@ -164,17 +164,17 @@ table1 = table1(~ time + age + gender + smoking + diabetes + bp + EF_cat +
                   anemia + sodium + creatinine + cpk + platelets | event,
                   data = dat_table,
                 extra.col = list(`P-value` = pvalue), caption = caption)
-t1kable(table1) %>% kable_styling(font_size = 8, latex_options = "HOLD_position")
+t1kable(table1) |> kable_styling(font_size = 8, latex_options = "HOLD_position")
 ```
 
 Based on the descriptive table, we can observe that the mean survival time for deletions and events is 158 days and 70.9 days, respectively. Since we have the complete dataset, there is no need to worry about missingness issue. The table also lists the p-values for each variable. Some variables have relatively large p-values. However, we still need to check the distribution of each variable ^[Histograms for continuous variables and bar charts for categorical variables] and determine which variables need to be transformed.
 
 ```{r fig.align='center', fig.height=5, fig.width=8}
 # Data contains the continuous vars only
-cont_dat = dat %>% 
+cont_dat = dat |> 
   select(age, sodium, creatinine, platelets, cpk)
 # Long format 
-cont_dat.long = cont_dat %>% 
+cont_dat.long = cont_dat |> 
   pivot_longer(cols = c(age, sodium, creatinine, platelets, cpk))
 # Plot the continuous variable histograms
 cont_hist = ggplot(data = cont_dat.long, aes(x = value)) +
@@ -187,10 +187,10 @@ cont_hist = ggplot(data = cont_dat.long, aes(x = value)) +
 cont_hist
 
 # Data contains the categorical vars only
-cate_data = dat %>% 
+cate_data = dat |> 
   select(event, gender, smoking, diabetes, bp, anemia, EF_cat)
 # Long format 
-cate_dat.long = cate_data %>% 
+cate_dat.long = cate_data |> 
   pivot_longer(cols = c(event, gender, smoking, diabetes, bp, anemia, EF_cat))
 # Plot the categorical variable barplots
 cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
@@ -208,7 +208,7 @@ cate_barplot
 After checking the histograms, two continuous variables creatinine phosphokinase (cpk) and serum creatinine are right-skewed. We decide to log-transformed both of them for further model fitting.
 
 ```{r}
-dat_log = dat %>% 
+dat_log = dat |> 
   mutate(cpk_log = log(cpk + 1),
          creatinine_log = log(creatinine + 1))
 ```
@@ -325,8 +325,8 @@ log(T) = \mu+\beta_1x_1+\beta_2x_2+ ... +\beta_px_p+\epsilon
 $$
 
 ```{r}
-# aft.fit <- survreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
-#                      age + ef_cat+ sodium + pletelets + logcre + logcpk,
+# aft.fit <- survreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + 
+#                      age + ef_cat+ sodium + platelets + logcre + logcpk,
 #                    data = model_data, dist = "exponential")
 # summary(aft.fit)
 ```
@@ -381,12 +381,12 @@ To evaluate the calibration of our model, we focused on the calibration slope. C
 ### Life Table
 
 ```{r}
-nonpara_dat = dat_log %>% 
-  dplyr::select(-c(EF, cpk, creatinine)) %>% 
-  relocate(time, event, EF_cat, smoking, everything()) %>% 
+nonpara_dat = dat_log |> 
+  dplyr::select(-c(EF, cpk, creatinine)) |> 
+  relocate(time, event, EF_cat, smoking, everything()) |> 
   mutate(event = as.numeric(event) - 1)
-nonpara_male = nonpara_dat %>% filter(gender == 1)
-nonpara_female = nonpara_dat %>% filter(gender == 0)
+nonpara_male = nonpara_dat |> filter(gender == 1)
+nonpara_female = nonpara_dat |> filter(gender == 0)
 ```
 
 ```{r}
@@ -394,11 +394,11 @@ life_table_male <- lifetab2(Surv(time, event) ~ 1, data = nonpara_male,
                             breaks = seq(0, 300, 30))
 life_table_female <- lifetab2(Surv(time, event) ~ 1, data = nonpara_female,
                               breaks = seq(0, 300, 30))
-life_table_male %>% kable(booktabs = T,
-                          caption = "Table 2.1: Heart Failure Life Table (Male)") %>% 
+life_table_male |> kable(booktabs = T,
+                          caption = "Table 2.1: Heart Failure Life Table (Male)") |> 
   kable_styling(latex_options = c("HOLD_position"), font_size = 6) 
-life_table_female %>% kable(booktabs = T,
-                            caption = "Table 2.2: Heart Failure Life Table (Female)") %>% 
+life_table_female |> kable(booktabs = T,
+                            caption = "Table 2.2: Heart Failure Life Table (Female)") |> 
   kable_styling(latex_options = c("HOLD_position"), font_size = 6)
 ```
 
@@ -410,13 +410,13 @@ Table 2.1 and Table 2.2 represent the lifetable with a time break of 30 days (on
 km = survfit(Surv(time, event) ~ gender, data = nonpara_dat)
 fh <- survfit(Surv(time, event) ~ gender, data = nonpara_dat, type = "fh")
 km_plot = 
-  km %>% autoplot() +
+  km |> autoplot() +
   labs(y = "S(t)",
        x = "Time",
        subtitle = "Figure 2.1. Kaplan-Meier Survival Curve By Gender",
        color = "Gender", fill = 'Gender') + theme(legend.position = "none")
 fh_plot = 
-  fh %>% autoplot() +
+  fh |> autoplot() +
   labs(y = "S(t)",
        x = "Time",
        subtitle = "Figure 2.2. Fleming-Harrington Survival Curve By Gender",
@@ -447,10 +447,10 @@ results2 <- data.frame(
   p_value = c(0.9, 0.9)
 )
 
-results_table1 <- kable(results1, align = "c") %>%
+results_table1 <- kable(results1, align = "c") |>
   kable_styling(latex_options = c("HOLD_position"))
 
-results_table2 <- kable(results2, align = "c") %>%
+results_table2 <- kable(results2, align = "c") |>
   kable_styling(latex_options = c("HOLD_position"))
 
 results_table1
@@ -459,15 +459,165 @@ results_table2
 
 The Log-Rank test and the Wilcoxon test can be used to test for differences in survival experience between genders. Reviewing the results from the table, we find that both the Log-Rank test and the Wilcoxon test have provided a similar result and gave a p-value of 0.9. This indicates that we failed to reject the null hypothesis. Therefore, we conclude that there is no statistically significant difference in survival experiences between males and females.
 
+
 ## Model Selection
 
 $$
 h(t) = h_0(t)\exp[\beta_1{age} + \beta_2{EF_{Medium}} + \beta_3{EF_{High}} + \beta_4{bp}+\beta_5{sodium} + \beta_6\log({creatinine}+1)]
 $$
 
+
+```{r}
+# raw data
+raw_data <- data |>
+  arrange(TIME) |>
+  janitor::clean_names() |>
+  mutate(platelets = pletelets,
+         anemia = anaemia)
+
+# model data
+model_data <- dat
+
+## create dummy variable for categorical variable
+heart_data <- model.matrix(EF~ EF_cat, data = model_data)[,-1] |>
+  as.data.frame()
+
+## create data frame for stepwiseCox
+heart_data <- cbind(raw_data, heart_data) 
+stepwise_data <- heart_data |>
+  mutate(logcre=log(creatinine+1),
+         logcpk = log(cpk+1)) |>
+  dplyr::select(-creatinine, -cpk, -ejection_fraction)
+```
+
+```{r}
+# Variable selection using stepwise Cox model using Sl
+stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
+                                 EF_catMedium + EF_catHigh,
+                               data = stepwise_data,
+                               select = "SL",
+                               # significant level for entry
+                               sle = 0.25,
+                               # significant level for stay
+                               sls = 0.15,
+                               method = "efron",
+                               weights = NULL,
+                               best = NULL)
+# 7 variables are selected: logcre, age, EF_catMedium, EF_catHigh, bp, sodium, anemia  
+
+## Variable selection using stepwise Cox model using AIC
+stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
+                                 EF_catMedium + EF_catHigh,
+                               data = stepwise_data,
+                               selection = "bidirection",
+                               select = "AIC",
+                               # significant level for entry
+                               sle = 0.25,
+                               # significant level for stay
+                               sls = 0.15,
+                               method = "efron",
+                               weights = NULL,
+                               best = NULL)
+# 6 variables are selected: logcre, age, EF_catMedium, EF_catHigh, bp, sodium
+
+### Variable selection using stepwise Cox model using AICc
+stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
+                                 EF_catMedium + EF_catHigh,
+                               data = stepwise_data,
+                               selection = "bidirection",
+                               select = "AICc",
+                               # significant level for entry
+                               sle = 0.25,
+                               # significant level for stay
+                               sls = 0.15,
+                               method = "efron",
+                               weights = NULL,
+                               best = NULL)
+# AICc 9 variables: logcre, age, EF_catMedium, EF_catHigh, bp, sodium, anemia, logcpk, diabetes 
+
+### Variable selection using stepwise Cox model using SBC
+stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
+                                 EF_catMedium + EF_catHigh,
+                               data = stepwise_data,
+                               selection = "bidirection",
+                               select = "SBC",
+                               # significant level for entry
+                               sle = 0.25,
+                               # significant level for stay
+                               sls = 0.15,
+                               method = "efron",
+                               weights = NULL,
+                               best = NULL)
+# SBC 5 variables: logcre, age, EF_catMedium, EF_catHigh, bp
+```
+
+```{r selection}
+# Extract data from the models
+steps2 <- stepwise_model3$`Process of Selection`[, "Step"]
+enteredEffect1 <- stepwise_model3$`Process of Selection`[, "EnteredEffect"]
+sl1 <- stepwise_model1$`Process of Selection`[, "SL"]
+aic2 <- stepwise_model2$`Process of Selection`[, "AIC"]
+aic3 <- stepwise_model3$`Process of Selection`[, "AICc"]
+sbc4 <- stepwise_model4$`Process of Selection`[, "SBC"]
+
+# Determine the maximum length
+max_len <- max(sapply(list(steps2, enteredEffect1, sl1, aic2, aic3, sbc4), length))
+
+# Function to pad vectors with NA to make their length equal to max_len
+pad_vector <- function(vec, max_len) {
+  length(vec) <- max_len
+  return(vec)
+}
+
+# Apply the function to each vector
+steps2 <- pad_vector(steps2, max_len)
+enteredEffect1 <- pad_vector(enteredEffect1, max_len)
+sl1 <- pad_vector(sl1, max_len)
+aic2 <- pad_vector(aic2, max_len)
+aic3 <- pad_vector(aic3, max_len)
+sbc4 <- pad_vector(sbc4, max_len)
+
+# Create the data frame
+model_selection <- data.frame(
+  Step = steps2,
+  EnteredEffect = enteredEffect1,
+  SL = round(as.numeric(sl1),4),
+  AIC = round(as.numeric(aic2), 2),
+  AICc = round(as.numeric(aic3), 2),
+  SBC = round(as.numeric(sbc4), 2)
+)
+model_selection[is.na(model_selection)] <- c("-")
+
+# Create table using kable
+model_selection |> kable(booktabs = T,
+                         caption = "Table 3: Summary of Model Selection", digits = 4) |>
+  kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
+```
+
 ## Semi-parametric Models
 
 The final model obtained from Stepwise Selection using AIC contains creatinine, age, ejection fraction, blood pressure status, sodium covariates.
+
+```{r final model results}
+# Create table using kable
+model_summary <- tibble(stepwise_model2$`Coefficients of the Selected Variables`)
+
+model_summary <- model_summary |>
+  mutate(coef = as.numeric(coef),
+        `exp(coef)` = as.numeric(`exp(coef)`),
+        `se(coef)` = as.numeric(`se(coef)`),
+        z = as.numeric(z),
+        `Pr(>|z|)`= as.numeric(`Pr(>|z|)`))
+
+model_summary |> kable(booktabs = T,
+      caption = "Table 4: Summary of Cox Model", 
+      digits = 4, row.names = TRUE) |>
+  kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
+```
 
 ## Parametric Models
 (Model checking, fitting the model)

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  10 DEC 2023 03:53
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  10 DEC 2023 04:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -728,65 +728,95 @@ Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-9-
 [8] [9 <./P8108_final_report_files/figure-latex/unnamed-chunk-9-1.pdf>] [10] [1
 1] [12]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 9
-17.
+60.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 918.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 961.
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-1002.
+1045.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) [13]
-Underfull \vbox (badness 10000) detected at line 1170
+)
+
+LaTeX Font Warning: Font shape `T1/lmtt/bx/it' in size <10> not available
+(Font)              Font shape `T1/lmtt/b/sl' tried instead on input line 1152.
+
+
+[13]
+Underfull \vbox (badness 10000) detected at line 1349
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1170
+Underfull \vbox (badness 10000) detected at line 1349
  []
 
 [14]
-Underfull \vbox (badness 10000) detected at line 1170
+Underfull \vbox (badness 10000) detected at line 1349
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1170
+Underfull \vbox (badness 10000) detected at line 1349
  []
 
 [15]
-Underfull \vbox (badness 10000) detected at line 1170
+Underfull \vbox (badness 10000) detected at line 1349
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1170
+Underfull \vbox (badness 10000) detected at line 1349
  []
 
 [16]
+Underfull \vbox (badness 10000) detected at line 1349
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1349
+ []
+
+[17]
+Underfull \vbox (badness 10000) detected at line 1349
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1349
+ []
+
+[18]
+Underfull \vbox (badness 10000) detected at line 1349
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1349
+ []
+
+[19]
 
 Package caption Warning: Unused \captionsetup[figure] on input line 99.
 See the caption package documentation for explanation.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1173.
-[17]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1173.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1352.
+[20]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1352.
 (./P8108_final_report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1173.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1173.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1352.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1352.
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 16277 strings out of 480608
- 242810 string characters out of 5903631
- 570515 words of memory out of 5000000
- 31647 multiletter control sequences out of 15000+600000
- 612878 words of font info for 131 fonts, out of 8000000 for 9000
+ 16288 strings out of 480608
+ 242967 string characters out of 5903631
+ 603284 words of memory out of 5000000
+ 31652 multiletter control sequences out of 15000+600000
+ 613198 words of font info for 132 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  41i,9n,42p,817b,388s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/local
-/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/2020/
+{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
+texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/local/texlive/2020/
 texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2020/texmf-dist/fon
 ts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvi
 ps/lm/lm-mathit.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-m
@@ -808,12 +838,13 @@ cal/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texliv
 e/2020/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></usr/local/texlive/2020/texm
 f-dist/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2020/texmf-dist/font
 s/type1/public/lm/lmtk10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/pu
-blic/lm/lmtt10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lm
-tti10.pfb>
-Output written on P8108_final_report.pdf (19 pages, 508023 bytes).
+blic/lm/lmtko10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/l
+mtt10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmtti10.pfb
+>
+Output written on P8108_final_report.pdf (22 pages, 548668 bytes).
 PDF statistics:
- 490 PDF objects out of 1000 (max. 8388607)
- 433 compressed objects within 5 object streams
- 106 named destinations out of 1000 (max. 500000)
+ 510 PDF objects out of 1000 (max. 8388607)
+ 449 compressed objects within 5 object streams
+ 111 named destinations out of 1000 (max. 500000)
  16696 words of extra memory for PDF output out of 17280 (max. 10000000)
 
