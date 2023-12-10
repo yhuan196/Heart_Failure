@@ -24,7 +24,8 @@ packages <- c("dplyr", "tidyverse", "readxl",
               # ggsurvplot()
               "survminer",
               # stepwiseCox()
-              "StepReg")
+              "StepReg",
+              "kableExtra")
 
 
 # Install missing packages
@@ -155,7 +156,6 @@ stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
 
 stepwise_model2
 # 6 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium
-
 ```
 
 
@@ -207,6 +207,65 @@ stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
 # SBC 5 variables: logcre, age, ef_catMedium, ef_catHigh, bp
 ```
 
+
+
+
+# Table of Selection Summary
+
+```{r}
+# Extract data from the models
+steps2 <- stepwise_model3$`Process of Selection`[, "Step"]
+enteredEffect1 <- stepwise_model3$`Process of Selection`[, "EnteredEffect"]
+removedEffect1 <- stepwise_model3$`Process of Selection`[, "RemovedEffect"]
+sl1 <- stepwise_model1$`Process of Selection`[, "SL"]
+aic2 <- stepwise_model2$`Process of Selection`[, "AIC"]
+aic3 <- stepwise_model3$`Process of Selection`[, "AICc"]
+sbc4 <- stepwise_model4$`Process of Selection`[, "SBC"]
+
+# Determine the maximum length
+max_len <- max(sapply(list(steps2, enteredEffect1, removedEffect1, sl1, aic2, aic3, sbc4), length))
+
+# Function to pad vectors with NA to make their length equal to max_len
+pad_vector <- function(vec, max_len) {
+  length(vec) <- max_len
+  return(vec)
+}
+
+# Apply the function to each vector
+steps2 <- pad_vector(steps2, max_len)
+enteredEffect1 <- pad_vector(enteredEffect1, max_len)
+removedEffect1 <- pad_vector(removedEffect1, max_len)
+sl1 <- pad_vector(sl1, max_len)
+aic2 <- pad_vector(aic2, max_len)
+aic3 <- pad_vector(aic3, max_len)
+sbc4 <- pad_vector(sbc4, max_len)
+
+# Create the data frame
+model_selection <- data.frame(
+  Step = steps2,
+  EnteredEffect = enteredEffect1,
+  RemovedEffect = removedEffect1,
+  SL = sl1,
+  AIC = aic2,
+  AICc = aic3,
+  SBC = sbc4
+)
+model_selection[is.na(model_selection)] <- c("-")
+# Create table using kable
+kable(model_selection, caption = "Summary of Model Selection", digits = 4) 
+# |>
+# kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+## Final Cox Model Results
+
+```{r}
+# Create table using kable
+kable(stepwise_model2$`Coefficients of the Selected Variables`, 
+      caption = "Summary of Model Selection", 
+      digits = 2, row.names = FALSE)
+  # kable_styling(latex_options = c("striped", "hold_position"))
+```
 
 ## Check assumptions for Cox model
 
