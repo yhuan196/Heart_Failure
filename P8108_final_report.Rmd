@@ -24,11 +24,7 @@ abstract: "Heart failure (HF) results from weakened heart muscles, impairing blo
   of heart failure (HF) patients between April and December 2015. Our research employs
   a comprehensive range of statistical methodologies, including exploratory data analysis,
   nonparametric techniques, Kaplan-Meier curves, Cox proportional hazards models,
-  and parametric survival models, aiming to ascertain the influence of important predictors
-  such as creatinine levels, age, gender, ejection fraction, blood pressure, anemia,
-  and serum sodium on HF. Our findings aim to refining risk assessment models, thereby
-  strengthening clinical decision-making and optimizing patient care in the future.
-  XXXX (conclusion)"
+  and parametric survival models, aiming to identify significant predictors and investigate their influences on heart failure. The significant factors identified in our study include creatinine levels, age, ejection fraction, blood pressure, anemia, and serum sodium. Additionally, the model's discriminative ability across varied samples and conditions is validated using rigorous bootstrap validation methods such as c-index and calibration slope. Our findings contribute to refining risk assessment models, enhancing clinical decision-making, and optimizing patient care for heart failure in the future. The insights gained from our modeling process offer a deeper understanding of HF progression and its risk factors, paving the way for more personalized treatment approaches and preventive strategies that could profoundly impact patient outcomes and quality of life."
 editor_options:
   chunk_output_type: console
 ---
@@ -74,12 +70,12 @@ According to the statistics, heart failure affects 1-2\% of adults in the genera
 
 ## Objective
 
-Our project aims to assess the influence of key physiological and clinical factors on the outcomes of heart failure patients at the Institute of Cardiology and Allied Hospital, Faisalabad, Pakistan, during April-December 2015. We will examine variables such as creatinine levels, gender, age, ejection fraction, blood pressure, anemia, and serum sodium to determine their impact on patient prognosis. Utilizing a range of analytical techniques including exploratory data analysis, nonparametric methods, Kaplan-Meier curves, Cox proportional hazards modeling, parametric survival models, and validation procedures, our study is designed to identify crucial predictors of patient outcomes and their interrelationships. The insights gained from this analysis are expected to contribute significantly to the development of tailored treatment strategies and improved risk stratification models, thereby enhancing clinical decision-making and patient care for heart failure management.
+Our project aims to assess the influence of key physiological and clinical factors on the outcomes of heart failure patients at the Institute of Cardiology and Allied Hospital, Faisalabad, Pakistan, during April-December 2015. We will examine variables such as creatinine levels, gender, age, ejection fraction, blood pressure, anemia, and serum sodium to determine their impact on patient prognosis. Utilizing a range of analytic techniques including exploratory data analysis, nonparametric methods, Kaplan-Meier curves, Cox proportional hazards modeling, parametric survival models, and validation procedures, our study is designed to identify crucial predictors of patient outcomes and their interrelationships. The insights gained from this analysis are expected to contribute significantly to the development of tailored treatment strategies and improved risk stratification models, thereby enhancing clinical decision-making and patient care for heart failure management.
 
 
 # Exploratory Data Analysis (EDA)
 
-The present study focuses on 299 heart failure patients, including 105 women and 194 men. All participants were over 40 years old and diagnosed with left ventricular systolic dysfunction, classified under NYHA classes III and IV. The follow-up duration ranged from 4 to 285 days, with an average of 130 days. Diagnosis of the disease was confirmed through cardiac echocardiogram reports or physician's notes. A brief description of variables in the dataset is shown below:
+The present study focuses on 299 heart failure patients, including 105 women and 194 men. All participants were over 40 years old and diagnosed with left ventricular systolic dysfunction, classified under NYHA classes III and IV. The follow-up duration ranged from 4 to 285 days, with an average of 130 days. Diagnosis of the disease was confirmed through cardiac echo-cardiogram reports or physician's notes. A brief description of variables in the dataset is shown below:
 
 - **age**: Age in years 
 - **time**: Survival time in days
@@ -168,7 +164,7 @@ table1 = table1(~ time + age + gender + smoking + diabetes + bp + EF_cat +
 t1kable(table1) |> kable_styling(font_size = 8, latex_options = "HOLD_position")
 ```
 
-Based on the descriptive table, we can observe that the mean survival time for deletions and events is 158 days and 70.9 days, respectively. Since we have the complete dataset, there is no need to worry about missingness issue. The table also lists the p-values for each variable. Some variables have relatively large p-values. However, we still need to check the distribution of each variable ^[Histograms for continuous variables and bar charts for categorical variables] and determine which variables need to be transformed.
+Based on the descriptive table, we can observe that the mean survival time for deletions and events is 158 days and 70.9 days, respectively. Since we have the complete dataset, there is no need to worry about missing values issue. The table also lists the p-values for each variable. Some variables have relatively large p-values. However, we still need to check the distribution of each variable ^[Histograms for continuous variables and bar charts for categorical variables] and determine which variables need to be transformed.
 
 ```{r fig.align='center', fig.height=5, fig.width=8}
 # Data contains the continuous vars only
@@ -348,10 +344,10 @@ where $k = 0$ for the exponential model, $k = 1$ for the Weibull, log-logistic a
 ### Graphical Approach
 
 - Cox Proportional Hazard Model:
-The Cox proportional hazard model has two main assumptions. One is that the that the hazard functions of the survival curves of the different strata are proportional at time t. The other assumption is that the relationship between the $\log h(t)$, and each covariate is linear. We can compare the survival curves visaully to check the PH assumption. One of the most commonly used plot is $\log(-\log\hat{S}(t|Z = z))$ over $\log t$. Since we know:
+The Cox proportional hazard model has two main assumptions. One is that the that the hazard functions of the survival curves of the different strata are proportional at time t. The other assumption is that the relationship between the $\log h(t)$, and each covariate is linear. We can compare the survival curves visually to check the PH assumption. One of the most commonly used plot is $\log(-\log\hat{S}(t|Z = z))$ over $\log t$. Since we know:
 
 $$\log(-\log\hat{S}(t|Z = z))-\log(-\log\hat{S}_0(t)) = \beta$$
-where $Z$ is a binary group indicator and the survival probability is usually estimated by K-M estimator. The parallel curves in the plot indicates the hazard ratio accross the variable of interest is proportional at time t.
+where $Z$ is a binary group indicator and the survival probability is usually estimated by K-M estimator. The parallel curves in the plot indicates the hazard ratio across the variable of interest is proportional at time t.
 
 Another graphical method is to compare the differences between the fitted survival functions and observed K-M estimates from our PH model. If the fitted survival curse is closed to the observed K-M estimated survival curve, our PH assumption holds. 
 
@@ -626,7 +622,7 @@ The final model obtained from Stepwise Selection using AIC contains creatinine, 
 
 ### Model Checking
 
-Before fitting the Cox proportional hazard model, we need to check whether our variables hold the PH assumption^[See the Method Section for details]. The $\log(-\log\hat{S}(t|Z = z))$ over $\log t$ plot and observed survival versus estimated survival curves are provided below. We have multiple variables remained after model selection, so we randomly took two of them (`age` and `logcre`) for the PH assumption check. Since both `age` and `logcre`^[Since 1.5 mg/dL is the clinical threshold of creatinine, so we categorized log(creatinine + 1) > log(2.5) as "High", otherwise, it's in "Low" group. And prople in "High" group should be regarded as renal dysfunction.] are continuous variable, we categorized it into two groups and recoded as "Low" and "High", respectively. 
+Before fitting the Cox proportional hazard model, we need to check whether our variables hold the PH assumption^[See the Method Section for details]. The $\log(-\log\hat{S}(t|Z = z))$ over $\log t$ plot and observed survival versus estimated survival curves are provided below. We have multiple variables remained after model selection, so we randomly took two of them (`age` and `logcre`) for the PH assumption check. Since both `age` and `logcre`^[Since 1.5 mg/dL is the clinical threshold of creatinine, so we categorized log(creatinine + 1) > log(2.5) as "High", otherwise, it's in "Low" group. And people in "High" group should be regarded as renal dysfunction.] are continuous variable, we categorized it into two groups and recoded as "Low" and "High", respectively. 
 
 ```{r fig.align='center', fig.width=10, fig.height=6}
 mc_dat = nonpara_dat %>% mutate(age_cat = case_when(age <= mean(age) ~ "Low", age > mean(age) ~ "High")) %>% 
@@ -768,7 +764,7 @@ Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **F
 
 ```{r, fig.align='center', fig.height=5, fig.width=8}
 # # Calculate predicted risks
-# predicted_risks <- predict(step_model, newdata = model_data, type = "risk")
+# predicted_risks <- predict(step_model, newdata = stepwise_data, type = "risk")
 # 
 # # Time points for ROC analysis
 # time_points <- c(50, 250)
