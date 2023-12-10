@@ -221,7 +221,7 @@ In our analysis, we applied life table, Kaplan-Meier and Fleming-Harrington Curv
 The life table is particularly useful for larger sample sizes and when the data are grouped into intervals. The survival probability at each interval is estimated as:
   
 $$
-  \hat{S}_L(t_i)=\prod_{t_{i-1}<t}(1-\frac{d_{i}}{{n_{i}'}})
+\hat{S}_L(t_i)=\prod_{t_{i-1}<t}(1-\frac{d_{i}}{{n_{i}'}})
 $$
 
 where $d_i$ is the number of events in interval^[This is the survival function at the end of interval. However, R often reports the survival function at the beginning of the interval] $[t_{i-1}, t_i]$, $n_i'$ is the average number at risk in the interval $[t_{i-1}, t_i]$.
@@ -229,7 +229,7 @@ where $d_i$ is the number of events in interval^[This is the survival function a
 The Kaplan-Meier curve allows for varying follow-up times and censored data, making it versatile for smaller samples and individual subject data. It provides a visual representation of the survival experience of the cohort over time. The Kaplan-Meier estimate of survival function can be mathematically expressed as: 
       
 $$ 
-      \hat S_K(t)=\prod_{t_i \le t} [1-\frac{d_i}{n_i}]
+\hat S_K(t)=\prod_{t_i \le t} [1-\frac{d_i}{n_i}]
 $$
 where $d_i$ is the number of events at time $t_i$ and $n_i$ is the number at risk at $t_i^-$, and $c_i$ is the number of censored during the interval $[t_i, t_{i+1}]$  
       
@@ -323,6 +323,7 @@ The Accelerated Failure Time (AFT) model is a parametric model assumes that the 
 $$
 log(T) = \mu+\beta_1x_1+\beta_2x_2+ ... +\beta_px_p+\epsilon
 $$
+
 ```{r}
 # aft.fit <- survreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
 #                      age + ef_cat+ sodium + pletelets + logcre + logcpk,
@@ -340,11 +341,24 @@ $$\text{Max}_{v,s}[\chi^2_{LR}(v, s)]$$
 where $\chi^2_{LR}(v, s)$ is the log-rank test statistic computed for a split $s$ on variable $v$. The process continues until a stopping criterion is met, typically based on the minimum number of observations in a node or a minimum improvement in the survival difference. The result is a tree where the paths from the root to the leaves represent rules for predicting survival, offering a visual and interpretable model of the factors affecting the time to an event like death in this study.
 
 ### Stepwise Selection
-In model selection process, we incorporated bidirectional stepwise selection, alongside using various model assessment criteria such as Akaike Information Criterion (AIC), Corrected Akaike Information Criterion (AICc), and Schwarz Bayesian Criterion (SBC). This comprehensive approach enhanced our ability to identify the most appropriate model for our data.
+In model selection process, we incorporated bidirectional stepwise selection, alongside using various model assessment criteria such as Akaike Information Criterion (AIC), Corrected Akaike Information Criterion (AICc), and Schwarz Bayesian Criterion (SBC). This comprehensive approach enhanced our ability to identify the most appropriate model for our data. 
+
+We chose the final model based on AIC in our survival analysis due to its effective balance between model complexity and fit, particularly valuable in preventing overfitting in complex models. Additionally, given our sufficiently large sample size, AIC provided a more appropriate measure compared to AICc, and its less stringent penalty compared to SBC was better suited for our data's scale and complexity. *Collett (1994)* suggested that the AIC for survival models should be: 
+
 
 $$
-h(t) = h_0(t)\exp[\beta_1X_{age} + \beta_2X_{EF_{Medium}} + \beta_3X_{EF_{High}} + \beta_4X_{bp}+\beta_5X_{sodium} + \beta_6\log(X_{creatinine}+1)]
+AIC = -2\partial \log(likeligood) +2k
 $$
+
+In this equation, $k$ represents the number of parameters in the model. The term $2k$ serves as a penalty to discourage overfitting by complex models. 
+
+For different survival models, the AIC adapts as follows: 
+
+$$
+AIC = -2\log(likeligood) + 2(p+2+k)
+$$
+
+where $k = 0$ for the exponential model, $k = 1$ for the Weibull, log-logistic and log-normal models, and $k = 2$ for the generalized gamma model.
 
 
 ## Model Validation
@@ -445,11 +459,17 @@ results_table2
 
 The Log-Rank test and the Wilcoxon test can be used to test for differences in survival experience between genders. Reviewing the results from the table, we find that both the Log-Rank test and the Wilcoxon test have provided a similar result and gave a p-value of 0.9. This indicates that we failed to reject the null hypothesis. Therefore, we conclude that there is no statistically significant difference in survival experiences between males and females.
 
+## Model Selection
+
+$$
+h(t) = h_0(t)\exp[\beta_1{age} + \beta_2{EF_{Medium}} + \beta_3{EF_{High}} + \beta_4{bp}+\beta_5{sodium} + \beta_6\log({creatinine}+1)]
+$$
+
 ## Semi-parametric Models
 
 The final model obtained from Stepwise Selection using AIC contains creatinine, age, ejection fraction, blood pressure status, sodium covariates.
 
-## Parametric Model
+## Parametric Models
 (Model checking, fitting the model)
 
 ## Model Validation 
