@@ -24,7 +24,9 @@ packages <- c("dplyr", "tidyverse", "readxl",
               # ggsurvplot()
               "survminer",
               # stepwiseCox()
-              "StepReg")
+              "StepReg",
+              "kableExtra",
+              "knitr")
 
 
 # Install missing packages
@@ -54,7 +56,9 @@ raw_data <- read_csv("data/heart_failure.csv")
 # clean variable names
 raw_data <- raw_data |>
   arrange(TIME) |>
-  janitor::clean_names()
+  janitor::clean_names() |>
+  mutate(platelets = pletelets,
+         anemia = anaemia)
 
 ## data cleaning, create data frame for model
 model_data <- raw_data |>
@@ -62,11 +66,10 @@ model_data <- raw_data |>
          smoking = factor(smoking),
          diabetes = factor(diabetes),
          bp = factor(bp),
-         # event = factor(event),
-         anaemia = factor(anaemia),
-         logcre=log(creatinine+1),
+         anemia = factor(anemia),
+         logcre =log(creatinine+1),
          logcpk = log(cpk+1)) |>
-  rename(pletelets = pletelets)|>
+  rename(platelets = platelets)|>
   mutate(ef_cat = factor(case_when(
     ejection_fraction <= 30 ~ "Low",
     ejection_fraction > 30 & ejection_fraction < 45 ~ "Medium",
@@ -93,9 +96,9 @@ stepwise_data <- heart_data |>
 ```{r}
 # use survival to fit a cox model
 # 6 categorical and 5 continuous predictors
-cox_model1 <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ef_cat +
-                     sodium + pletelets + creatinine + cpk, data = model_data)
-summary(cox_model1)
+cox_model1 <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + age + ef_cat +
+                     sodium + platelets + creatinine + cpk, data = model_data)
+# summary(cox_model1)
 ```
 
 **Full model with log transform on left-skewed predictors**
@@ -104,8 +107,8 @@ summary(cox_model1)
 # consider transformation on left-skewed predictors: 
 # logcre=log(creatinine+1), logcpk=log(cpk+1)
 # 6 categorical and 5 continuous predictors 
-cox_model2 <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ef_cat+ sodium + pletelets + logcre + logcpk, data = model_data)
-summary(cox_model2)
+cox_model2 <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + age + ef_cat+ sodium + platelets + logcre + logcpk, data = model_data)
+# summary(cox_model2)
 ```
 
 
@@ -113,11 +116,11 @@ summary(cox_model2)
 
 **Selection Criteria SL**
 
-7 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anaemia .
+7 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anemia .
 ```{r}
 # Variable selection using stepwise Cox model using Sl
 stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anaemia + age + sodium + pletelets + logcre + logcpk + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
                                  ef_catMedium + ef_catHigh,
                                data = stepwise_data,
                                select = "SL",
@@ -130,7 +133,7 @@ stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
                                best = NULL)
 
 # stepwise_model1
-# 7 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anaemia  
+# 7 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anemia  
 ```
 
 
@@ -140,7 +143,7 @@ stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
 ```{r}
 ## Variable selection using stepwise Cox model using AIC
 stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anaemia + age + sodium + pletelets + logcre + logcpk + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
                                  ef_catMedium + ef_catHigh,
                                data = stepwise_data,
                                selection = "bidirection",
@@ -153,19 +156,18 @@ stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
                                weights = NULL,
                                best = NULL)
 
-stepwise_model2
+# stepwise_model2
 # 6 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium
-
 ```
 
 
 **Selection Criteria AICc**
 
-9 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anaemia, logcpk, diabetes 
+9 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anemia, logcpk, diabetes 
 ```{r}
 ### Variable selection using stepwise Cox model using AICc
 stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anaemia + age + sodium + pletelets + logcre + logcpk + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
                                  ef_catMedium + ef_catHigh,
                                data = stepwise_data,
                                selection = "bidirection",
@@ -179,7 +181,7 @@ stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
                                best = NULL)
 
 # stepwise_model3
-# AICc 9 variables: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anaemia, logcpk, diabetes 
+# AICc 9 variables: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anemia, logcpk, diabetes 
 ```
 
 
@@ -190,7 +192,7 @@ stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
 ```{r}
 ### Variable selection using stepwise Cox model using SBC
 stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anaemia + age + sodium + pletelets + logcre + logcpk + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
                                  ef_catMedium + ef_catHigh,
                                data = stepwise_data,
                                selection = "bidirection",
@@ -207,6 +209,71 @@ stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
 # SBC 5 variables: logcre, age, ef_catMedium, ef_catHigh, bp
 ```
 
+
+
+
+# Table of Selection Summary
+
+```{r}
+# Extract data from the models
+steps2 <- stepwise_model3$`Process of Selection`[, "Step"]
+enteredEffect1 <- stepwise_model3$`Process of Selection`[, "EnteredEffect"]
+sl1 <- stepwise_model1$`Process of Selection`[, "SL"]
+aic2 <- stepwise_model2$`Process of Selection`[, "AIC"]
+aic3 <- stepwise_model3$`Process of Selection`[, "AICc"]
+sbc4 <- stepwise_model4$`Process of Selection`[, "SBC"]
+
+# Determine the maximum length
+max_len <- max(sapply(list(steps2, enteredEffect1, sl1, aic2, aic3, sbc4), length))
+
+# Function to pad vectors with NA to make their length equal to max_len
+pad_vector <- function(vec, max_len) {
+  length(vec) <- max_len
+  return(vec)
+}
+
+# Apply the function to each vector
+steps2 <- pad_vector(steps2, max_len)
+enteredEffect1 <- pad_vector(enteredEffect1, max_len)
+sl1 <- pad_vector(sl1, max_len)
+aic2 <- pad_vector(aic2, max_len)
+aic3 <- pad_vector(aic3, max_len)
+sbc4 <- pad_vector(sbc4, max_len)
+
+# Create the data frame
+model_selection <- data.frame(
+  Step = steps2,
+  EnteredEffect = enteredEffect1,
+  SL = round(as.numeric(sl1),4),
+  AIC = round(as.numeric(aic2), 2),
+  AICc = round(as.numeric(aic3), 2),
+  SBC = round(as.numeric(sbc4), 2)
+)
+model_selection[is.na(model_selection)] <- c("-")
+# Create table using kable
+kable(model_selection, caption = "Summary of Model Selection", digits = 4) 
+# |>
+# kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+## Final Cox Model Results
+
+```{r}
+# Create table using kable
+model_summary <- tibble(stepwise_model2$`Coefficients of the Selected Variables`)
+
+model_summary <- model_summary |>
+  mutate(coef = as.numeric(coef),
+        `exp(coef)` = as.numeric(`exp(coef)`),
+        `se(coef)` = as.numeric(`se(coef)`),
+        z = as.numeric(z),
+        `Pr(>|z|)`= as.numeric(`Pr(>|z|)`))
+
+kable(model_summary, 
+      caption = "Summary of Cox Model", 
+      digits = 4, row.names = TRUE)
+# kable_styling(latex_options = c("striped", "hold_position"))
+```
 
 ## Check assumptions for Cox model
 
@@ -244,7 +311,7 @@ ggsurvplot(survfit(step_model), data = model_data, conf.int = TRUE)
 **Schoenfeld residuals**
 ```{r}
 colon_coxph <- coxph(Surv(time, event)~ logcre + age + ef_catMedium + ef_catHigh + 
-                       bp + anaemia + sodium, data = stepwise_data)
+                       bp + anemia + sodium, data = stepwise_data)
 
 ggcoxzph(cox.zph(colon_coxph), var = c("logcre"), df = 2, nsmo = 1000)
 
@@ -256,7 +323,7 @@ ggcoxzph(cox.zph(colon_coxph), var = c("ef_catHigh"), df = 2, nsmo = 1000)
 
 ggcoxzph(cox.zph(colon_coxph), var = c("bp"), df = 2, nsmo = 1000)
 
-ggcoxzph(cox.zph(colon_coxph), var = c("anaemia"), df = 2, nsmo = 1000)
+ggcoxzph(cox.zph(colon_coxph), var = c("anemia"), df = 2, nsmo = 1000)
 
 ggcoxzph(cox.zph(colon_coxph), var = c("sodium"), df = 2, nsmo = 1000)
 ```

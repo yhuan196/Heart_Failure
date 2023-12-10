@@ -1,21 +1,35 @@
 ---
-title: "**Heart Failure Survival Study**"
-subtitle: "**Mailman School of Public Health at Columbia University**"
+title: '**Heart Failure Survival Study**'
+author:
+-  "Yi Huang, Runze Cui, Xuesen Zhao, Huanyu Chen, Jiahe Deng"
+- 'P8108 Final Project Report: Group 6'
 date: "Dec 7, 2023"
-author: 
-  - "Yi Huang, Runze Cui, Xuesen Zhao, Huanyu Chen, Jiahe Deng"
-  - "P8108 Final Project Report: Group 6"
-output: 
+output:
   pdf_document:
-    number_section: true
-    extra_dependencies: ["float"]
+    number_section: yes
+    extra_dependencies: float
+subtitle: '**Mailman School of Public Health at Columbia University**'
 header-includes:
 - \usepackage{caption}
-- \usepackage{makecell} 
+- \usepackage{makecell}
 - \captionsetup[figure]{labelformat=empty}
 - \captionsetup[table]{labelformat=empty}
-abstract: Heart failure (HF) results from weakened heart muscles, impairing blood pumping and causing symptoms like breathlessness (Ahmad et al., 2017). Statistics show HF affects 1-2% of adults, especially those over 70, potentially higher due to misdiagnosis (Jones et al., 2019). HF prevalence increased by 25% since 2002 due to aging, improved survival, and risk factors. This study utilizes data from the Institute of Cardiology and Allied Hospital in Faisalabad, Pakistan, which previously investigated the impact of key physiological and clinical factors on the prognosis of heart failure (HF) patients between April and December 2015. Our research employs a comprehensive range of statistical methodologies, including exploratory data analysis, nonparametric techniques, Kaplan-Meier curves, Cox proportional hazards models, and parametric survival models, aiming to ascertain the influence of important predictors such as creatinine levels, age, gender, ejection fraction, blood pressure, anemia, and serum sodium on HF. Our findings aim to refining risk assessment models, thereby strengthening clinical decision-making and optimizing patient care in the future. XXXX (conclusion)
-editor_options: 
+abstract: "Heart failure (HF) results from weakened heart muscles, impairing blood
+  pumping and causing symptoms like breathlessness (Ahmad et al., 2017). Statistics
+  show HF affects 1-2% of adults, especially those over 70, potentially higher due
+  to misdiagnosis (Jones et al., 2019). HF prevalence increased by 25% since 2002
+  due to aging, improved survival, and risk factors. This study utilizes data from
+  the Institute of Cardiology and Allied Hospital in Faisalabad, Pakistan, which previously
+  investigated the impact of key physiological and clinical factors on the prognosis
+  of heart failure (HF) patients between April and December 2015. Our research employs
+  a comprehensive range of statistical methodologies, including exploratory data analysis,
+  nonparametric techniques, Kaplan-Meier curves, Cox proportional hazards models,
+  and parametric survival models, aiming to ascertain the influence of important predictors
+  such as creatinine levels, age, gender, ejection fraction, blood pressure, anemia,
+  and serum sodium on HF. Our findings aim to refining risk assessment models, thereby
+  strengthening clinical decision-making and optimizing patient care in the future.
+  XXXX (conclusion)"
+editor_options:
   chunk_output_type: console
 ---
 \thispagestyle{empty}
@@ -48,6 +62,7 @@ library(boot)
 library(rms)
 library(survivalROC)
 library(rpart)
+library(eha)
 ```
 
 # Introduction
@@ -84,12 +99,12 @@ This study falls into the category of Overall Survival (OS), where event indicat
 
 ```{r}
 data = read_csv("./data/heart_failure.csv") 
-dat <- data %>% 
-  arrange(TIME) %>% janitor::clean_names() %>%
+dat <- data |> 
+  arrange(TIME) |> janitor::clean_names() |>
   mutate(ejection_fraction_cat = case_when(ejection_fraction <= 30 ~ "Low",
                                       ejection_fraction > 30
                                       & ejection_fraction <= 45 ~ "Medium",
-                                      ejection_fraction > 45 ~ "High")) %>% 
+                                      ejection_fraction > 45 ~ "High")) |> 
   mutate(gender = factor(gender), 
          smoking = factor(smoking),
          diabetes = factor(diabetes),
@@ -97,7 +112,7 @@ dat <- data %>%
          event = factor(event),
          anaemia = factor(anaemia),
          ejection_fraction_cat = factor(ejection_fraction_cat,
-                                        levels = c("Low", "Medium", "High"))) %>% 
+                                        levels = c("Low", "Medium", "High"))) |> 
   rename(platelets = pletelets,
          anemia = anaemia,
          EF = ejection_fraction,
@@ -150,17 +165,17 @@ table1 = table1(~ time + age + gender + smoking + diabetes + bp + EF_cat +
                   anemia + sodium + creatinine + cpk + platelets | event,
                   data = dat_table,
                 extra.col = list(`P-value` = pvalue), caption = caption)
-t1kable(table1) %>% kable_styling(font_size = 8, latex_options = "HOLD_position")
+t1kable(table1) |> kable_styling(font_size = 8, latex_options = "HOLD_position")
 ```
 
 Based on the descriptive table, we can observe that the mean survival time for deletions and events is 158 days and 70.9 days, respectively. Since we have the complete dataset, there is no need to worry about missingness issue. The table also lists the p-values for each variable. Some variables have relatively large p-values. However, we still need to check the distribution of each variable ^[Histograms for continuous variables and bar charts for categorical variables] and determine which variables need to be transformed.
 
 ```{r fig.align='center', fig.height=5, fig.width=8}
 # Data contains the continuous vars only
-cont_dat = dat %>% 
+cont_dat = dat |> 
   select(age, sodium, creatinine, platelets, cpk)
 # Long format 
-cont_dat.long = cont_dat %>% 
+cont_dat.long = cont_dat |> 
   pivot_longer(cols = c(age, sodium, creatinine, platelets, cpk))
 # Plot the continuous variable histograms
 cont_hist = ggplot(data = cont_dat.long, aes(x = value)) +
@@ -173,10 +188,10 @@ cont_hist = ggplot(data = cont_dat.long, aes(x = value)) +
 cont_hist
 
 # Data contains the categorical vars only
-cate_data = dat %>% 
+cate_data = dat |> 
   select(event, gender, smoking, diabetes, bp, anemia, EF_cat)
 # Long format 
-cate_dat.long = cate_data %>% 
+cate_dat.long = cate_data |> 
   pivot_longer(cols = c(event, gender, smoking, diabetes, bp, anemia, EF_cat))
 # Plot the categorical variable barplots
 cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
@@ -191,10 +206,10 @@ cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
 cate_barplot
 ```
 
-After checking the histograms, two continuous variables creatinine phosphokinase (cpk) and serum creatinine are right-skewed. We decide to log-transformed both of them for further model fitting.
+After checking the histograms, two continuous variables creatinine phosphokinase (cpk) and serum creatinine are right-skewed. We decide to log-transformed both of them for further model fitting. The new variables are stored in the data named `logcre` and `logcpk`.
 
 ```{r}
-dat_log = dat %>% 
+dat_log = dat |> 
   mutate(cpk_log = log(cpk + 1),
          creatinine_log = log(creatinine + 1))
 ```
@@ -205,88 +220,80 @@ dat_log = dat %>%
 In our analysis, we applied life table, Kaplan-Meier and Fleming-Harrington Curves to estimate the survival function. All three approaches can handle censored data. 
 
 The life table is particularly useful for larger sample sizes and when the data are grouped into intervals. The survival probability at each interval is estimated as:
-
+  
 $$
-\hat{S}_L(t_i)=\hat{S}_L(t_{i-1})(1-\frac{d_{i}}{{n_{i}'}})
+\hat{S}_L(t_i)=\prod_{t_{i-1}<t}(1-\frac{d_{i}}{{n_{i}'}})
 $$
 
 where $d_i$ is the number of events in interval^[This is the survival function at the end of interval. However, R often reports the survival function at the beginning of the interval] $[t_{i-1}, t_i]$, $n_i'$ is the average number at risk in the interval $[t_{i-1}, t_i]$.
-
-The Kaplan-Meier curve allows for varying follow-up times and censored data, making it versatile for smaller samples and individual subject data. It provides a visual representation of the survival experience of the cohort over time. The K-M estimator^[Also known as product-limit estimator] can be mathematically expressed as: 
-
+    
+The Kaplan-Meier curve allows for varying follow-up times and censored data, making it versatile for smaller samples and individual subject data. It provides a visual representation of the survival experience of the cohort over time. The Kaplan-Meier estimate of survival function can be mathematically expressed as: 
+      
 $$ 
-\hat S_K(t)= \begin{cases}
-1 & \text { if } t< t_1  \\ 
-\prod_{t_i \le t} [1-\frac{d_i}{n_i}] = \prod_{t_i \le t} [1-h_i]& \text { if }   t \ge t_1
-\end{cases}
+\hat S_K(t)=\prod_{t_i \le t} [1-\frac{d_i}{n_i}]
 $$
 where $d_i$ is the number of events at time $t_i$ and $n_i$ is the number at risk at $t_i^-$, and $c_i$ is the number of censored during the interval $[t_i, t_{i+1}]$  
-
+      
 Unlike the Kaplan-Meier estimator, the Fleming-Harrington estimator^[Also known as Nelson-Aalen estimator] is designed to weight events differently over time in survival analysis. It focuses on estimating the cumulative hazard function. The estimated survival probability can be computed as:
-
+      
 $$ 
-\hat S_F(t)= \begin{cases}
-1 & \text { if } t< t_1  \\ 
-\prod_{t_i \le t} \exp[-\frac{d_i}{n_i}] = \prod_{t_i \le t} \exp[-h_i] & \text { if }   t \ge t_1
-\end{cases}
+\hat S_F(t)= \prod_{t_i \le t} \exp[-\frac{d_i}{n_i}]
 $$
 where the $d_i$, $n_i$ and $c_i$ conditions are the same as K-M estimator above, It is true that $\hat S_F(t) \geq \hat S_K(t)$ because $\exp{[-\frac{d_i}{n_i}]}$ is always great and equal to $1 - \frac{d_i}{n_i}$. 
-
+    
 Both K-M and F-H survival curves are presented in the **Result** section for further comparison.
-
+    
 ## Hypothesis Testing
-
+    
 The Log-Rank test focuses on comparing the number of observed to expected events across the groups at each time point. The test statistic^[This is the log-rank test statistics with tie] is calculated as:
-
+      
 $$
 \frac{L}{\sqrt{\text{Var}(L)}} = \frac{\sum_{i=1}^{k}(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i^2(n_i-1)}}} \sim N(0, 1)
 $$
-
+      
 The Gehan's Wilcoxon test^[Also known as the Breslow test] gives more weight to events at earlier time points. It achieves a greater sensitivity to differences in survival that manifest at the beginning of the observation period. The test statistic is calculated as:
 
 $$
-\frac{L}{\sqrt{\text{Var}(L)}} = \frac{\sum_{i=1}^{k}n_i(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i-1}}}
+\frac{L}{\sqrt{\text{Var}(L)}} = \frac{\sum_{i=1}^{k}n_i(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i-1}}} \sim N(0,1)
 $$
-Obviously, the Gehan's Wilcoxon test is actually a special case of weighted log-rank test with weight equals $n_i$.
 
-
+The Gehan's Wilcoxon test is actually a special case of weighted log-rank test for weight equals $n_i$.
+    
+    
 ## Proportional Hazard Models
-
-We use three propositional hazard models to evaluate the effect of several factors on survival time. It allows us to examine how specified factors influence the rate of the event that we are interested in at a particular point in time. This rate is the hazard rate. 
-
-Proportional hazard model is the primary regression model to investigate the effectiveness of treatment $X$ over survival time $T$, where the $i_{th}$ patient at a time $t$ \
+    
+We use three propositional hazard models to evaluate the effect of several factors on survival time. It allows us to examine how specified factors influence the rate of the event that we are interested in at a particular point in time. The rate here is the hazard rate. Proportional hazard model is the primary regression model to investigate the effectiveness of treatment $X$ over survival time $T$, where the $i_{th}$ patient at a time $t$ \
 is\
 $$h_i(t) = h_0(t)\exp[{\beta_1X_{i1}+\beta_2X_{i2}+\ldots+\beta_p X_{ip}}]$$
-
 where
 
 \begin{itemize}
-
+    
 \item $h_0(t)$ is the baseline hazard function
-
-\item $h(t)$ is the hazard function determined by a set of $p$ covariates $(x_1,\ x_2,\ ...,\ x_p)$
-
+    
+\item $h_i(t)$ is the hazard function determined by a set of $p$ covariates $(X_{i1},\ X_{i2},\ ...,\ X_{ip})$
+      
 \item $(\beta_1,\ \beta_2,\ ...,\ \beta_p)$ are the coefficients which measure the impact of covariates.
-
+    
 \end{itemize}
-
+    
 The **proportional hazard** can be expressed as ratio of two hazard functions at time t in two individuals or groups with covariates $X$ and $X'$, and does not depend on $t$. 
 
 $$\frac{h(t|X = x)}{h(t|X = x')} = e^{\beta({x-x'})}$$
 
 There are different ways to formulate the baseline hazard function $h_0(t)$, which lead to different models and estimations. 
 
-### Cox PH Model
+### Cox Proportational Hazard Model
 
-The Cox PH model is a semi-parametric model which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model looks as parametric PH and can be expressed as:
+The Cox proportional hazard model is a semi-parametric model which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model is given by:
 
 $$
 h_i(t) = \tilde{h}_0(t) \exp[\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}] \\
 $$
 
-### Weibull Model
+### Weibull Proportional Hazard Model
 
-Assumes a specific functional form for the hazard rate, which can either increase or decrease over time.
+The Weibull model is a popular parametric proportional hazard model which assumes a specific functional form for the hazard rate, either increase or decrease over time. Its parameters are intuitively interpretable, with the shape parameter distinctly indicating whether the hazard rate is increasing, decreasing, or constant.
 
 $$
 \begin{aligned}
@@ -294,11 +301,11 @@ h_i(t) &= \lambda \gamma t^{\gamma - 1} \exp(\beta_1 X_{i1} + \beta_2 X_{i2} + \
 \end{aligned}
 $$
 
-where $\lambda$ is the Scale parameter, and $\gamma$ is the Shape parameter.
+where $\lambda$ is the scale parameter, and $\gamma$ is the shape parameter.
 
-### Gompertz Model
+### Gompertz Proportional Hazard Model
 
-The Gompertz model assumes a hazard function that either increases or decreases exponentially over time.
+The Gompertz model, a parametric approach in survival analysis, assumes an exponential increase or decrease in the hazard function over time. This approach is suitable for studies where hazard rates show distinct exponential trends. 
 
 $$
 \begin{aligned}
@@ -306,8 +313,7 @@ h_i(t) &= \lambda \exp(\eta t + \beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta
 \end{aligned}
 $$
 
-where $\lambda$ is the Scale parameter, and $\eta$ is the rate of increase or decrease in hazard.
-
+where $\lambda$ is the scale parameter, and $\eta$ is the rate of increase or decrease in hazard.
 
 ## Model Selection
 ### Survival Tree
@@ -318,12 +324,42 @@ $$\text{Max}_{v,s}[\chi^2_{LR}(v, s)]$$
 where $\chi^2_{LR}(v, s)$ is the log-rank test statistic computed for a split $s$ on variable $v$. The process continues until a stopping criterion is met, typically based on the minimum number of observations in a node or a minimum improvement in the survival difference. The result is a tree where the paths from the root to the leaves represent rules for predicting survival, offering a visual and interpretable model of the factors affecting the time to an event like death in this study.
 
 ### Stepwise Selection
-In model selection process, we incorporated bidirectional stepwise selection, alongside using various model assessment criteria such as Akaike Information Criterion (AIC), Corrected Akaike Information Criterion (AICc), and Schwarz Bayesian Criterion (SBC). This comprehensive approach enhanced our ability to identify the most appropriate model for our data.
+In model selection process, we incorporated bidirectional stepwise selection, alongside using various model assessment criteria such as Akaike Information Criterion (AIC), Corrected Akaike Information Criterion (AICc), and Schwarz Bayesian Criterion (SBC). This comprehensive approach enhanced our ability to identify the most appropriate model for our data. 
+
+We chose the final model based on AIC in our survival analysis due to its effective balance between model complexity and fit, particularly valuable in preventing overfitting in complex models. Additionally, given our sufficiently large sample size, AIC provided a more appropriate measure compared to AICc, and its less stringent penalty compared to SBC was better suited for our data's scale and complexity. The AIC for the survival model is as follows (Collett et al., 1999):
+
+The formula for the Cox model being:
 
 $$
-h(t) = h_0(t)\exp[\beta_1X_{age} + \beta_2X_{EF_{Medium}} + \beta_3X_{EF_{High}} + \beta_4X_{bp}+\beta_5X_{sodium} + \beta_6\log(X_{creatinine}+1)]
+AIC_{cox} = -2\partial \mathcal{L}(\theta;x) +2k
 $$
 
+In this equation, $k$ represents the number of parameters in the model. The term $2k$ serves as a penalty to discourage overfitting by complex models and $\mathcal{L}(\theta;x)$ indicates log-likelihood of parameter $\theta$ in the sample $x$.
+
+For other survival models, the AIC adapts as follows with different penalty term: 
+
+$$
+AIC = -2\mathcal{L}(\theta;x) + 2(p+2+k)
+$$
+
+where $k = 0$ for the exponential model, $k = 1$ for the Weibull, log-logistic and log-normal models, and $k = 2$ for the generalized gamma model.
+
+## Model Checking
+### Graphical Approach
+
+- Cox Proportional Hazard Model:
+The Cox proportional hazard model has two main assumptions. One is that the that the hazard functions of the survival curves of the different strata are proportional at time t. The other assumption is that the relationship between the $\log h(t)$, and each covariate is linear. We can compare the survival curves visaully to check the PH assumption. One of the most commonly used plot is $\log(-\log\hat{S}(t|Z = z))$ over $\log t$. Since we know:
+
+$$\log(-\log\hat{S}(t|Z = z))-\log(-\log\hat{S}_0(t)) = \beta$$
+where $Z$ is a binary group indicator and the survival probability is usually estimated by K-M estimator. The parallel curves in the plot indicates the hazard ratio accross the variable of interest is proportional at time t.
+
+Another graphical method is to compare the differences between the fitted survival functions and observed K-M estimates from our PH model. If the fitted survival curse is closed to the observed K-M estimated survival curve, our PH assumption holds. 
+
+- Parametric Proportional Hazard Model:
+In the parametric proportional hazard models, we can use both $-\log \hat{S}(t)$ plot and $\log(-\log\hat{S}(t))$ to confirm if the hazard rate is constant. In other words, it can help us choose a proper distribution before fitting the models. For $-\log \hat{S}(t)$ plot, a straight line means constant hazard rate and the distribution should be exponential. Otherwise, Weibull model is better. In $\log(-\log\hat{S}(t))$ plot, if the slope of the straight line equals 1, then hazard rate should be constant. And if it is not, we choose Weibull model.
+
+## Residuals and Interaction Test
+Schoenfeld residuals are used to test the assumption of proportional hazards. If the proportional hazards assumption holds, these residuals should not show any systematic trend when plotted against time. In other words, if some covariate was dropped from a previous model selection and shows a regression line of zero in that figure, then we need to consider whether to add that variable of interest to our Cox proportional hazards model.
 
 ## Model Validation
 
@@ -345,42 +381,42 @@ To evaluate the calibration of our model, we focused on the calibration slope. C
 ### Life Table
 
 ```{r}
-nonpara_dat = dat_log %>% 
-  dplyr::select(-c(EF, cpk, creatinine)) %>% 
-  relocate(time, event, EF_cat, smoking, everything()) %>% 
+nonpara_dat = dat_log |> 
+  dplyr::select(-c(EF, cpk, creatinine)) |> 
+  relocate(time, event, EF_cat, smoking, everything()) |> 
   mutate(event = as.numeric(event) - 1)
-nonpara_male = nonpara_dat %>% filter(gender == 1)
-nonpara_female = nonpara_dat %>% filter(gender == 0)
+nonpara_male = nonpara_dat |> filter(gender == 1)
+nonpara_female = nonpara_dat |> filter(gender == 0)
 ```
 
-```{r lifetable}
+```{r}
 life_table_male <- lifetab2(Surv(time, event) ~ 1, data = nonpara_male,
                             breaks = seq(0, 300, 30))
 life_table_female <- lifetab2(Surv(time, event) ~ 1, data = nonpara_female,
                               breaks = seq(0, 300, 30))
-life_table_male %>% kable(booktabs = T,
-                          caption = "Table 2.1: Heart Failure Life Table (Male)") %>% 
+life_table_male |> kable(booktabs = T,
+                          caption = "Table 2.1: Heart Failure Life Table (Male)") |> 
   kable_styling(latex_options = c("HOLD_position"), font_size = 6) 
-life_table_female %>% kable(booktabs = T,
-                            caption = "Table 2.2: Heart Failure Life Table (Female)") %>% 
+life_table_female |> kable(booktabs = T,
+                            caption = "Table 2.2: Heart Failure Life Table (Female)") |> 
   kable_styling(latex_options = c("HOLD_position"), font_size = 6)
 ```
 
-Table 2.1 and Table 2.2 represent the lifetable with a time break of 30 days (one month), stratified by gender. According to the table, we find that the last line (270-300 days) shows a survival probability larger than 0.5 for both genders (0.54 for male and 0.59 for female). This may indicate a high life expectancy and improved health care, where a significant proportion of individuals are expected to live longer than 300 days (10 months). Moreover, males have a relatively shorter survival time than females based on the lifetable. This hypothesis needs future testing in the following modeling fit.
+**Table 2.1** and **Table 2.2** represent the lifetable with a time break of 30 days (one month), stratified by gender. According to the table, we find that the last line (270-300 days) shows a survival probability larger than 0.5 for both genders (0.54 for male and 0.59 for female). This may indicate a high life expectancy and improved health care, where a significant proportion of individuals are expected to live longer than 300 days (10 months). Moreover, males have a relatively shorter survival time than females based on the life table. This hypothesis needs future testing in the following modeling fit.
 
 ### The Kaplan-Meier and Fleming-Harrington Model
 
-```{r KM_FH, fig.width=12, fig.height=5}
+```{r fig.width=12, fig.height=5}
 km = survfit(Surv(time, event) ~ gender, data = nonpara_dat)
 fh <- survfit(Surv(time, event) ~ gender, data = nonpara_dat, type = "fh")
 km_plot = 
-  km %>% autoplot() +
+  km |> autoplot() +
   labs(y = "S(t)",
        x = "Time",
        subtitle = "Figure 2.1. Kaplan-Meier Survival Curve By Gender",
        color = "Gender", fill = 'Gender') + theme(legend.position = "none")
 fh_plot = 
-  fh %>% autoplot() +
+  fh |> autoplot() +
   labs(y = "S(t)",
        x = "Time",
        subtitle = "Figure 2.2. Fleming-Harrington Survival Curve By Gender",
@@ -390,12 +426,341 @@ km_plot + fh_plot
 
 The Kaplan-Meier and Fleming-Harrington have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.9) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
 
+## Hypothesis Testing
+
+### Log-Rank test and Gehan's Wilcoxon test
+
+```{r logrank}
+logrank_test <- survdiff(Surv(time, event) ~ gender, data = nonpara_dat)
+wilcox_result <- wilcox.test(time ~ gender, data = nonpara_dat)
+results1 <- tibble(
+  Gender = c(0, 1),
+  N = c(105, 194),
+  Observed = c(34,62),
+  Expected = c(34.3, 61.7),
+  '11' = c(0.00254, 0.00141),
+  '22' = c(0.00397, 0.00397)
+)
+
+results2 <- tibble(
+  Test = c("Log Rank Test", "Wilcoxon Test"),
+  "Chi square" = c(0, 0),
+  df = c(1, 1),
+  "p-value" = c(0.950, 0.765)
+)
+
+results_table1 <- kable(results1, align = "c", booktabs = T, escape = F,
+caption = "Figure 3.1: Comparison of Survival Experience Between Males and Females by Log-Rank Test",
+col.names = c("Gender", "N", "Observed", "Expected", "$\\frac{(O-E)^2}{E}$", "$\\frac{(O-E)^2}{V}$")) |>
+  kable_styling(latex_options = c("HOLD_position"))
+
+results_table2 <- kable(results2, align = "c", booktabs = T, 
+caption = "Figure 3.2: P-values for the Log-rank and Gehan's Wilcoxon test") |>
+  kable_styling(latex_options = c("HOLD_position"))
+
+results_table1
+results_table2
+```
+
+The Log-Rank test and the Gehan's Wilcoxon test can be used to test for differences in survival experience between genders. Reviewing the results from the table, we find that both the Log-Rank test and the Gehan's Wilcoxon test have provided a similar result and gave a p-value greater than 0.05. This indicates that we failed to reject the null hypothesis at the significance level of 0.05, and we can state there is no statistically significant difference in survival experiences between males and females.
+
+## Model Selection
+### Survival Tree
+
+```{r fig.align='center', fig.width=10, fig.height=6}
+surv_obj <- Surv(time = nonpara_dat$time, event = nonpara_dat$event)
+surv_tree <- rpart(surv_obj ~ gender + smoking + diabetes + bp + anemia + age + EF_cat + sodium + creatinine_log + platelets + cpk_log,
+                   data = nonpara_dat, method = "exp")
+rpart.plot::rpart.plot(surv_tree, main = "Figure 3: Results of Survival Tree")
+```
+
+The survival tree depicted in the image stratifies patients based on factors affecting survival. At the first level, patients are divided by `EF_cat`, suggesting that EF is a significant factor in survival. For patients with medium to high EF, age is the next discriminator, indicating its importance in survival for this subgroup. Among those with lower EF, log-transformed creatinine levels further split the cohort, underscoring renal function's role in survival. The tree branches into additional factors such as log-transformed cpk levels, the presence of diabetes, and sodium levels, highlighting their contribution to survival outcomes. Terminal nodes provide risk ratios and the proportion of patients experiencing the event, illustrating the combined effect of these variables on patient survival. This tree model, therefore, offers a nuanced view of patient risk profiles, emphasizing the multifactorial nature of survival in this patient population.
+
+### Stepwise Selection
+
+$$
+h(t) = h_0(t)\exp[\beta_1{Age} + \beta_2{EF_{Medium}} + \beta_3{EF_{High}} + \beta_4{BP}+\beta_5{Sodium} + \beta_6\log({Creatinine}+1)]
+$$
+
+
+```{r}
+# raw data
+raw_data <- data |>
+  arrange(TIME) |>
+  janitor::clean_names() |>
+  mutate(platelets = pletelets,
+         anemia = anaemia)
+
+# model data
+model_data <- dat
+
+## create dummy variable for categorical variable
+heart_data <- model.matrix(EF~ EF_cat, data = model_data)[,-1] |>
+  as.data.frame()
+
+## create data frame for stepwiseCox
+heart_data <- cbind(raw_data, heart_data) 
+stepwise_data <- heart_data |>
+  mutate(logcre=log(creatinine+1),
+         logcpk = log(cpk+1)) |>
+  dplyr::select(-creatinine, -cpk, -ejection_fraction)
+```
+
+```{r}
+# Variable selection using stepwise Cox model using Sl
+stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
+                                 EF_catMedium + EF_catHigh,
+                               data = stepwise_data,
+                               select = "SL",
+                               # significant level for entry
+                               sle = 0.25,
+                               # significant level for stay
+                               sls = 0.15,
+                               method = "efron",
+                               weights = NULL,
+                               best = NULL)
+# 7 variables are selected: logcre, age, EF_catMedium, EF_catHigh, bp, sodium, anemia  
+
+## Variable selection using stepwise Cox model using AIC
+stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
+                                 EF_catMedium + EF_catHigh,
+                               data = stepwise_data,
+                               selection = "bidirection",
+                               select = "AIC",
+                               # significant level for entry
+                               sle = 0.25,
+                               # significant level for stay
+                               sls = 0.15,
+                               method = "efron",
+                               weights = NULL,
+                               best = NULL)
+# 6 variables are selected: logcre, age, EF_catMedium, EF_catHigh, bp, sodium
+
+### Variable selection using stepwise Cox model using AICc
+stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
+                                 EF_catMedium + EF_catHigh,
+                               data = stepwise_data,
+                               selection = "bidirection",
+                               select = "AICc",
+                               # significant level for entry
+                               sle = 0.25,
+                               # significant level for stay
+                               sls = 0.15,
+                               method = "efron",
+                               weights = NULL,
+                               best = NULL)
+# AICc 9 variables: logcre, age, EF_catMedium, EF_catHigh, bp, sodium, anemia, logcpk, diabetes 
+
+### Variable selection using stepwise Cox model using SBC
+stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
+                                 EF_catMedium + EF_catHigh,
+                               data = stepwise_data,
+                               selection = "bidirection",
+                               select = "SBC",
+                               # significant level for entry
+                               sle = 0.25,
+                               # significant level for stay
+                               sls = 0.15,
+                               method = "efron",
+                               weights = NULL,
+                               best = NULL)
+# SBC 5 variables: logcre, age, EF_catMedium, EF_catHigh, bp
+```
+
+```{r selection}
+# Extract data from the models
+steps2 <- stepwise_model3$`Process of Selection`[, "Step"]
+enteredEffect1 <- stepwise_model3$`Process of Selection`[, "EnteredEffect"]
+sl1 <- stepwise_model1$`Process of Selection`[, "SL"]
+aic2 <- stepwise_model2$`Process of Selection`[, "AIC"]
+aic3 <- stepwise_model3$`Process of Selection`[, "AICc"]
+sbc4 <- stepwise_model4$`Process of Selection`[, "SBC"]
+
+# Determine the maximum length
+max_len <- max(sapply(list(steps2, enteredEffect1, sl1, aic2, aic3, sbc4), length))
+
+# Function to pad vectors with NA to make their length equal to max_len
+pad_vector <- function(vec, max_len) {
+  length(vec) <- max_len
+  return(vec)
+}
+
+# Apply the function to each vector
+steps2 <- pad_vector(steps2, max_len)
+enteredEffect1 <- pad_vector(enteredEffect1, max_len)
+sl1 <- pad_vector(sl1, max_len)
+aic2 <- pad_vector(aic2, max_len)
+aic3 <- pad_vector(aic3, max_len)
+sbc4 <- pad_vector(sbc4, max_len)
+
+# Create the data frame
+model_selection <- data.frame(
+  Step = steps2,
+  EnteredEffect = enteredEffect1,
+  SL = round(as.numeric(sl1),4),
+  AIC = round(as.numeric(aic2), 2),
+  AICc = round(as.numeric(aic3), 2),
+  SBC = round(as.numeric(sbc4), 2)
+)
+model_selection[is.na(model_selection)] <- c("-")
+
+# Create table using kable
+model_selection |> kable(booktabs = T,
+                         caption = "Table 4: Summary of Model Selection", digits = 4) |>
+  kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
+```
+
+The **Table 4** summarizes the Cox model selection process, indicating `logcre`, `age`, `EF` categories, and `BP` as persistent predictors across the top four models. The AIC favors `logcre` and `age` for their significant contributions to model fit relative to added complexity, emphasizing model fit over parameter count. 
+
+However, with large sample size, the AICc modification slightly adjusts these values, shifting the preference toward other variables like `diabetes`, which shows the lowest AICc, suggesting a strong impact on the model when accounting for sample size. The SBC, with its more substantial penalty for complexity, particularly at larger sample sizes, selects `BP` as the best variable, underscoring its contribution to the model's explanatory power without excessive complexity. 
+
+We choose AIC for model selection, given its consistency with SL findings, which jointly highlight `logcre` and `age` as key predictors. This consistent identification underscores their substantial impact on model accuracy while maintaining simplicity, justifying their selection.
+ 
 ## Semi-parametric Models
 
 The final model obtained from Stepwise Selection using AIC contains creatinine, age, ejection fraction, blood pressure status, sodium covariates.
 
-## Parametric Model
-(Model checking, fitting the model)
+### Model Checking
+
+Before fitting the Cox proportional hazard model, we need to check whether our variables hold the PH assumption^[See the Method Section for details]. The $\log(-\log\hat{S}(t|Z = z))$ over $\log t$ plot and observed survival versus estimated survival curves are provided below. We have multiple variables remained after model selection, so we randomly took two of them (`age` and `logcre`) for the PH assumption check. Since both `age` and `logcre`^[Since 1.5 mg/dL is the clinical threshold of creatinine, so we categorized log(creatinine + 1) > log(2.5) as "High", otherwise, it's in "Low" group. And prople in "High" group should be regarded as renal dysfunction.] are continuous variable, we categorized it into two groups and recoded as "Low" and "High", respectively. 
+
+```{r fig.align='center', fig.width=10, fig.height=6}
+mc_dat = nonpara_dat %>% mutate(age_cat = case_when(age <= mean(age) ~ "Low", age > mean(age) ~ "High")) %>% 
+  mutate(cre_cat = case_when(creatinine_log <= log(2.5) ~ "Low", 
+                             creatinine_log > log(2.5) ~ "High")) %>% 
+  mutate(age_cat = factor(age_cat)) %>% 
+  mutate(cre_cat = factor(cre_cat)) %>% 
+  as.data.frame()
+mc_surv_age = survfit(Surv(time, event == 1) ~ age_cat, data = mc_dat)
+mc_surv_cre = survfit(Surv(time, event == 1) ~ cre_cat, data = mc_dat)
+mc_age_surv_log = survfit(Surv(log(time + 1), event == 1) ~ age_cat, data = mc_dat)
+mc_cre_surv_log = survfit(Surv(log(time + 1), event == 1) ~ cre_cat, data = mc_dat)
+
+g1 = ggsurvplot(mc_age_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
+                xlab = "log(time)", ylab = "log[-log(Survival Probability)]",
+                ggtheme = theme_minimal(), xlim = c(1.5, 6)) +
+  labs(title = "Figure 4.1: Log of Negative Log of Estimated Survival Functions \nby Age Group")
+g2 = ggsurvplot(mc_cre_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
+                xlab = "log(time)", ylab = "log[-log(Survival Probability)]",
+                ggtheme = theme_minimal(), xlim = c(1.5,6)) +
+  labs(title = "Figure 4.2: Log of Negative Log of Estimated Survival Functions \nby Log-transformed Creatinine Group")
+gridExtra::grid.arrange(g1$plot, g2$plot, nrow = 2)
+
+g3.1 = ggsurvplot(mc_surv_age, data = mc_dat, risk.table = FALSE, ggtheme = theme_minimal())
+g3.2 = ggadjustedcurves(coxph(Surv(time, event == 1) ~ age_cat, data = mc_dat), variable = "age_cat", 
+                        data = mc_dat, ggtheme = theme_minimal())
+km_fit = g3.1$plot$data
+cox_fit = g3.2$data
+cox_fit$age_cat = cox_fit$variable
+
+g3 = ggplot(cox_fit, aes(x = time, y = surv, group = age_cat, color = age_cat)) + geom_step() +
+  geom_step(data = km_fit, aes(x = time, y = surv, group = age_cat, color = age_cat), lty = 3) + 
+  labs(title = "Figure 5.1: Plot of Observed vs. Fitted Survival By Age Group", y = "Survival Distribution Function Estimate", 
+  caption = "Straight line: Fitted Survival \nDashed line: Observed Survival") +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  scale_color_manual(
+    name = "Age Group",
+    values = c("blue", "red"),
+    labels = c("Low", "High") 
+  )
+
+  
+g4.1 = ggsurvplot(mc_surv_cre, data = mc_dat, risk.table = FALSE, ggtheme = theme_minimal())
+g4.2 = ggadjustedcurves(coxph(Surv(time, event == 1) ~ cre_cat, data = mc_dat), variable = "cre_cat", 
+                        data = mc_dat, ggtheme = theme_minimal())
+km_fit = g4.1$plot$data
+cox_fit = g4.2$data
+cox_fit$cre_cat = cox_fit$variable
+
+g4 = ggplot(cox_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat)) + geom_step() +
+  geom_step(data = km_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat), lty = 3) + 
+  labs(title = "Figure 5.2: Plot of Observed vs. Fitted Survival By Creatinine Group", y = "Survival Distribution Function Estimate", 
+  caption = "Straight line: Fitted Survival \nDashed line: Observed Survival") +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  scale_color_manual(
+    name = "Creatinine Group",
+    values = c("blue", "red"), # Change these colors based on your data
+    labels = c("Low", "High") # Custom labels for the legend
+  )
+
+g3 / g4
+```
+
+```{r fig.align='center', fig.width=10, fig.height = 4, fig.cap="Figure 6.1: Schoenfeld Test For Log-transformed Creatinine"}
+scho <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodium, data = mc_dat)
+ggcoxzph(cox.zph(scho), var = c("creatinine_log"), df = 2, nsmo = 1000)
+```
+
+```{r fig.align='center', fig.width=10, fig.height = 4, fig.cap="Figure 6.2: Schoenfeld Test For Age"}
+ggcoxzph(cox.zph(scho), var = c("age"), df = 2, nsmo = 1000)
+```
+
+\newpage
+
+Obviously, The curves in **Figure 4.1** and **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot (**Figure 5.1** and **Figure 5.2**), the straight curve and dashed curve are close to each other, which means the proportional hazard ratio is proportional for both age and creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots (**Figure 6.1** and **Figure 6.2**) of the fitted model. We chose to input `age` and `logcre` variables and found a regression lines with a slope close to zero for both.
+
+### Model Fitting and Results
+
+```{r final model results}
+# Create table using kable
+model_summary <- tibble(stepwise_model2$`Coefficients of the Selected Variables`)
+
+model_summary <- model_summary |>
+  mutate(coef = as.numeric(coef),
+        `exp(coef)` = as.numeric(`exp(coef)`),
+        `se(coef)` = as.numeric(`se(coef)`),
+        z = as.numeric(z),
+        `Pr(>|z|)` = as.numeric(`Pr(>|z|)`))
+
+model_summary |> kable(booktabs = T,
+      caption = "Table 5: Summary of Cox Proportional Hazard Model", 
+      digits = 4, row.names = TRUE) |>
+  kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
+```
+
+For the `logcre`, the hazard ratio of 3.0573 suggests that as the logarithm of creatinine levels increases by one unit, the hazard, or the risk of the event occurring, is more than three times greater. This result is statistically significant, indicating a strong relationship between creatinine levels and survival.
+
+Concerning `age`, an HR of 1.0473 indicates that with each additional year of age, the hazard increases by approximately 4.73%. This relationship is highly significant, affirming age as a critical predictor in the survival model.
+
+For `EF_catMedium`, and  `EF_catHigh` the HR suggests that individuals with a medium ejection fraction or high fraction ejection have lower risks of the event occurring compared to the baseline low ejection fraction, which are statistically significant.
+
+The `bp` shows an HR of 1.7258, indicating that higher blood pressure status is associated with a 72.58% increase in hazard, and this predictor is statistically significant.
+
+Lastly, `sodium` presents an HR of 0.9628, suggesting a slight decrease in hazard with higher sodium levels. However, this effect is not statistically significant, implies this predictor is not a conclusive predictor in this model.
+
+Overall, this model provides a quantitative assessment of how each predictor influences the survival probability, with `logcre`, `age`, `EF_catMedium`, `EF_catHigh`, and `bp` being significant factors in predicting survival outcomes.
+
+## Parametric Models
+### Model Checking
+
+```{r fig.width=10}
+mc_surv_age = survfit(Surv(time, event == 1) ~ age_cat, data = mc_dat)
+mc_surv_cre = survfit(Surv(time, event == 1) ~ cre_cat, data = mc_dat)
+
+plot(mc_surv_age, col = c("red", "blue"), 
+     fun = "cumhaz", xlab = "Time(Days)", ylab = "-logS(t)", 
+     main = "Figure 7.1: Negative Log of Estimated Survival Functions For Age Groups")
+legend("topleft", legend = c("High", "Low"), 
+       title = "Age Group", col = c("red", "blue"), lty = 1)
+
+plot(mc_surv_age, col = c("red", "blue"), 
+     fun = "cumhaz", xlab = "Time(Days)", ylab = "-logS(t)", 
+     main = "Figure 7.2: Negative Log of Estimated Survival Functions For Creatinine Groups")
+legend("topleft", legend = c("High", "Low"), 
+       title = "Creatinine Group", col = c("red", "blue"), lty = 1)
+```
+
+Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **Figure 4.2**) for `age` and `logcre`, and the slopes do not strictly equal to 1. Now we also check the $-\log\hat{S}(t)$ plot (**Figure 7.1** and **Figure 7.2**) for same variables. The curves for both two plots seems not to be straight and nonlinear. We suggest Weibull distributions for parametric proportional hazard models. 
+
+
+### Model Fitting
+
 
 ## Model Validation 
 
@@ -493,9 +858,11 @@ Our calculated mean calibration slope came to approximately 1.1529. This value, 
 
 # Discussion
 
-According to the life table, we find that there is a slight difference in survival probability between genders. However, the hypothesis test and model selection show that there is no difference. Similarities in heart failure presentation, treatment regimen, and sample size may explain the absence of sex-based differences in survival. Specifically, if the severity of heart failure was not related to gender or if patients received appropriate gender-based treatment and the sample size or characteristics of the study limited gender-specific analyses, potential differences could be masked.
+According to the life table, we find that there is a slight difference in survival probability between male and female. However, the hypothesis test and model selection show that there is actually no difference. Similarities in heart failure presentation, treatment regimen, and sample size may explain the absence of sex-based differences in survival. Specifically, if the severity of heart failure was not related to gender or if patients received appropriate gender-based treatment and the sample size or characteristics of the study limited gender-specific analyses, potential differences could be masked.
 
-The nuanced findings from our analysis provide a comprehensive view of our Cox model's performance. While the model exhibits strong discriminative ability, as indicated by the AUC values and C-index, our calibration assessment, particularly the calibration slope, suggests areas where improvement is needed. Notably, the calibration slope, slightly over the ideal value of 1, implies a mild overestimation in risk predictions. This indicates a complex calibration scenario where the model might be overfitting to some extent.
+The Cox proportional hazard model's results indicating creatinine as a significant predictor of survival are reasonable and supported by existing literature. A study published in Frontiers in Cardiovascular Medicine found that postoperative serum creatinine is a significant prognostic factor for cardiac surgery patients (Zhong et al., 2021). This study showed that higher levels of postoperative serum creatinine were linked to increased hospital mortality and longer stays in the intensive care unit. Specifically, it found that patients who did not survive had significantly higher postoperative serum creatinine levels, and there was a positive correlation between these levels and lengths of ICU stay. These findings highlight the importance of renal function, which is intricately linked with heart failure, as indicated by creatinine levels, in determining the survival outcomes for patients undergoing cardiac surgery.
+
+The nuanced findings from our analysis provide a comprehensive view of our Cox model's performance. While the model exhibits strong discriminative ability, as indicated by the AUC values and C-index, our calibration assessment, particularly the calibration slope, suggests areas where improvement is needed. Notably, the calibration slope, slightly over the ideal value of one, implies a mild overestimation in risk predictions. This indicates a complex calibration scenario where the model might be overfitting to some extent.
 
 Such overestimation, although modest, is critical in clinical settings. Accurate risk prediction is vital for informed decision-making and effective patient management. Overestimated risks might lead to more aggressive interventions than necessary, affecting patient care and resource allocation. Conversely, underestimating risks could result in missed opportunities for timely intervention. This highlights the importance of achieving a balance in predictive accuracy, ensuring that the model neither overestimates nor underestimates risks.
 
@@ -527,7 +894,7 @@ Pavlou, M., Ambler, G., Seaman, S. R., Guttmann, O., Elliott, P., King, M., & Om
 
 Heagerty, P. J., & Zheng, Y. (2005). Survival Model Predictive Accuracy and ROC Curves. Biometrics, 61(1), 92–105. https://doi.org/10.1111/j.0006-341X.2005.030814.x
 
-
+Zhong, J., Gao, J., Luo, J. C., Zheng, J. L., Tu, G. W., & Xue, Y. (2021). Serum creatinine as a predictor of mortality in patients readmitted to the intensive care unit after cardiac surgery: a retrospective cohort study in China. Journal of thoracic disease, 13(3), 1728–1736. https://doi.org/10.21037/jtd-20-3205
 
 
 \newpage

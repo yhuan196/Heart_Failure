@@ -233,13 +233,15 @@ ggsurvplot(
 ```
 
 ```{r}
-library(broom)
 aft.fit <- survreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + 
                   age + ef_cat+ sodium + pletelets + logcre + logcpk, 
                 data = model_data, dist = "exponential")
-tidy(aft.fit)
+summary(aft.fit)
 ```
-
+The Accelerated Failure Time (AFT) model is a parametric model assumes that the effect of covariates is to accelerate or decelerate the life course of a disease by some constant. In the AFT model, the key assumption is that the logarithm of survival time follows a linear relationship with the covariates. Mathematically, it can be expressed as:
+$$
+log(T) = \mu+\beta_1x_1+\beta_2x_2+ ... +\beta_px_p+\epsilon
+$$
 
 
 The Cox Proportional Hazards (PH) Model operates under two primary assumptions:
