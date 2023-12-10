@@ -310,14 +310,13 @@ stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
 # Extract data from the models
 steps2 <- stepwise_model3$`Process of Selection`[, "Step"]
 enteredEffect1 <- stepwise_model3$`Process of Selection`[, "EnteredEffect"]
-removedEffect1 <- stepwise_model3$`Process of Selection`[, "RemovedEffect"]
 sl1 <- stepwise_model1$`Process of Selection`[, "SL"]
 aic2 <- stepwise_model2$`Process of Selection`[, "AIC"]
 aic3 <- stepwise_model3$`Process of Selection`[, "AICc"]
 sbc4 <- stepwise_model4$`Process of Selection`[, "SBC"]
 
 # Determine the maximum length
-max_len <- max(sapply(list(steps2, enteredEffect1, removedEffect1, sl1, aic2, aic3, sbc4), length))
+max_len <- max(sapply(list(steps2, enteredEffect1, sl1, aic2, aic3, sbc4), length))
 
 # Function to pad vectors with NA to make their length equal to max_len
 pad_vector <- function(vec, max_len) {
@@ -328,7 +327,6 @@ pad_vector <- function(vec, max_len) {
 # Apply the function to each vector
 steps2 <- pad_vector(steps2, max_len)
 enteredEffect1 <- pad_vector(enteredEffect1, max_len)
-removedEffect1 <- pad_vector(removedEffect1, max_len)
 sl1 <- pad_vector(sl1, max_len)
 aic2 <- pad_vector(aic2, max_len)
 aic3 <- pad_vector(aic3, max_len)
@@ -338,11 +336,10 @@ sbc4 <- pad_vector(sbc4, max_len)
 model_selection <- data.frame(
   Step = steps2,
   EnteredEffect = enteredEffect1,
-  RemovedEffect = removedEffect1,
-  SL = sl1,
-  AIC = aic2,
-  AICc = aic3,
-  SBC = sbc4
+  SL = round(as.numeric(sl1),4),
+  AIC = round(as.numeric(aic2), 2),
+  AICc = round(as.numeric(aic3), 2),
+  SBC = round(as.numeric(sbc4), 2)
 )
 model_selection[is.na(model_selection)] <- c("-")
 # Create table using kable
@@ -362,15 +359,12 @@ Step
 EnteredEffect
 </th>
 <th style="text-align:left;">
-RemovedEffect
-</th>
-<th style="text-align:left;">
 SL
 </th>
 <th style="text-align:left;">
 AIC
 </th>
-<th style="text-align:left;">
+<th style="text-align:right;">
 AICc
 </th>
 <th style="text-align:left;">
@@ -387,18 +381,16 @@ SBC
 logcre
 </td>
 <td style="text-align:left;">
+0
 </td>
 <td style="text-align:left;">
-1.6871984448572e-07
+993.05
+</td>
+<td style="text-align:right;">
+991.09
 </td>
 <td style="text-align:left;">
-993.048326864199
-</td>
-<td style="text-align:left;">
-991.090880055688
-</td>
-<td style="text-align:left;">
-995.612675055667
+995.61
 </td>
 </tr>
 <tr>
@@ -409,18 +401,16 @@ logcre
 age
 </td>
 <td style="text-align:left;">
+0
 </td>
 <td style="text-align:left;">
-9.78512797059471e-06
+975.5
+</td>
+<td style="text-align:right;">
+971.62
 </td>
 <td style="text-align:left;">
-975.495411177225
-</td>
-<td style="text-align:left;">
-971.62444343529
-</td>
-<td style="text-align:left;">
-980.624107560161
+980.62
 </td>
 </tr>
 <tr>
@@ -431,18 +421,16 @@ age
 ef_catMedium
 </td>
 <td style="text-align:left;">
+7e-04
 </td>
 <td style="text-align:left;">
-0.000695488592103142
+965.99
+</td>
+<td style="text-align:right;">
+960.26
 </td>
 <td style="text-align:left;">
-965.994146660923
-</td>
-<td style="text-align:left;">
-960.255016226141
-</td>
-<td style="text-align:left;">
-973.687191235327
+973.69
 </td>
 </tr>
 <tr>
@@ -453,18 +441,16 @@ ef_catMedium
 ef_catHigh
 </td>
 <td style="text-align:left;">
+1e-04
 </td>
 <td style="text-align:left;">
-0.000144795920296501
+953.56
+</td>
+<td style="text-align:right;">
+946.00
 </td>
 <td style="text-align:left;">
-953.555445635325
-</td>
-<td style="text-align:left;">
-945.995006074886
-</td>
-<td style="text-align:left;">
-963.812838401197
+963.81
 </td>
 </tr>
 <tr>
@@ -475,18 +461,16 @@ ef_catHigh
 bp
 </td>
 <td style="text-align:left;">
+0.0193
 </td>
 <td style="text-align:left;">
-0.0192853102983629
+950.08
+</td>
+<td style="text-align:right;">
+940.75
 </td>
 <td style="text-align:left;">
-950.079987970209
-</td>
-<td style="text-align:left;">
-940.746654636875
-</td>
-<td style="text-align:left;">
-962.901728927548
+962.9
 </td>
 </tr>
 <tr>
@@ -497,15 +481,13 @@ bp
 sodium
 </td>
 <td style="text-align:left;">
+0.1178
 </td>
 <td style="text-align:left;">
-0.117756005385636
+949.63
 </td>
-<td style="text-align:left;">
-949.633071741161
-</td>
-<td style="text-align:left;">
-938.57689196588
+<td style="text-align:right;">
+938.58
 </td>
 <td style="text-align:left;">
 
@@ -519,15 +501,13 @@ sodium
   anaemia
   </td>
   <td style="text-align:left;">
-  </td>
-  <td style="text-align:left;">
-  0.199347241304378
+  0.1993
   </td>
   <td style="text-align:left;">
 
   - </td>
-    <td style="text-align:left;">
-    937.258648762401
+    <td style="text-align:right;">
+    937.26
     </td>
     <td style="text-align:left;">
 
@@ -541,15 +521,13 @@ sodium
       logcpk
       </td>
       <td style="text-align:left;">
-      </td>
-      <td style="text-align:left;">
 
       - </td>
         <td style="text-align:left;">
 
         - </td>
-          <td style="text-align:left;">
-          936.597219871896
+          <td style="text-align:right;">
+          936.60
           </td>
           <td style="text-align:left;">
 
@@ -563,15 +541,13 @@ sodium
             diabetes
             </td>
             <td style="text-align:left;">
-            </td>
-            <td style="text-align:left;">
 
             - </td>
               <td style="text-align:left;">
 
               - </td>
-                <td style="text-align:left;">
-                936.176737512297
+                <td style="text-align:right;">
+                936.18
                 </td>
                 <td style="text-align:left;">
 
@@ -589,9 +565,18 @@ sodium
 
 ``` r
 # Create table using kable
-kable(stepwise_model2$`Coefficients of the Selected Variables`, 
+model_summary <- tibble(stepwise_model2$`Coefficients of the Selected Variables`)
+
+model_summary <- model_summary |>
+  mutate(coef = as.numeric(coef),
+        `exp(coef)` = as.numeric(`exp(coef)`),
+        `se(coef)` = as.numeric(`se(coef)`),
+        z = as.numeric(z),
+        `Pr(>|z|)`= as.numeric(`Pr(>|z|)`))
+
+kable(model_summary, 
       caption = "Summary of Cox Model", 
-      digits = 2, row.names = FALSE)
+      digits = 4, row.names = TRUE)
 ```
 
 <table>
@@ -601,21 +586,23 @@ Summary of Cox Model
 <thead>
 <tr>
 <th style="text-align:left;">
+</th>
+<th style="text-align:left;">
 Variable
 </th>
-<th style="text-align:left;">
+<th style="text-align:right;">
 coef
 </th>
-<th style="text-align:left;">
+<th style="text-align:right;">
 exp(coef)
 </th>
-<th style="text-align:left;">
+<th style="text-align:right;">
 se(coef)
 </th>
-<th style="text-align:left;">
+<th style="text-align:right;">
 z
 </th>
-<th style="text-align:left;">
+<th style="text-align:right;">
 Pr(\>\|z\|)
 </th>
 </tr>
@@ -623,129 +610,147 @@ Pr(\>\|z\|)
 <tbody>
 <tr>
 <td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
 logcre
 </td>
-<td style="text-align:left;">
-1.1050452084616
+<td style="text-align:right;">
+1.1050
 </td>
-<td style="text-align:left;">
-3.01936096638544
+<td style="text-align:right;">
+3.0194
 </td>
-<td style="text-align:left;">
-0.294774014823687
+<td style="text-align:right;">
+0.2948
 </td>
-<td style="text-align:left;">
-3.74878772514112
+<td style="text-align:right;">
+3.7488
 </td>
-<td style="text-align:left;">
-0.000177691402070054
+<td style="text-align:right;">
+0.0002
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+2
+</td>
 <td style="text-align:left;">
 age
 </td>
-<td style="text-align:left;">
-0.046345944124046
+<td style="text-align:right;">
+0.0463
 </td>
-<td style="text-align:left;">
-1.04743670285961
+<td style="text-align:right;">
+1.0474
 </td>
-<td style="text-align:left;">
-0.0090830494759904
+<td style="text-align:right;">
+0.0091
 </td>
-<td style="text-align:left;">
-5.10246522894697
+<td style="text-align:right;">
+5.1025
 </td>
-<td style="text-align:left;">
-3.35257357927203e-07
+<td style="text-align:right;">
+0.0000
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+3
+</td>
 <td style="text-align:left;">
 ef_catMedium
 </td>
-<td style="text-align:left;">
--1.10818853131284
+<td style="text-align:right;">
+-1.1082
 </td>
-<td style="text-align:left;">
-0.330156487850877
+<td style="text-align:right;">
+0.3302
 </td>
-<td style="text-align:left;">
-0.250250062440763
+<td style="text-align:right;">
+0.2503
 </td>
-<td style="text-align:left;">
--4.42832469452494
+<td style="text-align:right;">
+-4.4283
 </td>
-<td style="text-align:left;">
-9.49678618552646e-06
+<td style="text-align:right;">
+0.0000
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+4
+</td>
 <td style="text-align:left;">
 ef_catHigh
 </td>
-<td style="text-align:left;">
--0.958352769749456
+<td style="text-align:right;">
+-0.9584
 </td>
-<td style="text-align:left;">
-0.383524118469508
+<td style="text-align:right;">
+0.3835
 </td>
-<td style="text-align:left;">
-0.277754807609556
+<td style="text-align:right;">
+0.2778
 </td>
-<td style="text-align:left;">
--3.45035528996721
+<td style="text-align:right;">
+-3.4504
 </td>
-<td style="text-align:left;">
-0.000559849223776396
+<td style="text-align:right;">
+0.0006
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+5
+</td>
 <td style="text-align:left;">
 bp
 </td>
-<td style="text-align:left;">
-0.543520561583973
+<td style="text-align:right;">
+0.5435
 </td>
-<td style="text-align:left;">
-1.72205881691052
+<td style="text-align:right;">
+1.7221
 </td>
-<td style="text-align:left;">
-0.21386491114686
+<td style="text-align:right;">
+0.2139
 </td>
-<td style="text-align:left;">
-2.54141999577827
+<td style="text-align:right;">
+2.5414
 </td>
-<td style="text-align:left;">
-0.0110403209784974
+<td style="text-align:right;">
+0.0110
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
 sodium
 </td>
-<td style="text-align:left;">
--0.0383960625554244
+<td style="text-align:right;">
+-0.0384
 </td>
-<td style="text-align:left;">
-0.962331721841969
+<td style="text-align:right;">
+0.9623
 </td>
-<td style="text-align:left;">
-0.0241249708289812
+<td style="text-align:right;">
+0.0241
 </td>
-<td style="text-align:left;">
--1.59154855886082
+<td style="text-align:right;">
+-1.5915
 </td>
-<td style="text-align:left;">
-0.111486176357268
+<td style="text-align:right;">
+0.1115
 </td>
 </tr>
 </tbody>
 </table>
 
 ``` r
-  # kable_styling(latex_options = c("striped", "hold_position"))
+# kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
 ## Check assumptions for Cox model
