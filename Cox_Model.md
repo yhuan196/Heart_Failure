@@ -12,7 +12,9 @@ raw_data <- read_csv("data/heart_failure.csv")
 # clean variable names
 raw_data <- raw_data |>
   arrange(TIME) |>
-  janitor::clean_names()
+  janitor::clean_names() |>
+  mutate(platelets = pletelets,
+         anemia = anaemia)
 
 ## data cleaning, create data frame for model
 model_data <- raw_data |>
@@ -20,11 +22,10 @@ model_data <- raw_data |>
          smoking = factor(smoking),
          diabetes = factor(diabetes),
          bp = factor(bp),
-         # event = factor(event),
-         anaemia = factor(anaemia),
-         logcre=log(creatinine+1),
+         anemia = factor(anemia),
+         logcre =log(creatinine+1),
          logcpk = log(cpk+1)) |>
-  rename(pletelets = pletelets)|>
+  rename(platelets = platelets)|>
   mutate(ef_cat = factor(case_when(
     ejection_fraction <= 30 ~ "Low",
     ejection_fraction > 30 & ejection_fraction < 45 ~ "Medium",
@@ -50,52 +51,10 @@ stepwise_data <- heart_data |>
 ``` r
 # use survival to fit a cox model
 # 6 categorical and 5 continuous predictors
-cox_model1 <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ef_cat +
-                     sodium + pletelets + creatinine + cpk, data = model_data)
-summary(cox_model1)
+cox_model1 <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + age + ef_cat +
+                     sodium + platelets + creatinine + cpk, data = model_data)
+# summary(cox_model1)
 ```
-
-    ## Call:
-    ## coxph(formula = Surv(time, event) ~ gender + smoking + diabetes + 
-    ##     bp + anaemia + age + ef_cat + sodium + pletelets + creatinine + 
-    ##     cpk, data = model_data)
-    ## 
-    ##   n= 299, number of events= 96 
-    ## 
-    ##                    coef  exp(coef)   se(coef)      z Pr(>|z|)    
-    ## gender1      -1.856e-01  8.306e-01  2.508e-01 -0.740 0.459413    
-    ## smoking1      1.233e-01  1.131e+00  2.506e-01  0.492 0.622668    
-    ## diabetes1     2.013e-01  1.223e+00  2.235e-01  0.901 0.367771    
-    ## bp1           5.213e-01  1.684e+00  2.178e-01  2.394 0.016659 *  
-    ## anaemia1      3.195e-01  1.376e+00  2.198e-01  1.454 0.145978    
-    ## age           5.306e-02  1.054e+00  9.635e-03  5.507 3.65e-08 ***
-    ## ef_catMedium -1.254e+00  2.855e-01  2.568e-01 -4.882 1.05e-06 ***
-    ## ef_catHigh   -1.029e+00  3.574e-01  2.824e-01 -3.644 0.000269 ***
-    ## sodium       -5.286e-02  9.485e-01  2.321e-02 -2.277 0.022770 *  
-    ## pletelets    -7.680e-07  1.000e+00  1.110e-06 -0.692 0.489207    
-    ## creatinine    2.495e-01  1.283e+00  7.040e-02  3.544 0.000395 ***
-    ## cpk           2.628e-04  1.000e+00  9.775e-05  2.689 0.007170 ** 
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ##              exp(coef) exp(-coef) lower .95 upper .95
-    ## gender1         0.8306     1.2039    0.5080    1.3581
-    ## smoking1        1.1312     0.8840    0.6922    1.8488
-    ## diabetes1       1.2230     0.8176    0.7892    1.8954
-    ## bp1             1.6843     0.5937    1.0992    2.5809
-    ## anaemia1        1.3765     0.7265    0.8947    2.1175
-    ## age             1.0545     0.9483    1.0348    1.0746
-    ## ef_catMedium    0.2855     3.5029    0.1726    0.4722
-    ## ef_catHigh      0.3574     2.7982    0.2055    0.6216
-    ## sodium          0.9485     1.0543    0.9063    0.9927
-    ## pletelets       1.0000     1.0000    1.0000    1.0000
-    ## creatinine      1.2834     0.7792    1.1179    1.4732
-    ## cpk             1.0003     0.9997    1.0001    1.0005
-    ## 
-    ## Concordance= 0.744  (se = 0.026 )
-    ## Likelihood ratio test= 86.98  on 12 df,   p=2e-13
-    ## Wald test            = 83.66  on 12 df,   p=8e-13
-    ## Score (logrank) test = 92.66  on 12 df,   p=2e-14
 
 **Full model with log transform on left-skewed predictors**
 
@@ -104,63 +63,21 @@ summary(cox_model1)
 # consider transformation on left-skewed predictors: 
 # logcre=log(creatinine+1), logcpk=log(cpk+1)
 # 6 categorical and 5 continuous predictors 
-cox_model2 <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anaemia + age + ef_cat+ sodium + pletelets + logcre + logcpk, data = model_data)
-summary(cox_model2)
+cox_model2 <- coxph(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + age + ef_cat+ sodium + platelets + logcre + logcpk, data = model_data)
+# summary(cox_model2)
 ```
-
-    ## Call:
-    ## coxph(formula = Surv(time, event) ~ gender + smoking + diabetes + 
-    ##     bp + anaemia + age + ef_cat + sodium + pletelets + logcre + 
-    ##     logcpk, data = model_data)
-    ## 
-    ##   n= 299, number of events= 96 
-    ## 
-    ##                    coef  exp(coef)   se(coef)      z Pr(>|z|)    
-    ## gender1      -1.816e-01  8.339e-01  2.497e-01 -0.727 0.466998    
-    ## smoking1      1.561e-01  1.169e+00  2.537e-01  0.616 0.538209    
-    ## diabetes1     2.106e-01  1.234e+00  2.240e-01  0.940 0.347097    
-    ## bp1           5.125e-01  1.669e+00  2.158e-01  2.375 0.017549 *  
-    ## anaemia1      2.909e-01  1.338e+00  2.156e-01  1.349 0.177311    
-    ## age           4.902e-02  1.050e+00  9.697e-03  5.055 4.29e-07 ***
-    ## ef_catMedium -1.125e+00  3.245e-01  2.563e-01 -4.390 1.13e-05 ***
-    ## ef_catHigh   -9.488e-01  3.872e-01  2.793e-01 -3.396 0.000683 ***
-    ## sodium       -4.136e-02  9.595e-01  2.356e-02 -1.755 0.079254 .  
-    ## pletelets    -6.479e-07  1.000e+00  1.088e-06 -0.595 0.551584    
-    ## logcre        1.158e+00  3.184e+00  2.994e-01  3.868 0.000110 ***
-    ## logcpk        1.109e-01  1.117e+00  1.005e-01  1.104 0.269499    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ##              exp(coef) exp(-coef) lower .95 upper .95
-    ## gender1         0.8339     1.1991    0.5112    1.3604
-    ## smoking1        1.1690     0.8554    0.7110    1.9219
-    ## diabetes1       1.2344     0.8101    0.7958    1.9149
-    ## bp1             1.6694     0.5990    1.0937    2.5482
-    ## anaemia1        1.3376     0.7476    0.8766    2.0411
-    ## age             1.0502     0.9522    1.0305    1.0704
-    ## ef_catMedium    0.3245     3.0814    0.1964    0.5363
-    ## ef_catHigh      0.3872     2.5825    0.2240    0.6695
-    ## sodium          0.9595     1.0422    0.9162    1.0048
-    ## pletelets       1.0000     1.0000    1.0000    1.0000
-    ## logcre          3.1839     0.3141    1.7706    5.7254
-    ## logcpk          1.1173     0.8950    0.9176    1.3605
-    ## 
-    ## Concordance= 0.745  (se = 0.026 )
-    ## Likelihood ratio test= 85.18  on 12 df,   p=4e-13
-    ## Wald test            = 85.13  on 12 df,   p=4e-13
-    ## Score (logrank) test = 91.9  on 12 df,   p=2e-14
 
 ## Variable Selection
 
 **Selection Criteria SL**
 
 7 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp,
-sodium, anaemia .
+sodium, anemia .
 
 ``` r
 # Variable selection using stepwise Cox model using Sl
 stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anaemia + age + sodium + pletelets + logcre + logcpk + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
                                  ef_catMedium + ef_catHigh,
                                data = stepwise_data,
                                select = "SL",
@@ -173,7 +90,7 @@ stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
                                best = NULL)
 
 # stepwise_model1
-# 7 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anaemia  
+# 7 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anemia  
 ```
 
 **Selection Criteria AIC**
@@ -184,7 +101,7 @@ sodium
 ``` r
 ## Variable selection using stepwise Cox model using AIC
 stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anaemia + age + sodium + pletelets + logcre + logcpk + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
                                  ef_catMedium + ef_catHigh,
                                data = stepwise_data,
                                selection = "bidirection",
@@ -197,73 +114,19 @@ stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
                                weights = NULL,
                                best = NULL)
 
-stepwise_model2
-```
-
-    ##        Table 1. Summary of Parameters       
-    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
-    ##         Paramters               Value       
-    ## ————————————————————————————————————————————
-    ## Response Variable        Surv(time, event)   
-    ## Included Variable        NULL                
-    ## Selection Method         bidirection         
-    ## Select Criterion         AIC                 
-    ## Method                   efron               
-    ## Multicollinearity Terms  NULL                
-    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
-    ## 
-    ##                                          Table 2. Variables Type                                          
-    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
-    ##    class                                              variable                                            
-    ## ——————————————————————————————————————————————————————————————————————————————————————————————————————————
-    ## nmatrix.2  Surv(time, event)                                                                               
-    ## numeric    gender smoking diabetes bp anaemia age sodium pletelets logcre logcpk ef_catMedium ef_catHigh   
-    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
-    ## 
-    ##                    Table 3. Process of Selection                    
-    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
-    ##  Step  EnteredEffect  RemovedEffect  DF  NumberIn        AIC        
-    ## ————————————————————————————————————————————————————————————————————
-    ## 1     logcre                        1   1         993.048326864199   
-    ## 2     age                           1   2         975.495411177225   
-    ## 3     ef_catMedium                  1   3         965.994146660923   
-    ## 4     ef_catHigh                    1   4         953.555445635325   
-    ## 5     bp                            1   5         950.079987970209   
-    ## 6     sodium                        1   6         949.633071741161   
-    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
-    ## 
-    ##                        Table 4. Selected Varaibles                        
-    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
-    ##  variables1  variables2   variables3   variables4  variables5  variables6 
-    ## ——————————————————————————————————————————————————————————————————————————
-    ## logcre      age         ef_catMedium  ef_catHigh  bp          sodium       
-    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
-    ## 
-    ##                                   Table 5. Coefficients of the Selected Variables                                  
-    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
-    ##    Variable           coef              exp(coef)           se(coef)               z                Pr(>|z|)       
-    ## ———————————————————————————————————————————————————————————————————————————————————————————————————————————————————
-    ## logcre        1.1050452084616      3.01936096638544   0.294774014823687   3.74878772514112   0.000177691402070054   
-    ## age           0.046345944124046    1.04743670285961   0.0090830494759904  5.10246522894697   3.35257357927203e-07   
-    ## ef_catMedium  -1.10818853131284    0.330156487850877  0.250250062440763   -4.42832469452494  9.49678618552646e-06   
-    ## ef_catHigh    -0.958352769749456   0.383524118469508  0.277754807609556   -3.45035528996721  0.000559849223776396   
-    ## bp            0.543520561583973    1.72205881691052   0.21386491114686    2.54141999577827   0.0110403209784974     
-    ## sodium        -0.0383960625554244  0.962331721841969  0.0241249708289812  -1.59154855886082  0.111486176357268      
-    ## ‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗
-
-``` r
+# stepwise_model2
 # 6 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp, sodium
 ```
 
 **Selection Criteria AICc**
 
 9 variables are selected: logcre, age, ef_catMedium, ef_catHigh, bp,
-sodium, anaemia, logcpk, diabetes
+sodium, anemia, logcpk, diabetes
 
 ``` r
 ### Variable selection using stepwise Cox model using AICc
 stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anaemia + age + sodium + pletelets + logcre + logcpk + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
                                  ef_catMedium + ef_catHigh,
                                data = stepwise_data,
                                selection = "bidirection",
@@ -277,7 +140,7 @@ stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
                                best = NULL)
 
 # stepwise_model3
-# AICc 9 variables: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anaemia, logcpk, diabetes 
+# AICc 9 variables: logcre, age, ef_catMedium, ef_catHigh, bp, sodium, anemia, logcpk, diabetes 
 ```
 
 **Slection Criterian SBC**
@@ -287,7 +150,7 @@ stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
 ``` r
 ### Variable selection using stepwise Cox model using SBC
 stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anaemia + age + sodium + pletelets + logcre + logcpk + 
+                                 anemia + age + sodium + platelets + logcre + logcpk + 
                                  ef_catMedium + ef_catHigh,
                                data = stepwise_data,
                                selection = "bidirection",
@@ -498,7 +361,7 @@ sodium
   7
   </td>
   <td style="text-align:left;">
-  anaemia
+  anemia
   </td>
   <td style="text-align:left;">
   0.1993
@@ -834,7 +697,7 @@ ggsurvplot(survfit(step_model), data = model_data, conf.int = TRUE)
 
 ``` r
 colon_coxph <- coxph(Surv(time, event)~ logcre + age + ef_catMedium + ef_catHigh + 
-                       bp + anaemia + sodium, data = stepwise_data)
+                       bp + anemia + sodium, data = stepwise_data)
 
 ggcoxzph(cox.zph(colon_coxph), var = c("logcre"), df = 2, nsmo = 1000)
 ```
@@ -866,7 +729,7 @@ ggcoxzph(cox.zph(colon_coxph), var = c("bp"), df = 2, nsmo = 1000)
 ![](Cox_Model_files/figure-gfm/unnamed-chunk-12-5.png)<!-- -->
 
 ``` r
-ggcoxzph(cox.zph(colon_coxph), var = c("anaemia"), df = 2, nsmo = 1000)
+ggcoxzph(cox.zph(colon_coxph), var = c("anemia"), df = 2, nsmo = 1000)
 ```
 
 ![](Cox_Model_files/figure-gfm/unnamed-chunk-12-6.png)<!-- -->
