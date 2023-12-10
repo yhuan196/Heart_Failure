@@ -423,7 +423,8 @@ The Kaplan-Meier and Fleming-Harrington have similar trends and show no signific
 ```{r logrank}
 results1 <- data.frame(
   Gender = c(0, 1),
-  Observed = c(105, 194),
+  N = c(105, 194),
+  Observed = c(34,62),
   Expected = c(34.3, 61.7),
   Log_Rank = c(0.00254, 0.00141),
   Wilcoxon = c(0.00397, 0.00397)

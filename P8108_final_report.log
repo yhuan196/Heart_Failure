@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.11)  10 DEC 2023 01:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.11)  10 DEC 2023 01:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -659,27 +659,27 @@ LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 9
 (/Users/huanyu/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [12]
-Underfull \vbox (badness 10000) detected at line 1134
+Underfull \vbox (badness 10000) detected at line 1135
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1134
+Underfull \vbox (badness 10000) detected at line 1135
  []
 
 [13]
-Underfull \vbox (badness 10000) detected at line 1134
+Underfull \vbox (badness 10000) detected at line 1135
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1134
+Underfull \vbox (badness 10000) detected at line 1135
  []
 
 [14]
-Underfull \vbox (badness 10000) detected at line 1134
+Underfull \vbox (badness 10000) detected at line 1135
  []
 
 
-Underfull \vbox (badness 10000) detected at line 1134
+Underfull \vbox (badness 10000) detected at line 1135
  []
 
 [15]
@@ -707,7 +707,7 @@ Here is how much of TeX's memory you used:
  14 hyphenation exceptions out of 8191
  75i,10n,79p,413b,511s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx8.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/huanyu/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on P8108_final_report.pdf (19 pages, 515345 bytes).
+Output written on P8108_final_report.pdf (19 pages, 515628 bytes).
 PDF statistics:
  506 PDF objects out of 1000 (max. 8388607)
  425 compressed objects within 5 object streams
