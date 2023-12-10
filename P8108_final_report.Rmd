@@ -14,7 +14,7 @@ header-includes:
 - \usepackage{makecell} 
 - \captionsetup[figure]{labelformat=empty}
 - \captionsetup[table]{labelformat=empty}
-abstract: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+abstract: Heart failure (HF) results from weakened heart muscles, impairing blood pumping and causing symptoms like breathlessness (Ahmad et al., 2017). Statistics show HF affects 1-2% of adults, especially those over 70, potentially higher due to misdiagnosis (Jones et al., 2019). HF prevalence increased by 25% since 2002 due to aging, improved survival, and risk factors. This study utilizes data from the Institute of Cardiology and Allied Hospital in Faisalabad, Pakistan, which previously investigated the impact of key physiological and clinical factors on the prognosis of heart failure (HF) patients between April and December 2015. Our research employs a comprehensive range of statistical methodologies, including exploratory data analysis, nonparametric techniques, Kaplan-Meier curves, Cox proportional hazards models, and parametric survival models, aiming to ascertain the influence of important predictors such as creatinine levels, age, gender, ejection fraction, blood pressure, anemia, and serum sodium on HF. Our findings aim to refining risk assessment models, thereby strengthening clinical decision-making and optimizing patient care in the future. XXXX (conclusion)
 editor_options: 
   chunk_output_type: console
 ---
@@ -356,6 +356,8 @@ life_table_female %>% kable(booktabs = T, caption = "Table 2.2: Heart Failure Li
   kable_styling(latex_options = c("HOLD_position"), font_size = 6)
 ```
 
+Table 2.1 and Table 2.2 represent the lifetable with a time break of 30 days (one month), stratified by gender. According to the table, we find that the last line (270-300 days) shows a survival probability larger than 0.5 for both genders (0.54 for male and 0.59 for female). This may indicate a high life expectancy and improved health care, where a significant proportion of individuals are expected to live longer than 300 days (10 months). Moreover, males have a relatively shorter survival time than females based on the lifetable. This hypothesis needs future testing in the following modeling fit.
+
 ### The Kaplan-Meier and Fleming-Harrington Model
 
 ```{r KM_FH, fig.width=12, fig.height=5}
@@ -375,6 +377,8 @@ fh_plot =
        color = "Gender", fill = 'Gender')
 km_plot + fh_plot
 ```
+
+The Kaplan-Meier and Fleming-Harrington have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.9) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
 
 ## Semi-parametric Models
 
@@ -488,6 +492,7 @@ Future work should, therefore, focus on refining the model's complexity and vari
 
 # Conclusions
 
+The non-parametric method showed that more than 50% of both genders (54% for males and 59% for females) can survive for over 300 days. This may indicate a high life expectancy and improved health care. Moreover, the non-parametric method showed no significant difference on survival probability between gender.
 
 
 \newpage
