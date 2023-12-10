@@ -219,71 +219,66 @@ dat_log = dat %>%
 In our analysis, we applied life table, Kaplan-Meier and Fleming-Harrington Curves to estimate the survival function. All three approaches can handle censored data. 
 
 The life table is particularly useful for larger sample sizes and when the data are grouped into intervals. The survival probability at each interval is estimated as:
-
+  
 $$
-\hat{S}_L(t_i)=\hat{S}_L(t_{i-1})(1-\frac{d_{i}}{{n_{i}'}})
+  \hat{S}_L(t_i)=\prod_{t_{i-1}<t}(1-\frac{d_{i}}{{n_{i}'}})
 $$
 
 where $d_i$ is the number of events in interval^[This is the survival function at the end of interval. However, R often reports the survival function at the beginning of the interval] $[t_{i-1}, t_i]$, $n_i'$ is the average number at risk in the interval $[t_{i-1}, t_i]$.
-
-The Kaplan-Meier curve allows for varying follow-up times and censored data, making it versatile for smaller samples and individual subject data. It provides a visual representation of the survival experience of the cohort over time. The K-M estimator^[Also known as product-limit estimator] can be mathematically expressed as: 
-
+    
+The Kaplan-Meier curve allows for varying follow-up times and censored data, making it versatile for smaller samples and individual subject data. It provides a visual representation of the survival experience of the cohort over time. The Kaplan-Meier estimate of survival function can be mathematically expressed as: 
+      
 $$ 
-\hat S_K(t)= \begin{cases}
-1 & \text { if } t< t_1  \\ 
-\prod_{t_i \le t} [1-\frac{d_i}{n_i}] = \prod_{t_i \le t} [1-h_i]& \text { if }   t \ge t_1
-\end{cases}
+      \hat S_K(t)=\prod_{t_i \le t} [1-\frac{d_i}{n_i}]
 $$
 where $d_i$ is the number of events at time $t_i$ and $n_i$ is the number at risk at $t_i^-$, and $c_i$ is the number of censored during the interval $[t_i, t_{i+1}]$  
-
+      
 Unlike the Kaplan-Meier estimator, the Fleming-Harrington estimator^[Also known as Nelson-Aalen estimator] is designed to weight events differently over time in survival analysis. It focuses on estimating the cumulative hazard function. The estimated survival probability can be computed as:
-
+      
 $$ 
-\hat S_F(t)= \begin{cases}
-1 & \text { if } t< t_1  \\ 
-\prod_{t_i \le t} \exp[-\frac{d_i}{n_i}] = \prod_{t_i \le t} \exp[-h_i] & \text { if }   t \ge t_1
-\end{cases}
+\hat S_F(t)= \prod_{t_i \le t} \exp[-\frac{d_i}{n_i}]
 $$
 where the $d_i$, $n_i$ and $c_i$ conditions are the same as K-M estimator above, It is true that $\hat S_F(t) \geq \hat S_K(t)$ because $\exp{[-\frac{d_i}{n_i}]}$ is always great and equal to $1 - \frac{d_i}{n_i}$. 
-
+    
 Both K-M and F-H survival curves are presented in the **Result** section for further comparison.
-
+    
 ## Hypothesis Testing
-
+    
 The Log-Rank test focuses on comparing the number of observed to expected events across the groups at each time point. The test statistic^[This is the log-rank test statistics with tie] is calculated as:
-
+      
 $$
 \frac{L}{\sqrt{\text{Var}(L)}} = \frac{\sum_{i=1}^{k}(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i^2(n_i-1)}}} \sim N(0, 1)
 $$
-
+      
 The Gehan's Wilcoxon test^[Also known as the Breslow test] gives more weight to events at earlier time points. It achieves a greater sensitivity to differences in survival that manifest at the beginning of the observation period. The test statistic is calculated as:
 
 $$
 \frac{L}{\sqrt{\text{Var}(L)}} = \frac{\sum_{i=1}^{k}n_i(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i-1}}}
 $$
-Obviously, the Gehan's Wilcoxon test is actually a special case of weighted log-rank test with weight equals $n_i$.
 
-
+The Gehan's Wilcoxon test is actually a special case of weighted log-rank test with weight equals $n_i$.
+    
+    
 ## Proportional Hazard Models
-
+    
 We use three propositional hazard models to evaluate the effect of several factors on survival time. It allows us to examine how specified factors influence the rate of the event that we are interested in at a particular point in time. This rate is the hazard rate. 
-
+    
 Proportional hazard model is the primary regression model to investigate the effectiveness of treatment $X$ over survival time $T$, where the $i_{th}$ patient at a time $t$ \
 is\
 $$h_i(t) = h_0(t)\exp[{\beta_1X_{i1}+\beta_2X_{i2}+\ldots+\beta_p X_{ip}}]$$
-
+      
 where
 
 \begin{itemize}
-
+    
 \item $h_0(t)$ is the baseline hazard function
-
+    
 \item $h(t)$ is the hazard function determined by a set of $p$ covariates $(x_1,\ x_2,\ ...,\ x_p)$
-
+      
 \item $(\beta_1,\ \beta_2,\ ...,\ \beta_p)$ are the coefficients which measure the impact of covariates.
-
+    
 \end{itemize}
-
+    
 The **proportional hazard** can be expressed as ratio of two hazard functions at time t in two individuals or groups with covariates $X$ and $X'$, and does not depend on $t$. 
 
 $$\frac{h(t|X = x)}{h(t|X = x')} = e^{\beta({x-x'})}$$
@@ -292,7 +287,7 @@ There are different ways to formulate the baseline hazard function $h_0(t)$, whi
 
 ### Cox PH Model
 
-The Cox PH model is a semi-parametric model which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model looks as parametric PH and can be expressed as:
+The Cox PH model is a semi-parametric model which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model is given by:
 
 $$
 h_i(t) = \tilde{h}_0(t) \exp[\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}] \\
@@ -300,7 +295,7 @@ $$
 
 ### Weibull Model
 
-Assumes a specific functional form for the hazard rate, which can either increase or decrease over time.
+The Weibull model is a popular parametric model wihch assumes a specific functional form for the hazard rate, either increase or decrease over time. Its parameters are intuitively interpretable, with the shape parameter distinctly indicating whether the hazard rate is increasing, decreasing, or constant.
 
 $$
 \begin{aligned}
@@ -312,7 +307,7 @@ where $\lambda$ is the Scale parameter, and $\gamma$ is the Shape parameter.
 
 ### Gompertz Model
 
-The Gompertz model assumes a hazard function that either increases or decreases exponentially over time.
+The Gompertz model, a parametric approach in survival analysis, assumes an exponential increase or decrease in the hazard function over time. This approach is suitable for studies where hazard rates show distinct exponential trends. 
 
 $$
 \begin{aligned}
@@ -322,7 +317,7 @@ $$
 
 where $\lambda$ is the Scale parameter, and $\eta$ is the rate of increase or decrease in hazard.
 
-### AFT Model
+## Accelerated Failure Time Model
 The Accelerated Failure Time (AFT) model is a parametric model assumes that the effect of covariates is to accelerate or decelerate the life course of a disease by some constant. In the AFT model, the key assumption is that the logarithm of survival time follows a linear relationship with the covariates. Mathematically, it can be expressed as:
 
 $$
