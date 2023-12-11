@@ -758,7 +758,7 @@ Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **F
 ### Model Fitting
 The Weibull model obtained from Stepwise Selection using AIC contains bp, age, ef_cat, sodium, and logcre.
 
-For `bp`, it is a binary covariate  (0 and 1), the coefficient is 0.559, implying a 1.749 times higher hazard of the event in level 1 compared to level 0. The Wald p-value is 0.009 < 0.05, indicating statistical significance.
+For `bp`, it is a binary covariate (0 and 1), the coefficient is 0.559, implying a 1.749 times higher hazard of the event in level 1 compared to level 0. The Wald p-value is 0.009 < 0.05, indicating statistical significance.
 
 For `age`, for each one-unit increase in age, the hazard (risk) of the event increases by a factor of 1.049. The coefficient is statistically significant with p-value < 0.001.
 
@@ -798,8 +798,6 @@ The `overall p-value`=1.11022e-16 with 7 degree of freedom, which is statistical
 ```{r, fig.align='center', fig.height=5, fig.width=8}
 step_model_final <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodium, data = mc_dat)
 
-
-
 # Calculate predicted risks
 predicted_risks <- predict(step_model_final, newdata = mc_dat, type = "risk")
  # Time points for ROC analysis
@@ -818,7 +816,7 @@ auc_250 <- roc_250$AUC
 #print(paste("AUC at 250 days:", auc_250))
 
 # Plot ROC curves
-plot(roc_50$FP, roc_50$TP, type = "l", col = "red", xlab = "1 - Specificity", ylab = "Sensitivity", main = "Time-Dependent ROC Curves")
+plot(roc_50$FP, roc_50$TP, type = "l", col = "red", xlab = "1 - Specificity", ylab = "Sensitivity", main = "Figure 8.1: Time-Dependent ROC Curves for 50 and 250 Days")
 lines(roc_250$FP, roc_250$TP, type = "l", col = "blue")
 legend("bottomright", legend = c("50 days", "250 days"), col = c("red", "blue"), lty = 1)
 abline(0, 1, col = "black", lty = 2)
@@ -931,6 +929,7 @@ In conclusion, incorporating the insights from both semi-parametric and parametr
 7. Zamora, E., Lupón, J., Urrutia, A., González, B., Mas, D., Díez, C., Altimir, S., &amp; Valle, V. (2007, December 1). Prognostic significance of creatinine clearance rate in patients with heart failure and normal serum creatinine: Revista Española de Cardiología. Revista Española de Cardiología (English Edition). https://www.revespcardiol.org/en-prognostic-significance-creatinine-clearance-rate-articulo-13114181 
 
 8. Zhong, J., Gao, J., Luo, J. C., Zheng, J. L., Tu, G. W., & Xue, Y. (2021). Serum creatinine as a predictor of mortality in patients readmitted to the intensive care unit after cardiac surgery: a retrospective cohort study in China. Journal of thoracic disease, 13(3), 1728–1736. https://doi.org/10.21037/jtd-20-3205
+
 \newpage
 
 # Appendix
