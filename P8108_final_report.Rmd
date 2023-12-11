@@ -392,29 +392,49 @@ life_table_female |> kable(booktabs = T,
   kable_styling(latex_options = c("HOLD_position"), font_size = 6)
 ```
 
-**Table 2.1** and **Table 2.2** represent the lifetable with a time break of 30 days (one month), stratified by gender. According to the table, we find that the last line (270-300 days) shows a survival probability larger than 0.5 for both genders (0.54 for male and 0.59 for female). The median survival time is longer than 300 days (10 months), indicating a high life expectancy and improved health care. Moreover, males have a relatively shorter survival time than females based on the life table. This hypothesis needs future testing in the following modeling fit.
+**Table 2.1** and **Table 2.2** represent the lifetable with a time break of 30 days (one month), stratified by gender. According to the table, we find that the last line (270-300 days) shows a survival probability larger than 0.5 for both genders (0.54 for male and 0.59 for female). This may indicate a high life expectancy and improved health care, where a significant proportion of individuals are expected to live longer than 300 days (10 months). Moreover, males have a relatively shorter survival time than females based on the life table. This hypothesis needs future testing in the following modeling fit.
 
 ### The Kaplan-Meier and Fleming-Harrington Model
 
-```{r fig.width=12, fig.height=5}
+```{r}
+km_overall = survfit(Surv(time, event) ~ 1, data = nonpara_dat)
+km_overall_plot = 
+  km_overall |> autoplot() +
+  labs(y = "S(t)",
+       x = "Time",
+       subtitle = "Figure 2.1. Overall Kaplan-Meier Survival Curve") +
+  theme(legend.position = "none")
+
 km = survfit(Surv(time, event) ~ gender, data = nonpara_dat)
-fh <- survfit(Surv(time, event) ~ gender, data = nonpara_dat, type = "fh")
 km_plot = 
   km |> autoplot() +
   labs(y = "S(t)",
        x = "Time",
-       subtitle = "Figure 2.1. Kaplan-Meier Survival Curve By Gender",
+       subtitle = "Figure 2.2. Kaplan-Meier Survival Curve By Gender",
        color = "Gender", fill = 'Gender') + theme(legend.position = "none")
+km_overall_plot + km_plot
+```
+
+
+```{r fig.width=12, fig.height=5}
+fh_overall = survfit(Surv(time, event) ~ 1, data = nonpara_dat, type = "fh")
+fh_overall_plot = 
+  fh_overall |> autoplot() +
+  labs(y = "S(t)",
+       x = "Time",
+       subtitle = "Figure 2.3. Overall Fleming-Harrington Survival Curve") +
+  theme(legend.position = "none")
+fh <- survfit(Surv(time, event) ~ gender, data = nonpara_dat, type = "fh")
 fh_plot = 
   fh |> autoplot() +
   labs(y = "S(t)",
        x = "Time",
-       subtitle = "Figure 2.2. Fleming-Harrington Survival Curve By Gender",
+       subtitle = "Figure 2.4. Fleming-Harrington Survival Curve By Gender",
        color = "Gender", fill = 'Gender')
-km_plot + fh_plot
+fh_overall_plot + fh_plot
 ```
 
-The Kaplan-Meier and Fleming-Harrington have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.95) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
+From the graph we noticed that the median survival time is larger than 300 months. In other words, more than half of the individuals in this study have not experienced the event in the study period. Moreover, the Kaplan-Meier and Fleming-Harrington have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.95) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
 
 ## Hypothesis Testing
 
