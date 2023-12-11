@@ -70,7 +70,7 @@ According to the statistics, heart failure affects 1-2\% of adults in the genera
 
 ## Objective
 
-Our project aims to assess the influence of key physiological and clinical factors on the outcomes of heart failure patients at the Institute of Cardiology and Allied Hospital, Faisalabad, Pakistan, during April-December 2015. We will examine variables such as creatinine levels, gender, age, ejection fraction, blood pressure, anemia, and serum sodium to determine their impact on patient prognosis. Utilizing a range of analytic techniques including exploratory data analysis, nonparametric methods, Kaplan-Meier curves, Cox proportional hazards modeling, parametric survival models, and validation procedures, our study is designed to identify crucial predictors of heart failure and to investigate their influences on the outcome. The insights gained from this analysis are expected to contribute significantly to the development of tailored treatment strategies and improved risk stratification models, thereby enhancing clinical decision-making and patient care for heart failure management.
+Our project aims to assess the influence of key physiological and clinical factors on the outcomes of heart failure patients at the Institute of Cardiology and Allied Hospital, Faisalabad, Pakistan, during April-December 2015. We will examine variables such as creatinine levels, gender, age, ejection fraction, blood pressure, anemia, and serum sodium to determine their impact on patient prognosis. Utilizing a range of analytic techniques including exploratory data analysis, nonparametric methods, hypothesis testing, semi-parametric modeling, parametric survival models, model checking, and validation procedures, our study is designed to identify crucial predictors of heart failure and to investigate their influences on the outcome. The insights gained from this analysis are expected to contribute significantly to the development of tailored treatment strategies and improved risk stratification models, thereby enhancing clinical decision-making and patient care for heart failure management.
 
 
 # Exploratory Data Analysis (EDA)
@@ -202,7 +202,7 @@ cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
 cate_barplot
 ```
 
-After checking the histograms, two continuous variables creatinine phosphokinase (cpk) and serum creatinine are right-skewed. We decide to log-transformed both of them for further model fitting. The new log-transformed variables follow an approximately symmetric distribution and are stored as `logcre` and `logcpk`.
+After checking the histograms, two continuous variables creatinine phosphokinase (cpk) and serum creatinine are right-skewed. We decide to log-transformed both of them for further model fitting. The new log-transformed variables follow a little more symmetric-like distribution and are stored as `logcre` and `logcpk`.
 
 ```{r}
 dat_log = dat |> 
@@ -854,16 +854,16 @@ The `overall p-value`=1.11022e-16 with 7 degree of freedom, which is statistical
 ### ROC Curves and AUC
 
 ```{r, fig.align='center', fig.height=5, fig.width=8}
-step_model_final <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodium, data = mc_dat)
+step_model_final <- coxph(Surv(time, event == 1) ~ EF_catHigh +EF_catMedium + bp + logcre + age + sodium, data = stepwise_data)
 
 # Calculate predicted risks
-predicted_risks <- predict(step_model_final, newdata = mc_dat, type = "risk")
+predicted_risks <- predict(step_model_final, newdata = stepwise_data, type = "risk")
  # Time points for ROC analysis
 time_points <- c(50, 250)
  
 # Calculate ROC curves at specified times
-roc_50 <- timeROC(T = mc_dat$time, delta = mc_dat$event, marker = predicted_risks, times = 50, cause = 1)
-roc_250 <- timeROC(T = mc_dat$time, delta = mc_dat$event, marker = predicted_risks, times = 250, cause = 1)
+roc_50 <- timeROC(T = stepwise_data$time, delta = stepwise_data$event, marker = predicted_risks, times = 50, cause = 1)
+roc_250 <- timeROC(T = stepwise_data$time, delta = stepwise_data$event, marker = predicted_risks, times = 250, cause = 1)
  
 # Extract AUC values
 auc_50 <- roc_50$AUC
@@ -892,7 +892,7 @@ boot_c_statistic <- function(original_data, indices) {
   boot_data <- original_data[indices, ]
  
  # Fit the Cox model to the bootstrap sample
- fit <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodium, data = mc_dat)
+ fit <- coxph(Surv(time, event == 1) ~ EF_catHigh + EF_catMedium + bp + logcre + age + sodium, data = stepwise_data)
    
    # Calculate the concordance statistic using the updated function
    concordance <- concordance(fit)$concordance
@@ -901,7 +901,7 @@ boot_c_statistic <- function(original_data, indices) {
  
  # Perform bootstrapping for C-statistic
  set.seed(123) # for reproducibility
- boot_results_c_stat <- boot(data = mc_dat, statistic = boot_c_statistic, R = 400)
+ boot_results_c_stat <- boot(data = stepwise_data, statistic = boot_c_statistic, R = 400)
  
  # Calculate the average C-statistic
  mean_c_stat <- mean(boot_results_c_stat$t)
@@ -916,7 +916,7 @@ The average C-index calculated through bootstrapping (n = 400) was 0.737 This su
  # Define the bootstrap function for calibration metrics using logistic regression
 boot_calibration_logistic <- function(original_data, indices) {
  boot_data <- original_data[indices, ]
-fit <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodium, data = mc_dat)
+fit <- coxph(Surv(time, event == 1) ~ EF_catHigh + EF_catMedium + bp + logcre + age + sodium, data = stepwise_data)
    
    
   # Predicted risks for the original dataset
@@ -933,7 +933,7 @@ fit <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodiu
  
  # Perform bootstrap
  set.seed(123)
- boot_results_logistic <- boot(data = mc_dat, statistic = boot_calibration_logistic, R = 400)
+ boot_results_logistic <- boot(data = stepwise_data, statistic = boot_calibration_logistic, R = 400)
  
  # Calculate the average calibration slope
 mean_calibration_slope_logistic <- mean(boot_results_logistic$t)
@@ -963,7 +963,9 @@ Future work should, therefore, focus on refining the model's complexity and vari
 
 The non-parametric method showed that more than 50% of both genders (54% for males and 59% for females) can survive for over 300 days. This may indicate a high life expectancy and improved health care. Moreover, the non-parametric method showed no significant difference in survival probability between genders. This result was later consistent with the results of the model selection. Our Cox proportional hazard model
 
-In conclusion, incorporating the insights from both semi-parametric and parametric models, particularly the Cox proportional model, our study offers a holistic view of heart failure prognosis. The findings not only reinforce the critical role of established risk factors but also highlight the evolving nature of these risks over time. While the Cox model demonstrates strong discriminative ability, as evidenced by the C-index of around 0.737 and AUC values ranging from 0.736 at 50 days to 0.934 at 250 days, indicating improved discrimination over time, it also suggests the need for refinement in risk predictions. Specifically, the calibration slope of approximately 1.33 points to a mild overestimation in risk predictions, hinting at potential overfitting. This aspect is crucial in clinical contexts, where precise risk assessment is key to patient care. Our findings underscore the importance of not only assessing a model's ability to discriminate but also ensuring its predictions accurately reflect observed outcomes. Future work will focus on refining the model's complexity, exploring alternative approaches, and conducting external validation to enhance its accuracy and applicability in diverse clinical settings. This study, by identifying significant predictors such as creatinine levels, age, ejection fraction, and blood pressure, contributes to a deeper understanding of heart failure progression and lays the groundwork for more personalized and effective patient management strategies.
+
+
+In conclusion, incorporating the insights from both semi-parametric and parametric models, particularly the Cox proportional model, our study offers a holistic view of heart failure prognosis. The findings not only reinforce the critical role of established risk factors but also highlight the evolving nature of these risks over time. While the Cox model demonstrates strong discriminative ability, it also suggests the need for refinement in risk predictions and addressing sligt over-estimation. Future work will focus on refining the model's complexity, exploring alternative approaches, and conducting external validation to enhance its accuracy and applicability in diverse clinical settings. This study, by identifying significant predictors such as creatinine levels, age, ejection fraction, and blood pressure, contributes to a deeper understanding of heart failure progression and lays the groundwork for more personalized and effective patient management strategies.
 
 \newpage
 
@@ -971,18 +973,16 @@ In conclusion, incorporating the insights from both semi-parametric and parametr
 
 1. Ahmad, T., Munir, A., Bhatti, S. H., Aftab, M., & Raza, M. A. (2017). Survival analysis of heart failure patients: A case study. PLOS ONE, 12(7), e0181001. https://doi.org/10.1371/journal.pone.0181001
 
-2. Collett, D. (1999). Modelling survival data in medical research. Chapman &amp; Hall/CRC. 
+2. Collett, D. (1999). Modelling survival data in medical research. Chapman &amp; Hall/CRC.
 
-3. Jones, N., Ak, R., Adoki, I., Fdr, H., & Cj, T. (2019). Survival of patients with chronic heart failure in the community: a systematic review and meta‐analysis. European Journal of Heart Failure, 21(11), 1306–1325. https://doi.org/10.1002/ejhf.1594
+3. Heagerty, P. J., & Zheng, Y. (2005). Survival Model Predictive Accuracy and ROC Curves. Biometrics, 61(1), 92–105. https://doi.org/10.1111/j.0006-341X.2005.030814.x
 
-
-4. Steyerberg, E. W., & Vergouwe, Y. (2014). Towards better clinical prediction models: Seven steps for development and an ABCD for validation. European Heart Journal, 35(29), 1925–1931. https://doi.org/10.1093/eurheartj/ehu207
-
+4. Jones, N., Ak, R., Adoki, I., Fdr, H., & Cj, T. (2019). Survival of patients with chronic heart failure in the community: a systematic review and meta‐analysis. European Journal of Heart Failure, 21(11), 1306–1325. https://doi.org/10.1002/ejhf.1594
 
 5. Pavlou, M., Ambler, G., Seaman, S. R., Guttmann, O., Elliott, P., King, M., & Omar, R. Z. (2015). How to develop a more accurate risk prediction model when there are few events. BMJ, h3868. https://doi.org/10.1136/bmj.h3868
 
+6. Steyerberg, E. W., & Vergouwe, Y. (2014). Towards better clinical prediction models: Seven steps for development and an ABCD for validation. European Heart Journal, 35(29), 1925–1931. https://doi.org/10.1093/eurheartj/ehu207
 
-6. Heagerty, P. J., & Zheng, Y. (2005). Survival Model Predictive Accuracy and ROC Curves. Biometrics, 61(1), 92–105. https://doi.org/10.1111/j.0006-341X.2005.030814.x
 
 7. Zamora, E., Lupón, J., Urrutia, A., González, B., Mas, D., Díez, C., Altimir, S., &amp; Valle, V. (2007, December 1). Prognostic significance of creatinine clearance rate in patients with heart failure and normal serum creatinine: Revista Española de Cardiología. Revista Española de Cardiología (English Edition). https://www.revespcardiol.org/en-prognostic-significance-creatinine-clearance-rate-articulo-13114181 
 
