@@ -21,7 +21,9 @@ rm(list = ls())
 packages <- c("dplyr", "tidyverse", "readxl", 
               "survival", "KMsurv", 
               "survminer","flexsurv",
-              "eha")
+              "eha",
+              "knitr",
+              "kableExtra")
 
 
 # Install missing packages
@@ -67,6 +69,16 @@ model_data <- raw_data |>
     ejection_fraction >= 45 ~ "High"),
     levels = c("Low", "Medium", "High")))
 
+## create dummy variable for categorical variable
+heart_data <- model.matrix(ejection_fraction~ef_cat, data = model_data)[,-1] |>
+  as.data.frame()
+
+## create data frame for stepwiseCox
+heart_data <- cbind(raw_data, heart_data) 
+stepwise_data <- heart_data |>
+  mutate(logcre=log(creatinine+1),
+         logcpk = log(cpk+1)) |>
+  dplyr::select(-creatinine, -cpk, -ejection_fraction)
 ```
 
 ## Parametric models
@@ -102,8 +114,28 @@ summary(fit_weibull)
 # AIC Both direction
 library(MASS)
 stepAIC(fit_weibull)
+
+final_weibull <- phreg(formula = Surv(time, event) ~ bp + age + ef_catMedium + 
+                          ef_catHigh + sodium + logcre, data = stepwise_data, dist = "weibull")
+
+final_weibull
 ```
 
+```{r}
+1 - pchisq((0.477/0.212876134)^2, df = 1)
+
+# Extract relevant information
+weibull_summary <- data.frame(
+  Variable= c(names(final_weibull$coefficients)),
+  Coef = round(as.vector(final_weibull$coefficients),4),
+  `Exp(Coef)` = round(exp(as.vector(final_weibull$coefficients)),4),
+  `se(Coef)` = round(sqrt(as.vector(diag(final_weibull[["var"]]))),4),
+  `Wald p` = round(1-pchisq((as.vector(final_weibull$coefficients)/sqrt(as.vector(diag(final_weibull[["var"]]))))^2,1),4))
+
+# Create table using kable
+kable(as.data.frame(weibull_summary), caption = "Summary of Gompertz PH Model Fitting", digits = 4) 
+# |> kable_styling(latex_options = c("striped", "hold_position"))
+```
 
 ## Gompertz
 
@@ -114,7 +146,24 @@ fit_gompertz = phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anae
 fit_gompertz
 
 # AIC Both direction
-stepAIC(fit_gompertz)
+stepAIC(fit_gompertz, direction = "backward")
+
+final_gompertz <- phreg(formula = Surv(time, event) ~ bp + anaemia + age + ef_catMedium + 
+                          ef_catHigh + sodium + logcre, data = stepwise_data, dist = "gompertz")
+
 ```
 
+```{r}
+# Extract relevant information
+gompertz_summary <- data.frame(
+  Variable= c(names(final_gompertz$coefficients)),
+  Coef = round(as.vector(final_gompertz$coefficients),4),
+  `Exp(Coef)` = round(exp(as.vector(final_gompertz$coefficients)),4),
+  `se(Coef)` = round(sqrt(as.vector(diag(final_gompertz[["var"]]))),4),
+  `Wald p` = round(1-pchisq((as.vector(final_gompertz$coefficients)/sqrt(as.vector(diag(final_gompertz[["var"]]))))^2,1),4))
+
+# Create table using kable
+kable(as.data.frame(weibull_summary), caption = "Summary of Weibul PH Model Fitting", digits = 4) 
+# |> kable_styling(latex_options = c("striped", "hold_position"))
+```
 
