@@ -29,7 +29,7 @@ To evaluate the calibration of our model, we focused on the calibration slope. C
 
 
 ```{r, fig.align='center', fig.height=5, fig.width=8}
-step_model_final <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium, data = stepwise_data)
+step_model_final <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium + bp, data = stepwise_data)
 
 # Calculate predicted risks
 predicted_risks <- predict(step_model_final, newdata = stepwise_data, type = "risk")
@@ -55,7 +55,7 @@ legend("bottomright", legend = c("50 days", "250 days"), col = c("red", "blue"),
 abline(0, 1, col = "black", lty = 2)
 ```
 
-Using the Cox proportional model with the 5 selected predictors, our time-dependent ROC analysis at 50 days yielded an AUC of approximately 0.717, while at 250 days, the AUC was 0.807。 These values indicate that the model's ability to discriminate between those who will experience the event and those who will not improves over time. The ROC curves further visually demonstrate this improvement, with the curve for 250 days being closer to the top left corner, indicating better performance.
+Using the Cox proportional model with the 5 selected predictors, our time-dependent ROC analysis at 50 days yielded an AUC of approximately 0.742, while at 250 days, the AUC was 0.851. These values indicate that the model's ability to discriminate between those who will experience the event and those who will not improves over time. The ROC curves further visually demonstrate this improvement, with the curve for 250 days being closer to the top left corner, indicating better performance.
 
 ### C-Index
 
@@ -66,7 +66,7 @@ boot_c_statistic <- function(original_data, indices) {
   boot_data <- original_data[indices, ]
  
  # Fit the Cox model to the bootstrap sample
- fit <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium, data = stepwise_data)
+ fit <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium + bp, data = stepwise_data)
    
    # Calculate the concordance statistic using the updated function
    concordance <- concordance(fit)$concordance
@@ -82,7 +82,7 @@ boot_c_statistic <- function(original_data, indices) {
  #print(mean_c_stat)
 ```
 
-The average C-index calculated through bootstrapping (n = 400) was 0.691 This suggests that in about 70% of pairwise comparisons, our model correctly ranks the survival times. A C-index of around 0.70 is generally indicative of good predictive ability, especially in clinical settings where accurate risk stratification is crucial for treatment planning.
+The average C-index calculated through bootstrapping (n = 400) was 0.703 This suggests that in about 70% of pairwise comparisons, our model correctly ranks the survival times. A C-index of around 0.70 is generally indicative of good predictive ability, especially in clinical settings where accurate risk stratification is crucial for treatment planning.
 
 
 ### Calibration Slope
@@ -91,7 +91,7 @@ The average C-index calculated through bootstrapping (n = 400) was 0.691 This su
  # Define the bootstrap function for calibration metrics using logistic regression
 boot_calibration_logistic <- function(original_data, indices) {
  boot_data <- original_data[indices, ]
- fit <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium, data = stepwise_data)
+ fit <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium+bp, data = stepwise_data)
    
    
   # Predicted risks for the original dataset
@@ -115,7 +115,7 @@ mean_calibration_slope_logistic <- mean(boot_results_logistic$t)
 #print(mean_calibration_slope_logistic)
 ```
 
-In our analysis, the calibration of the Cox proportional hazards model was evaluated using a bootstrap method with logistic regression. This model, incorporating logcre, age, and sodium as predictors, was subjected to 400 bootstrap iterations to robustly assess its calibration slope. The average calibration slope, derived from these iterations, was approximately 0.731. This value suggests good calibration of the model, indicating a close alignment between the predicted risks and the observed outcomes in our dataset. The bootstrap method provided a comprehensive assessment by capturing the variability inherent in the model, thereby offering a reliable estimate of the model's calibration.
+In our analysis, the calibration of the Cox proportional hazards model was evaluated using a bootstrap method with logistic regression. This model, incorporating `logcre`, `age`, `BP` , and `sodium` as predictors, was subjected to 400 bootstrap iterations to robustly assess its calibration slope. The average calibration slope, derived from these iterations, was approximately 0.627. This value suggests good calibration of the model, indicating a close alignment between the predicted risks and the observed outcomes in our dataset. The bootstrap method provided a comprehensive assessment by capturing the variability inherent in the model, thereby offering a reliable estimate of the model's calibration.
 
 
 # Discussion
@@ -133,8 +133,10 @@ In contrast, sodium levels (`sodium`) presented a nuanced picture. While higher 
 In the Weibull model analysis, the pivotal roles of `bp`, `age`, and `EF_cat` were reaffirmed. This model identified these variables as having particularly small p-values, emphasizing their statistical significance. The hazard notably increased with elevated blood pressure and advancing age. Higher ejection fractions (`EF_catMedium` and `EF_catHigh`) were significantly associated with reduced risk, which is in line with the understanding of cardiac function's protective role. While sodium levels indicated a trend towards decreased hazard, they did not emerge as a significant predictor. Importantly, this model's emphasis on creatinine levels (`logcre`) as a key factor aligns with findings from a study in Revista Española de Cardiología (Zamora et al., 2007). This study highlighted that normal creatinine levels might mask underlying kidney failure, a significant prognostic factor in heart failure (Zamora et al., 2007). It identified factors such as age, gender, cause of heart failure, left ventricular ejection fraction, diabetes, and hypertension as influential, but particularly underscored creatinine clearance as an independent mortality predictor (Zamora et al., 2007). Thus, the results from the Weibull model, supported by this study, underscore the importance of considering age, ejection fraction, and creatinine levels in assessing heart failure risk, aiding in early identification and targeted interventions in clinical practice.
 
 
-Building on the preceding discussion, our analysis further delved into the model's predictive capabilities using time-dependent ROC analysis and C-index evaluation. The time-dependent ROC analysis revealed an increasing Area Under the Curve (AUC) from approximately 0.717 at 50 days to 0.807 at 250 days, indicating an improvement in the model's ability to distinguish between patients at varying risk levels over time. This enhancement in discrimination ability, particularly for longer-term outcomes, is crucial for clinical decision-making in heart failure management. The increase in AUC highlights the importance of considering temporal dynamics in survival analysis, emphasizing the need for dynamic risk assessment strategies in clinical settings.
+Building on the preceding discussion, our analysis further delved into the model's predictive capabilities using time-dependent ROC analysis and C-index evaluation. TOur time-dependent ROC analysis revealed an Area Under the Curve (AUC) of approximately 0.742 at 50 days, which increased to 0.851 at 250 days. These AUC values signify the model's ability to effectively discriminate between patients at different risk levels, with an improvement observed over time. The increased AUC at 250 days suggests enhanced predictive accuracy for longer-term outcomes, a crucial aspect for patient management in heart failure.
 
-Furthermore, the model demonstrated a high degree of calibration accuracy, as evidenced by a calibration slope of approximately 0.731 obtained through bootstrapping (400 samples). This value suggests that the model's predictions align closely with the observed outcomes, thereby enhancing its clinical applicability for individual risk assessment. The combination of the model's strong calibration and good discriminative performance, as reflected by a C-index of around 0.691, underscores its utility in a clinical context. The ability to provide reliable risk estimations is particularly valuable in tailoring therapeutic strategies and long-term patient monitoring.
+Furthermore, the calibration slope obtained from the bootstrap analysis (400 samples) was approximately 0.627. This value indicates a reasonable level of calibration, suggesting that the predicted risks generated by the model are in good alignment with the observed outcomes. The calibration slope is a vital metric in evaluating how well a model's predictions correspond to actual event probabilities, and in this case, it demonstrates the model’s reliability in risk prediction.
 
-In conclusion, our comprehensive analysis, incorporating the Cox proportional hazards model and Weibull distribution, highlights the critical role of specific predictors such as creatinine levels, age, and ejection fraction categories in determining survival outcomes in heart failure patients. The integration of these predictors into a model that exhibits both strong discriminative ability and good calibration offers a promising tool for clinicians in the management of heart failure. The insights gained from this study can guide future research in refining predictive models for heart failure, emphasizing the importance of a multifaceted approach that accounts for both individual patient characteristics and dynamic risk factors over time.
+Additionally, the average C-index, determined through bootstrapping, was 0.703. This indicates that in about 70% of pairwise comparisons, the model correctly ranks the survival times. A C-index of this magnitude reflects good predictive performance, especially important in clinical settings where accurate risk assessment is pivotal for treatment planning and patient care.
+
+In conclusion, the inclusion of key variables such as creatinine levels (logcre), age, sodium levels (sodium), and blood pressure (bp) has enabled our model to robustly predict survival outcomes in heart failure patients. The model's ability to discriminate between different risk levels over time and its calibration accuracy highlight its potential utility in clinical practice. These insights emphasize the importance of integrating a range of clinical variables in heart failure management, allowing for dynamic risk assessment and individualized treatment strategies. Our findings can guide future research and clinical practice in enhancing predictive models for heart failure, focusing on a multifaceted approach that accounts for various patient-specific factors and temporal dynamics.
