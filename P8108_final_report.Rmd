@@ -433,7 +433,8 @@ fh_plot =
 (km_overall_plot + km_plot) / (fh_overall_plot + fh_plot)
 ```
 
-From the graph we noticed that the median survival time is larger than 300 months. In other words, more than half of the individuals in this study have not experienced the event in the study period. Moreover, the Kaplan-Meier and Fleming-Harrington have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.95) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
+From the overall survival curves, we noticed that the whole lines (as well as confidence interval) in both Kaplan-Meier and Fleming-Harrington are above 50 percent. In other words, more than half of the individuals in this study have not experienced the event in the study period, and the median survival time is longer than 300 days (10 months), with a certain level of significance.
+Moreover, the Kaplan-Meier and Fleming-Harrington have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.95) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
 
 ## Hypothesis Testing
 
@@ -890,7 +891,7 @@ Our calculated mean calibration slope came to approximately 1.33. This value, sl
 
 # Discussion
 
-According to the life table, we find that there is a slight difference in survival probability between male and female. However, the hypothesis test and model selection show that there is actually no difference. Similarities in heart failure presentation, treatment regimen, and sample size may explain the absence of sex-based differences in survival. Specifically, if the severity of heart failure was not related to gender or if patients received appropriate gender-based treatment and the sample size or characteristics of the study limited gender-specific analyses, potential differences could be masked.
+According to the non-parametric methods, we found that the median survival time is longer than 300 days (10 months), indicating that more than half of the individuals in this study have not experienced the event in the study period. Meanwhile, according to the life table, we find that there is a slight difference in survival probability between male and female. However, the hypothesis test and model selection show that there is actually no difference. Similarities in heart failure presentation, treatment regimen, and sample size may explain the absence of sex-based differences in survival. Specifically, if the severity of heart failure was not related to gender or if patients received appropriate gender-based treatment and the sample size or characteristics of the study limited gender-specific analyses, potential differences could be masked.
 
 Both the **Cox PH model** and the **Weibull PH Model** reveals significant predictors of survival outcomes in heart failure patients. Key among these is `logcre`, with the Cox model showing a HR of 3.06, indicating a substantial risk increase with elevated levels. `Age` with the Cox model suggesting a $5%$ increase in risk per year, implies people with advancing age face higher hazard. The `EF_cat` shows importance of cardiac function, as higher ejection fractions (`EF_catMedium` and `EF_catHigh`) correlate with reduced risk. `bp` similarly shows a significant impact on hazard, with a 72% increase in risk for higher levels in the Cox model, a finding mirrored in the Weibull analysis.
 
