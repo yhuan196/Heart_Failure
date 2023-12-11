@@ -764,7 +764,7 @@ Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **F
 fit_weibull = eha::phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + 
                   age + EF_cat+ sodium + platelets + log(creatinine+1) + log(cpk+1), 
                 data = model_data, dist = "weibull")
-summary(fit_weibull)
+# summary(fit_weibull)
 
 # AIC Both direction
 library(MASS)
