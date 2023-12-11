@@ -24,7 +24,7 @@ abstract: "Heart failure (HF) results from weakened heart muscles, impairing blo
   of heart failure (HF) patients between April and December 2015. Our research employs
   a comprehensive range of statistical methodologies, including exploratory data analysis,
   non-parametric approaches, semi-parametric model, parametric models, hypothesis testing, model checking,
-  and validation procedures, aiming to identify significant predictors and investigate their influences on heart failure. The significant factors identified in our study include creatinine levels, age, blood pressure, and serum sodium. Additionally, the model's discriminative ability across varied samples and conditions is validated using rigorous bootstrap validation methods such as c-index and calibration slope. Our findings contribute to refining risk assessment models, enhancing clinical decision-making, and optimizing patient care for heart failure in the future. The insights gained from our modeling process offer a deeper understanding of HF progression and its risk factors, paving the way for more personalized treatment approaches and preventive strategies that could profoundly impact patient outcomes and quality of life."
+  and validation procedures, aiming to identify significant predictors and investigate their influences on heart failure. The significant factors identified in our study include creatinine levels, age, blood pressure, ejection fraction, and serum sodium. Additionally, the model's discriminative ability across varied samples and conditions is validated using rigorous bootstrap validation methods such as c-index and calibration slope. Our findings contribute to refining risk assessment models, enhancing clinical decision-making, and optimizing patient care for heart failure in the future. The insights gained from our modeling process offer a deeper understanding of HF progression and its risk factors, paving the way for more personalized treatment approaches and preventive strategies that could profoundly impact patient outcomes and quality of life."
 editor_options:
   chunk_output_type: console
 ---
@@ -60,6 +60,7 @@ library(survivalROC)
 library(rpart)
 library(eha)
 library(pec)
+library(MASS)
 ```
 
 # Introduction
@@ -165,7 +166,7 @@ table1 = table1(~ time + age + gender + smoking + diabetes + bp + EF_cat +
 t1kable(table1) |> kable_styling(font_size = 8, latex_options = "HOLD_position")
 ```
 
-Based on the descriptive table, we observe that the mean survival time for deletions and events is 158 days and 70.9 days, respectively. Since we have the complete dataset, there is no need to worry about missing values issue. The table also lists the p-values for each variable with some having relatively large p-values. However, we still need to check the distribution of each variable ^[Histograms for continuous variables and bar charts for categorical variables] and determine which variables need to be transformed.
+Based on the descriptive table, we observe that the mean survival time for deletions and events is 158 days and 70.9 days, respectively. Since we have the complete dataset, there is no need to concern about missing values issue. The table also lists the p-values for each variable with some having relatively large p-values. However, we still need to check the distribution of each variable ^[Histograms for continuous variables and bar charts for categorical variables] and determine which variables need to be transformed.
 
 ```{r fig.align='center', fig.height=5, fig.width=8}
 # Data contains the continuous vars only
@@ -294,7 +295,7 @@ The Weibull model is a popular parametric proportional hazard model which assume
 
 $$
 \begin{aligned}
-h_i(t) &= \lambda \gamma t^{\gamma - 1} \exp(\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}) \\
+h_i(t) &= \lambda \gamma t^{\gamma - 1} \exp[\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}] \\
 \end{aligned}
 $$
 
@@ -309,6 +310,7 @@ $$\text{Max}_{v,s}[\chi^2_{LR}(v, s)]$$
 where $\chi^2_{LR}(v, s)$ is the log-rank test statistic computed for a split $s$ on variable $v$. The process continues until a stopping criterion is met, typically based on the minimum number of observations in a node or a minimum improvement in the survival difference. The result is a tree where the paths from the root to the leaves represent rules for predicting survival, offering a visual and interpretable model of the factors affecting the time to an event like death in this study.
 
 **Stepwise Selection**
+
 In model selection process, we incorporated bidirectional stepwise selection, alongside using various model assessment criteria such as Akaike Information Criterion (AIC), Corrected Akaike Information Criterion (AICc), and Schwarz Bayesian Criterion (SBC). This comprehensive approach enhanced our ability to identify the most appropriate model for our data. 
 
 We chose the final model based on AIC in our survival analysis due to its effective balance between model complexity and fit, particularly valuable in preventing overfitting in complex models. Additionally, given our sufficiently large sample size, AIC provided a more appropriate measure compared to AICc, and its less stringent penalty compared to SBC was better suited for our data's scale and complexity. The AIC for the survival model is as follows (Collett et al., 1999):
@@ -333,7 +335,7 @@ where $k = 0$ for the exponential model, $k = 1$ for the Weibull, log-logistic a
 
 **Graphical Approach**
 
-The Cox Proportional Hazard model has two main assumptions. One is that the that the hazard functions of the survival curves of the different strata are proportional at time t. The other assumption is that the relationship between the $\log h(t)$, and each covariate is linear. We can compare the survival curves visually to check the PH assumption. One of the most commonly used plot is $\log(-\log\hat{S}(t|Z = z))$ over $\log t$. Since we know:
+The Cox Proportional Hazard model has two main assumptions. One is that the hazard functions of the survival curves of the different strata are proportional at time t. The other assumption is that the relationship between the $\log h(t)$ and each covariate is linear. We can compare the survival curves visually to check the PH assumption. One of the most commonly used plot is $\log(-\log\hat{S}(t|Z = z))$ over $\log t$. Since we know:
 
 $$\log(-\log\hat{S}(t|Z = z))-\log(-\log\hat{S}_0(t)) = \beta$$
 where $Z$ is a binary group indicator and the survival probability is usually estimated by K-M estimator. The parallel curves in the plot indicates the hazard ratio across the variable of interest is proportional at time t.
@@ -341,7 +343,7 @@ where $Z$ is a binary group indicator and the survival probability is usually es
 Another graphical method is to compare the differences between the fitted survival functions and observed K-M estimates from our PH model. If the fitted survival curse is closed to the observed K-M estimated survival curve, our PH assumption holds. 
 
 
-In the parametric proportional hazard models, we can use both $-\log \hat{S}(t)$ plot and $\log(-\log\hat{S}(t))$ to confirm if the hazard rate is constant. In other words, it can help us choose a proper distribution before fitting the models. For $-\log \hat{S}(t)$ plot, a straight line means constant hazard rate and the distribution should be exponential. Otherwise, Weibull model is better. In $\log(-\log\hat{S}(t))$ plot, if the slope of the straight line equals 1, then hazard rate should be constant. And if it is not, we choose Weibull model.
+In the parametric proportional hazard models, we can use both $-\log \hat{S}(t)$ plot and $\log(-\log\hat{S}(t))$ to confirm if the hazard rate is constant. In other words, it can help us choose a proper distribution before fitting the models. For the $-\log \hat{S}(t)$ plot, a straight line means constant hazard rate and the distribution should be exponential. Otherwise, Weibull model is better. In the $\log(-\log\hat{S}(t))$ plot, if the slope of the straight line equals 1, then hazard rate should be constant. And if it is not, we choose Weibull model.
 
 
 **Schoenfeld Residuals Test**
@@ -654,11 +656,11 @@ mc_cre_surv_log = survfit(Surv(log(time + 1), event == 1) ~ cre_cat, data = mc_d
 g1 = ggsurvplot(mc_ef_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
                 xlab = "log(time)", ylab = "log[-log(Survival Probability)]",
                 ggtheme = theme_minimal(), xlim = c(1.5, 6)) +
-  labs(title = "Figure 4.1: Log of Negative Log of Estimated Survival Functions \nby EF Group")
+  labs(title = "Figure 4.1: Log of Negative Log of Estimated Survival Functions \nby EF Groups")
 g2 = ggsurvplot(mc_cre_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
                 xlab = "log(time)", ylab = "log[-log(Survival Probability)]",
                 ggtheme = theme_minimal(), xlim = c(1.5,6)) +
-  labs(title = "Figure 4.2: Log of Negative Log of Estimated Survival Functions \nby Log-transformed Creatinine Group")
+  labs(title = "Figure 4.2: Log of Negative Log of Estimated Survival Functions \nby Log-transformed Creatinine Groups")
 gridExtra::grid.arrange(g1$plot, g2$plot, nrow = 2)
 
 g3.1 = ggsurvplot(mc_surv_ef, data = mc_dat, risk.table = FALSE, ggtheme = theme_minimal())
@@ -670,7 +672,7 @@ cox_fit$EF_cat = cox_fit$variable
 
 g3 = ggplot(cox_fit, aes(x = time, y = surv, group = EF_cat, color = EF_cat)) + geom_step() +
   geom_step(data = km_fit, aes(x = time, y = surv, group = EF_cat, color = EF_cat), lty = 3) + 
-  labs(title = "Figure 5.1: Plot of Observed vs. Fitted Survival By EF Group", y = "Survival Distribution Function Estimate", 
+  labs(title = "Figure 5.1: Plot of Observed vs. Fitted Survival By EF Groups", y = "Survival Distribution Function Estimate", 
   caption = "Straight line: Fitted Survival \nDashed line: Observed Survival") +
   theme_minimal() +
   theme(legend.position = "top") +
@@ -690,7 +692,7 @@ cox_fit$cre_cat = cox_fit$variable
 
 g4 = ggplot(cox_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat)) + geom_step() +
   geom_step(data = km_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat), lty = 3) + 
-  labs(title = "Figure 5.2: Plot of Observed vs. Fitted Survival By Creatinine Group", y = "Survival Distribution Function Estimate", 
+  labs(title = "Figure 5.2: Plot of Observed vs. Fitted Survival By Creatinine Groups", y = "Survival Distribution Function Estimate", 
   caption = "Straight line: Fitted Survival \nDashed line: Observed Survival") +
   theme_minimal() +
   theme(legend.position = "top") +
@@ -703,20 +705,20 @@ g4 = ggplot(cox_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat)) 
 g3 / g4
 ```
 
-```{r fig.align='center', fig.width=10, fig.height = 4, fig.cap="Figure 6.1: Schoenfeld Test For Log-transformed Creatinine"}
+```{r fig.align='center', fig.width=8, fig.height = 4, fig.cap="Figure 6.1: Schoenfeld Test For Log-transformed Creatinine"}
 scho <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodium, data = mc_dat)
 ggcoxzph(cox.zph(scho), var = c("creatinine_log"), df = 2, nsmo = 1000)
 ```
 
-```{r fig.align='center', fig.width=10, fig.height = 4, fig.cap="Figure 6.2: Schoenfeld Test For EF\\_cat"}
+```{r fig.align='center', fig.width=8, fig.height = 4, fig.cap="Figure 6.2: Schoenfeld Test For Categorized EF"}
 ggcoxzph(cox.zph(scho), var = c("EF_cat"), df = 2, nsmo = 1000)
 ```
 
 \newpage
 
-Obviously, the curves in **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot **Figure 5.2**, the straight curve and dashed curve are close to each other, which means the proportional hazard ratio is proportional for creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots **Figure 6.1** of the fitted model. We chose to input `logcre` variables and found a regression lines with a slope close to zero.
+Obviously, the curves in **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot **Figure 5.2**, the straight curve and dashed curve are close to each other, which means the hazard ratio is proportional for creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots (**Figure 6.1**) of the fitted model. We chose to input `logcre` variables and found a regression lines with a slope close to zero.
 
-However, after checking the `EF_cat` variable, the curves in **Figure 4.1** are not parallel, the straight curve and dashed curve in **Figure 5.1** are not close to each other, especically at the beginning of the study. And there is an obvious slope for the regression line in Globall Schoenfeld test in **Figure 6.2**. The PH assumption is violated and we decide to remove this variable from our models.
+However, after checking the `EF_cat` variable, the curves in **Figure 4.1** are not parallel, the straight curve and dashed curve in **Figure 5.1** are not close to each other, especially at the beginning of the study. And there is an obviously non-zero slope for the regression line in Global Schoenfeld test in **Figure 6.2**. The PH assumption is then violated and we decide to remove this variable from our models and subsequent analyses.
 
 ### Cox Model Fitting and Results
 
@@ -740,7 +742,7 @@ model_summary |> kable(booktabs = T, escape = F,
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-Table 4 indicates that the first five variables are statistically significant at the $\alpha = 0.05$. Among these, `logcre`, `age`, and `bp` exhibit positive hazard ratios, suggesting an increased risk associated with higher values of these variables. On the other hand, `EF_cat` demonstrates a negative hazard ratio, indicating patient with high or medium ejection fractions value have a lower risk compared to those with low ejection fraction values.
+**Table 4** indicates that the first five variables are statistically significant at $\alpha = 0.05$. Among these, `logcre`, `age`, and `bp` exhibit positive hazard ratios, suggesting an increased risk associated with higher values of these variables. On the other hand, `EF_cat` demonstrates a negative hazard ratio, indicating patient with high or medium ejection fractions value have a lower risk compared to those with low ejection fraction values.
 
 
 ## Parametric Models
@@ -763,20 +765,12 @@ legend("topleft", legend = c("High", "Low"),
        title = "Creatinine Group", col = c("red", "blue"), lty = 1)
 ```
 
-Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **Figure 4.2**) for `age` and `logcre`, and the slopes do not strictly equal to 1. Now we also check the $-\log\hat{S}(t)$ plot (**Figure 7.1** and **Figure 7.2**) for same variables. The curves for both two plots seems not to be straight and nonlinear. We suggest Weibull distributions for parametric proportional hazard models. 
+Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **Figure 4.2**) for `age` and `logcre`, and the slopes do not strictly equal to 1. Now we also check the $-\log\hat{S}(t)$ plot (**Figure 7.1** and **Figure 7.2**) for same variables. The curves for both two plots seems not to be straight and linear. We suggest fitting Weibull distributions for parametric PH model. 
 
 
 ### Weibull Model Fitting and Results
 
 ```{r weibull}
-fit_weibull = eha::phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + 
-                  age + sodium + platelets + log(creatinine+1) + log(cpk+1), 
-                data = model_data, dist = "weibull")
-
-# AIC Both direction
-library(MASS)
-# stepAIC(fit_weibull)
-
 final_weibull <- eha::phreg(formula = Surv(time, event) ~ bp + age + sodium + logcre, data = stepwise_data, dist = "weibull")
 
 # Extract relevant information
@@ -793,7 +787,7 @@ weibull_summary |> kable(booktabs = T, escape = F, caption = "Table 5: Summary o
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-The Weibull proportional hazard model demonstrates that in the, the first four variables are statistically significant at $\alpha=0.05$, which is the same as the significance variables in the Cox proportional hazard model. Additionally, the log scale value of $2.547$ implies that the baseline hazard function is scaled by $\exp(2.547)$, influencing the time to event and indicating a higher baseline hazard rate. Meanwhile, the log shape value of $-0.0875$, when exponentiated to approximately $0.9162$, suggests a decreasing hazard rate over time, meaning that the risk of the event occurring diminishes as time progresses.
+The Weibull PH model demonstrates that in the first four variables are statistically significant at $\alpha=0.05$, which is the same as the significance variables in the Cox proportional hazard model. Additionally, the log scale value of $2.547$ implies that the baseline hazard function is scaled by $\exp(2.547)$, influencing the time to event and indicating a higher baseline hazard rate. Meanwhile, the log shape value of $-0.0875$, when exponentiated to approximately $0.9162$, suggests a decreasing hazard rate over time, meaning that the risk of the event occurring diminishes as time progresses.
 
 ## Model Validation 
 
@@ -894,19 +888,18 @@ In our analysis, the calibration of the Cox proportional hazards model was evalu
 
 According to the non-parametric methods, we found that the median survival time is longer than 300 days (10 months), indicating that more than half of the individuals in this study have not experienced the event in the study period. Meanwhile, according to the life table, we find that there is a slight difference in survival probability between male and female. However, the hypothesis test and model selection show that there is actually no difference. Similarities in heart failure presentation, treatment regimen, and sample size may explain the absence of sex-based differences in survival. Specifically, if the severity of heart failure was not related to gender or if patients received appropriate gender-based treatment and the sample size or characteristics of the study limited gender-specific analyses, potential differences could be masked.
 
-Both the **Cox PH model** and the **Weibull PH Model** reveals significant predictors of survival outcomes in heart failure patients. Key among these is `logcre`, with the Cox model showing a HR of 3.06, indicating a substantial risk increase with elevated levels. `Age` with the Cox model suggesting a $5%$ increase in risk per year, implies people with advancing age face higher hazard. `bp` similarly shows a significant impact on hazard, with a 72% increase in risk for higher levels in the Cox model, a finding mirrored in the Weibull analysis.
+Both the **Cox PH model** and the **Weibull PH Model** reveals significant predictors of survival outcomes in heart failure patients. Key among these is `logcre`, with the Cox PH model showing a HR of 3.06, indicating a substantial risk increase with elevated levels. `Age` with the Cox PH model suggesting a $5%$ increase in risk per year, implies people with advancing age face higher hazard. `bp` similarly shows a significant impact on hazard, with a 72% increase in risk for higher levels in the Cox PH model, a finding mirrored in the Weibull analysis.
 
-The Weibull model, in addition to confirming these findings, brings additional insights due to its parametric nature. The model emphasis on `bp`, `age`, and `logcre` with notably small p-values highlights their robustness as predictors. For `sodium`, the relationship with survival outcomes is more complex. In the Cox model, it is approach to significance level $\alpha=0.1$,  but remains statistically non-significant. The consistency between the Cox and Weibull models in identifying the key predictors provides credibility to these findings. 
-
+The Weibull PH model, in addition to confirming these findings, brings additional insights due to its parametric nature. The model emphasis on `bp`, `age`, and `logcre` with notably small p-values highlights their robustness as predictors. For `sodium`, the relationship with survival outcomes is more complex. In the Cox PH model, it is approach to significance level $\alpha=0.1$,  but remains statistically non-significant. The consistency between the Cox and Weibull models in identifying the key predictors provides credibility to these findings. 
 Supporting this, A study published in Frontiers in Cardiovascular Medicine found that postoperative serum creatinine is a significant prognostic factor for cardiac surgery patients (Zhong et al., 2021). This study showed that higher levels of postoperative serum creatinine were linked to increased hospital mortality and longer stays in the intensive care unit. Specifically, it found that patients who did not survive had significantly higher postoperative serum creatinine levels, and there was a positive correlation between these levels and lengths of ICU stay.
 
-Building on the preceding discussion, our analysis further delved into the model's predictive capabilities using time-dependent ROC analysis and C-index evaluation. TOur time-dependent ROC analysis revealed an Area Under the Curve (AUC) of approximately 0.742 at 50 days, which increased to 0.851 at 250 days. These AUC values signify the model's ability to effectively discriminate between patients at different risk levels, with an improvement observed over time. The increased AUC at 250 days suggests enhanced predictive accuracy for longer-term outcomes, a crucial aspect for patient management in heart failure.
+Building on the preceding discussion, our analysis further delved into the model's predictive capabilities using time-dependent ROC analysis and C-index evaluation. Our time-dependent ROC analysis revealed an Area Under the Curve (AUC) of approximately 0.742 at 50 days, which increased to 0.851 at 250 days. These AUC values signify the model's ability to effectively discriminate between patients at different risk levels, with an improvement observed over time. The increased AUC at 250 days suggests enhanced predictive accuracy for longer-term outcomes, a crucial aspect for patient management in heart failure.
 
 Furthermore, the calibration slope obtained from the bootstrap analysis (400 samples) was approximately 0.627. This value indicates a reasonable level of calibration, suggesting that the predicted risks generated by the model are in good alignment with the observed outcomes. The calibration slope is a vital metric in evaluating how well a model's predictions correspond to actual event probabilities, and in this case, it demonstrates the model’s reliability in risk prediction.
 
 Additionally, the average C-index, determined through bootstrapping, was 0.703. This indicates that in about 70% of pairwise comparisons, the model correctly ranks the survival times. A C-index of this magnitude reflects good predictive performance, especially important in clinical settings where accurate risk assessment is pivotal for treatment planning and patient care.
 
-In conclusion, the inclusion of key variables such as creatinine levels (logcre), age, sodium levels (sodium), and blood pressure (bp) has enabled our model to robustly predict survival outcomes in heart failure patients. The model's ability to discriminate between different risk levels over time and its calibration accuracy highlight its potential utility in clinical practice. These insights emphasize the importance of integrating a range of clinical variables in heart failure management, allowing for dynamic risk assessment and individualized treatment strategies. Our findings can guide future research and clinical practice in enhancing predictive models for heart failure, focusing on a multifaceted approach that accounts for various patient-specific factors and temporal dynamics.
+In conclusion, the inclusion of key variables such as creatinine levels (`logcre`), age, sodium levels (`sodium`), and blood pressure (`bp`) has enabled our model to robustly predict survival outcomes in heart failure patients. The model's ability to discriminate between different risk levels over time and its calibration accuracy highlight its potential utility in clinical practice. These insights emphasize the importance of integrating a range of clinical variables in heart failure management, allowing for dynamic risk assessment and individualized treatment strategies. Our findings can guide future research and clinical practice in enhancing predictive models for heart failure, focusing on a multifaceted approach that accounts for various patient-specific factors and temporal dynamics.
 
 # Conclusions
 
