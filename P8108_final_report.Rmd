@@ -162,7 +162,7 @@ pvalue <- function(x, ...) {
         p <- chisq.test(table(y, g))$p.value
     }
     # Format the p-value, using an HTML entity for the less-than sign.
-    # The initial empty string places the output on the line below the variable label.
+    # initial empty string places the output on the line below variable label
     c("", sub("<", "<", format.pval(p, digits = 3, eps = 0.001)))
 }
 caption = "Table 1: Descriptive Statistics Table for Variable Characteristic"
@@ -395,10 +395,12 @@ life_table_male <- lifetab2(Surv(time, event) ~ 1, data = nonpara_male,
 life_table_female <- lifetab2(Surv(time, event) ~ 1, data = nonpara_female,
                               breaks = seq(0, 300, 30))
 life_table_male |> kable(booktabs = T,
-                          caption = "Table 2.1: Heart Failure Life Table (Male)") |> 
+                          caption = 
+                           "Table 2.1: Heart Failure Life Table (Male)") |> 
   kable_styling(latex_options = c("HOLD_position"), font_size = 6) 
 life_table_female |> kable(booktabs = T,
-                            caption = "Table 2.2: Heart Failure Life Table (Female)") |> 
+                            caption = 
+                             "Table 2.2: Heart Failure Life Table (Female)") |> 
   kable_styling(latex_options = c("HOLD_position"), font_size = 6)
 ```
 
@@ -471,8 +473,11 @@ results2 <- tibble(
 )
 
 results_table1 <- kable(results1, align = "c", booktabs = T, escape = F,
-caption = "Figure 3.1: Comparison of Survival Experience Between Males and Females by Log-Rank Test",
-col.names = c("Gender", "N", "Observed", "Expected", "$\\frac{(O-E)^2}{E}$", "$\\frac{(O-E)^2}{V}$")) |>
+caption = 
+  "Figure 3.1: Comparison of Survival Experience Between Males and Females 
+by Log-Rank Test",
+col.names = c("Gender", "N", "Observed", "Expected", "$\\frac{(O-E)^2}{E}$",
+              "$\\frac{(O-E)^2}{V}$")) |>
   kable_styling(latex_options = c("HOLD_position"))
 
 results_table2 <- kable(results2, align = "c", booktabs = T, 
@@ -490,7 +495,9 @@ The Log-Rank test and the Gehan's Wilcoxon test can be used to test for differen
 
 ```{r fig.align='center', fig.width=10, fig.height=6}
 surv_obj <- Surv(time = nonpara_dat$time, event = nonpara_dat$event)
-surv_tree <- rpart(surv_obj ~ gender + smoking + diabetes + bp + anemia + age + EF_cat + sodium + creatinine_log + platelets + cpk_log,
+surv_tree <- rpart(surv_obj ~ gender + smoking + diabetes + 
+                     bp + anemia + age + EF_cat + sodium + 
+                     creatinine_log + platelets + cpk_log,
                    data = nonpara_dat, method = "exp")
 rpart.plot::rpart.plot(surv_tree, main = "Figure 3: Results of Survival Tree")
 ```
@@ -525,8 +532,9 @@ stepwise_data <- heart_data |>
 
 ```{r}
 # Variable selection using stepwise Cox model using Sl
-stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anemia + age + sodium + platelets + logcre + logcpk + 
+stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + 
+                                 diabetes + bp + anemia + age + sodium + 
+                                 platelets + logcre + logcpk + 
                                  EF_catMedium + EF_catHigh,
                                data = stepwise_data,
                                select = "SL",
@@ -537,11 +545,13 @@ stepwise_model1 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
                                method = "efron",
                                weights = NULL,
                                best = NULL)
-# 7 variables are selected: logcre, age, EF_catMedium, EF_catHigh, bp, sodium, anemia  
+# 7 variables are selected: 
+# logcre, age, EF_catMedium, EF_catHigh, bp, sodium, anemia  
 
 ## Variable selection using stepwise Cox model using AIC
-stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anemia + age + sodium + platelets + logcre + logcpk + 
+stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + 
+                                 diabetes + bp + anemia + age + sodium + 
+                                 platelets + logcre + logcpk + 
                                  EF_catMedium + EF_catHigh,
                                data = stepwise_data,
                                selection = "bidirection",
@@ -556,8 +566,9 @@ stepwise_model2 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
 # 6 variables are selected: logcre, age, EF_catMedium, EF_catHigh, bp, sodium
 
 ### Variable selection using stepwise Cox model using AICc
-stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anemia + age + sodium + platelets + logcre + logcpk + 
+stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + 
+                                 diabetes + bp + anemia + age + sodium + 
+                                 platelets + logcre + logcpk + 
                                  EF_catMedium + EF_catHigh,
                                data = stepwise_data,
                                selection = "bidirection",
@@ -569,11 +580,13 @@ stepwise_model3 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes +
                                method = "efron",
                                weights = NULL,
                                best = NULL)
-# AICc 9 variables: logcre, age, EF_catMedium, EF_catHigh, bp, sodium, anemia, logcpk, diabetes 
+# AICc 9 variables: 
+# logcre, age, EF_catMedium, EF_catHigh, bp, sodium, anemia, logcpk, diabetes 
 
 ### Variable selection using stepwise Cox model using SBC
-stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + diabetes + bp + 
-                                 anemia + age + sodium + platelets + logcre + logcpk + 
+stepwise_model4 <- stepwiseCox(Surv(time, event) ~ gender + smoking + 
+                                 diabetes + bp + anemia + age + sodium + 
+                                 platelets + logcre + logcpk + 
                                  EF_catMedium + EF_catHigh,
                                data = stepwise_data,
                                selection = "bidirection",
@@ -598,7 +611,8 @@ aic3 <- stepwise_model3$`Process of Selection`[, "AICc"]
 sbc4 <- stepwise_model4$`Process of Selection`[, "SBC"]
 
 # Determine the maximum length
-max_len <- max(sapply(list(steps2, enteredEffect1, sl1, aic2, aic3, sbc4), length))
+max_len <- max(sapply(list(steps2, enteredEffect1, sl1, aic2, aic3, sbc4),
+                      length))
 
 # Function to pad vectors with NA to make their length equal to max_len
 pad_vector <- function(vec, max_len) {
@@ -627,7 +641,8 @@ model_selection[is.na(model_selection)] <- c("-")
 
 # Create table using kable
 model_selection |> kable(booktabs = T,
-                         caption = "Table 3: Summary Table of Model Selection", digits = 4) |>
+                         caption = "Table 3: Summary Table of Model Selection", 
+                         digits = 4) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
@@ -652,7 +667,9 @@ $$
 Before fitting the Cox Proportional Hazard model, we need to check whether our variables hold the PH assumption^[See the Method Section for details]. The $\log(-\log\hat{S}(t|Z = z))$ over $\log t$ plot and observed survival versus estimated survival curves are provided below. We have multiple variables remained after model selection, so we randomly took two of them (`EF_cat` and `logcre`) for the PH assumption check. Since `logcre`^[Since 1.5 mg/dL is the clinical threshold of creatinine, so we categorized log(creatinine + 1) > log(2.5) as "High", otherwise, it's in "Low" group. And people in "High" group should be regarded as renal dysfunction.] is continuous variable, we categorized it into two groups and recoded as "Low" and "High", respectively. 
 
 ```{r fig.align='center', fig.width=10, fig.height=6}
-mc_dat = nonpara_dat %>% mutate(age_cat = case_when(age <= mean(age) ~ "Low", age > mean(age) ~ "High")) %>% 
+mc_dat = nonpara_dat %>% mutate(age_cat = 
+                                  case_when(age <= mean(age) ~ "Low", 
+                                            age > mean(age) ~ "High")) %>% 
   mutate(cre_cat = case_when(creatinine_log <= log(2.5) ~ "Low", 
                              creatinine_log > log(2.5) ~ "High")) %>% 
   mutate(age_cat = factor(age_cat)) %>% 
@@ -661,29 +678,42 @@ mc_dat = nonpara_dat %>% mutate(age_cat = case_when(age <= mean(age) ~ "Low", ag
   as.data.frame()
 mc_surv_ef = survfit(Surv(time, event == 1) ~ EF_cat, data = mc_dat)
 mc_surv_cre = survfit(Surv(time, event == 1) ~ cre_cat, data = mc_dat)
-mc_ef_surv_log = survfit(Surv(log(time + 1), event == 1) ~ EF_cat, data = mc_dat)
-mc_cre_surv_log = survfit(Surv(log(time + 1), event == 1) ~ cre_cat, data = mc_dat)
+mc_ef_surv_log = survfit(Surv(log(time + 1), event == 1) ~ EF_cat,
+                         data = mc_dat)
+mc_cre_surv_log = survfit(Surv(log(time + 1), event == 1) ~ cre_cat,
+                          data = mc_dat)
 
-g1 = ggsurvplot(mc_ef_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
+g1 = ggsurvplot(mc_ef_surv_log, data = mc_dat, fun = "cloglog",
+                risk.table = FALSE, 
                 xlab = "log(time)", ylab = "log[-log(Survival Probability)]",
                 ggtheme = theme_minimal(), xlim = c(1.5, 6)) +
-  labs(title = "Figure 4.1: Log of Negative Log of Estimated Survival Functions \nby EF Groups")
-g2 = ggsurvplot(mc_cre_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
+  labs(title = 
+         "Figure 4.1: Log of Negative Log of Estimated Survival Functions 
+       \nby EF Groups")
+g2 = ggsurvplot(mc_cre_surv_log, data = mc_dat, fun = "cloglog",
+                risk.table = FALSE, 
                 xlab = "log(time)", ylab = "log[-log(Survival Probability)]",
                 ggtheme = theme_minimal(), xlim = c(1.5,6)) +
-  labs(title = "Figure 4.2: Log of Negative Log of Estimated Survival Functions \nby Log-transformed Creatinine Groups")
+  labs(title = 
+         "Figure 4.2: Log of Negative Log of Estimated Survival Functions 
+       \nby Log-transformed Creatinine Groups")
 gridExtra::grid.arrange(g1$plot, g2$plot, nrow = 2)
 
-g3.1 = ggsurvplot(mc_surv_ef, data = mc_dat, risk.table = FALSE, ggtheme = theme_minimal())
-g3.2 = ggadjustedcurves(coxph(Surv(time, event == 1) ~ EF_cat, data = mc_dat), variable = "EF_cat", 
+g3.1 = ggsurvplot(mc_surv_ef, data = mc_dat, risk.table = FALSE,
+                  ggtheme = theme_minimal())
+g3.2 = ggadjustedcurves(coxph(Surv(time, event == 1) ~ EF_cat, data = mc_dat),
+                        variable = "EF_cat", 
                         data = mc_dat, ggtheme = theme_minimal())
 km_fit = g3.1$plot$data
 cox_fit = g3.2$data
 cox_fit$EF_cat = cox_fit$variable
 
-g3 = ggplot(cox_fit, aes(x = time, y = surv, group = EF_cat, color = EF_cat)) + geom_step() +
-  geom_step(data = km_fit, aes(x = time, y = surv, group = EF_cat, color = EF_cat), lty = 3) + 
-  labs(title = "Figure 5.1: Plot of Observed vs. Fitted Survival By EF Groups", y = "Survival Distribution Function Estimate", 
+g3 = ggplot(cox_fit, aes(x = time, y = surv, group = EF_cat, color = EF_cat)) +
+  geom_step() +
+  geom_step(data = km_fit, 
+            aes(x = time, y = surv, group = EF_cat, color = EF_cat), lty = 3) + 
+  labs(title = "Figure 5.1: Plot of Observed vs. Fitted Survival By EF Groups",
+       y = "Survival Distribution Function Estimate", 
   caption = "Straight line: Fitted Survival \nDashed line: Observed Survival") +
   theme_minimal() +
   theme(legend.position = "top") +
@@ -694,16 +724,23 @@ g3 = ggplot(cox_fit, aes(x = time, y = surv, group = EF_cat, color = EF_cat)) + 
   )
 
   
-g4.1 = ggsurvplot(mc_surv_cre, data = mc_dat, risk.table = FALSE, ggtheme = theme_minimal())
-g4.2 = ggadjustedcurves(coxph(Surv(time, event == 1) ~ cre_cat, data = mc_dat), variable = "cre_cat", 
+g4.1 = ggsurvplot(mc_surv_cre, data = mc_dat, risk.table = FALSE,
+                  ggtheme = theme_minimal())
+g4.2 = ggadjustedcurves(coxph(Surv(time, event == 1) ~ cre_cat, data = mc_dat),
+                        variable = "cre_cat", 
                         data = mc_dat, ggtheme = theme_minimal())
 km_fit = g4.1$plot$data
 cox_fit = g4.2$data
 cox_fit$cre_cat = cox_fit$variable
 
-g4 = ggplot(cox_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat)) + geom_step() +
-  geom_step(data = km_fit, aes(x = time, y = surv, group = cre_cat, color = cre_cat), lty = 3) + 
-  labs(title = "Figure 5.2: Plot of Observed vs. Fitted Survival By Creatinine Groups", y = "Survival Distribution Function Estimate", 
+g4 = ggplot(cox_fit, 
+            aes(x = time, y = surv, group = cre_cat, color = cre_cat)) + 
+  geom_step() +
+  geom_step(data = km_fit, 
+            aes(x = time, y = surv, group = cre_cat, color = cre_cat), lty = 3) + 
+  labs(title = 
+         "Figure 5.2: Plot of Observed vs. Fitted Survival By Creatinine Groups", 
+       y = "Survival Distribution Function Estimate", 
   caption = "Straight line: Fitted Survival \nDashed line: Observed Survival") +
   theme_minimal() +
   theme(legend.position = "top") +
@@ -717,7 +754,8 @@ g3 / g4
 ```
 
 ```{r fig.align='center', fig.width=8, fig.height = 4, fig.cap="Figure 6.1: Schoenfeld Test For Log-transformed Creatinine"}
-scho <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodium, data = mc_dat)
+scho <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + 
+                sodium, data = mc_dat)
 ggcoxzph(cox.zph(scho), var = c("creatinine_log"), df = 2, nsmo = 1000)
 ```
 
@@ -741,17 +779,20 @@ $$
 
 ```{r final model results}
 # final model
-cox_model <- coxph(Surv(time, event) ~ logcre + age + bp + sodium, data = stepwise_data)
+cox_model <- coxph(Surv(time, event) ~ logcre + age + bp + sodium,
+                   data = stepwise_data)
 
 cox_summary <- summary(cox_model)
 
 model_summary <- tibble(Variable = base::rownames(cox_summary$coefficients), 
-                         as.data.frame(cox_summary$coefficients)) |> dplyr::select(-z)
+                         as.data.frame(cox_summary$coefficients)) |> 
+  dplyr::select(-z)
 
 model_summary |> kable(booktabs = T, escape = F,
       caption = "Table 4: Summary of Cox Proportional Hazard Model", 
       digits = 4, row.names = TRUE, 
-      col.names = c("Variable", "$\\beta$", "$exp(\\beta)$", "$SE(\\beta)$",  "P-value")) |>
+      col.names = c("Variable", 
+                    "$\\beta$", "$exp(\\beta)$", "$SE(\\beta)$",  "P-value")) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
@@ -767,13 +808,16 @@ mc_surv_cre = survfit(Surv(time, event == 1) ~ cre_cat, data = mc_dat)
 
 plot(mc_surv_age, col = c("red", "blue"), 
      fun = "cumhaz", xlab = "Time(Days)", ylab = "-logS(t)", 
-     main = "Figure 7.1: Negative Log of Estimated Survival Functions For Age Groups")
+     main = 
+       "Figure 7.1: Negative Log of Estimated Survival Functions For Age Groups")
 legend("topleft", legend = c("High", "Low"), 
        title = "Age Group", col = c("red", "blue"), lty = 1)
 
 plot(mc_surv_cre, col = c("red", "blue"), 
      fun = "cumhaz", xlab = "Time(Days)", ylab = "-logS(t)", 
-     main = "Figure 7.2: Negative Log of Estimated Survival Functions For Creatinine Groups")
+     main = 
+       "Figure 7.2: Negative Log of Estimated Survival Functions 
+     For Creatinine Groups")
 legend("topleft", legend = c("High", "Low"), 
        title = "Creatinine Group", col = c("red", "blue"), lty = 1)
 ```
@@ -784,7 +828,8 @@ Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **F
 ### Weibull Model Fitting and Results
 
 ```{r weibull}
-final_weibull <- eha::phreg(formula = Surv(time, event) ~ bp + age + sodium + logcre, data = stepwise_data, dist = "weibull")
+final_weibull <- eha::phreg(formula = Surv(time, event) ~ bp + age + sodium + 
+                              logcre, data = stepwise_data, dist = "weibull")
 
 # Extract relevant information
 weibull_summary <- tibble(
@@ -792,11 +837,16 @@ weibull_summary <- tibble(
   Coef = round(as.vector(final_weibull$coefficients),4),
   `Exp(Coef)` = round(exp(as.vector(final_weibull$coefficients)),4),
   `se(Coef)` = round(sqrt(as.vector(diag(final_weibull[["var"]]))),4),
-  `Wald p` = round(1 - pchisq((as.vector(final_weibull$coefficients)/sqrt(as.vector(diag(final_weibull[["var"]]))))^2,1),4))
+  `Wald p` = round(1 - pchisq((as.vector(final_weibull$coefficients)/
+                                 sqrt(as.vector(
+                                   diag(final_weibull[["var"]]))))^2,1),4))
 
 # Create table using kable
-weibull_summary |> kable(booktabs = T, escape = F, caption = "Table 5: Summary of Weibull PH Model Fitting", 
-                         digits = 4, col.names = c("Variable", "$\\beta$", "$exp(\\beta)$", "$SE(\\beta)$", "Wald P-value")) |>
+weibull_summary |> kable(booktabs = T, escape = F, 
+                         caption = "Table 5: Summary of Weibull PH Model Fitting", 
+                         digits = 4,
+                         col.names = c("Variable", "$\\beta$", "$exp(\\beta)$",
+                                       "$SE(\\beta)$", "Wald P-value")) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
@@ -808,16 +858,20 @@ The Weibull proportional hazard model demonstrates that in the, the four variabl
 
 
 ```{r, fig.align='center', fig.height=5, fig.width=8}
-step_model_final <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium + bp, data = stepwise_data)
+step_model_final <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium + bp,
+                          data = stepwise_data)
 
 # Calculate predicted risks
-predicted_risks <- predict(step_model_final, newdata = stepwise_data, type = "risk")
+predicted_risks <- predict(step_model_final, newdata = stepwise_data, 
+                           type = "risk")
  # Time points for ROC analysis
 time_points <- c(50, 250)
  
 # Calculate ROC curves at specified times
-roc_50 <- timeROC(T = stepwise_data$time, delta = stepwise_data$event, marker = predicted_risks, times = 50, cause = 1)
-roc_250 <- timeROC(T = stepwise_data$time, delta = stepwise_data$event, marker = predicted_risks, times = 250, cause = 1)
+roc_50 <- timeROC(T = stepwise_data$time, delta = stepwise_data$event, 
+                  marker = predicted_risks, times = 50, cause = 1)
+roc_250 <- timeROC(T = stepwise_data$time, delta = stepwise_data$event,
+                   marker = predicted_risks, times = 250, cause = 1)
  
 # Extract AUC values
 auc_50 <- roc_50$AUC
@@ -828,9 +882,12 @@ auc_250 <- roc_250$AUC
 #print(paste("AUC at 250 days:", auc_250))
 
 # Plot ROC curves
-plot(roc_50$FP, roc_50$TP, type = "l", col = "red", xlab = "1 - Specificity", ylab = "Sensitivity", main = "Figure 8: Time-Dependent ROC Curves for 50 and 250 Days")
+plot(roc_50$FP, roc_50$TP, type = "l", col = "red", xlab = "1 - Specificity",
+     ylab = "Sensitivity", 
+     main = "Figure 8: Time-Dependent ROC Curves for 50 and 250 Days")
 lines(roc_250$FP, roc_250$TP, type = "l", col = "blue")
-legend("bottomright", legend = c("50 days", "250 days"), col = c("red", "blue"), lty = 1)
+legend("bottomright", legend = c("50 days", "250 days"),
+       col = c("red", "blue"), lty = 1)
 abline(0, 1, col = "black", lty = 2)
 ```
 
@@ -845,7 +902,8 @@ boot_c_statistic <- function(original_data, indices) {
   boot_data <- original_data[indices, ]
  
  # Fit the Cox model to the bootstrap sample
- fit <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium + bp, data = stepwise_data)
+ fit <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium + bp,
+              data = stepwise_data)
    
    # Calculate the concordance statistic using the updated function
    concordance <- concordance(fit)$concordance
@@ -854,7 +912,8 @@ boot_c_statistic <- function(original_data, indices) {
  
  # Perform bootstrapping for C-statistic
  set.seed(123) # for reproducibility
- boot_results_c_stat <- boot(data = stepwise_data, statistic = boot_c_statistic, R = 400)
+ boot_results_c_stat <- boot(data = stepwise_data, statistic = 
+                               boot_c_statistic, R = 400)
  
  # Calculate the average C-statistic
  mean_c_stat <- mean(boot_results_c_stat$t)
@@ -870,24 +929,28 @@ The average C-index calculated through bootstrapping (n = 400) was 0.703 This su
  # Define the bootstrap function for calibration metrics using logistic regression
 boot_calibration_logistic <- function(original_data, indices) {
  boot_data <- original_data[indices, ]
- fit <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium+bp, data = stepwise_data)
+ fit <- coxph(Surv(time, event == 1) ~  + logcre + age + sodium+bp,
+              data = stepwise_data)
    
    
   # Predicted risks for the original dataset
    predicted_risks <- predict(fit, newdata = original_data, type = "risk")
    
   # Fit a logistic model for calibration
-   calibration_model_logistic <- glm(event ~ predicted_risks, data = original_data, family = "binomial")
+   calibration_model_logistic <- glm(event ~ predicted_risks,
+                                     data = original_data, family = "binomial")
   
    # Calibration slope (coefficient of predicted_risks)
-   calibration_slope_logistic <- coef(calibration_model_logistic)["predicted_risks"]
+   calibration_slope_logistic <- 
+     coef(calibration_model_logistic)["predicted_risks"]
    
    return(calibration_slope_logistic)
  }
  
  # Perform bootstrap
  set.seed(123)
- boot_results_logistic <- boot(data = stepwise_data, statistic = boot_calibration_logistic, R = 400)
+ boot_results_logistic <- boot(data = stepwise_data,
+                               statistic = boot_calibration_logistic, R = 400)
  
  # Calculate the average calibration slope
 mean_calibration_slope_logistic <- mean(boot_results_logistic$t)
