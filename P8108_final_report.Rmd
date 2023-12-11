@@ -37,30 +37,23 @@ editor_options:
 
 ```{r include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
-library(biostat3)
-library(tidyverse)
-library(knitr)
-library(kableExtra)
-library(survival)
-library(survminer)
-library(ggfortify)
-library(ggsurvfit)
-library(patchwork)
-library(writexl)
-library(readxl)
-library(table1)
-library(rmarkdown)
-library(KMsurv)
-library(StepReg)
-library(ggplot2)
-library(timeROC)
-library(boot)
-library(rms)
-library(survivalROC)
-library(rpart)
-library(eha)
-library(pec)
-library(MASS)
+# INSTALL PACKAGES
+packages <- c("biostat3", "tidyverse", "knitr", "kableExtra", "survival", 
+                 "survminer", "ggfortify", "ggsurvfit", "patchwork", "writexl", 
+                 "readxl", "table1", "rmarkdown", "KMsurv", "StepReg", "ggplot2", 
+                 "timeROC", "boot", "rms", "survivalROC", "rpart", "eha", "pec", "MASS")
+  
+# Install missing packages
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages], dependencies = TRUE)
+}
+
+# Load packages invisibly
+invisible(lapply(packages, library, character.only = TRUE))
+
+# Remove variables associated with package installation
+rm(packages, installed_packages)
 ```
 
 # Introduction
@@ -104,6 +97,8 @@ The present study focuses on 299 heart failure patients, including 105 women and
 This study falls into the category of Overall Survival (OS), where event indicator equals 1 indicates the death of the subject and is the endpoint of survival. Specifically, 203 subjects were **right-censored** and 96 subjects have event. Detailed descriptive statistics table stratified by survival status are presented below. 
 
 Based on the descriptive table (**Table 1**), we observed that the mean survival time for deletions and events is 158 days and 70.9 days, respectively. Since the dataset is complete, we don't need to worry about missingness issue. The descriptive table also presents p-values for each variable, with some exhibiting relatively high values. However, we still need to check the distribution of each variable ^[Histograms for continuous variables and bar charts for categorical variables] and determine which variables need to be transformed.
+
+Based on the histograms (**Figure 1.1**) and bar charts (**Figure 1.2**), we noticed the two continuous variables creatinine phosphokinase (`cpk`) and serum creatinine (`creatinine`) are heavily right-skewed. The right skewed covariates may have large outliers in Cox regression and violates the assumption of proportional hazards. To address this issue, we decided to log-transformed both of them for further model fitting. The new log-transformed variables follow a little more symmetric-like distribution and are stored as `logcre` and `logcpk`.
 
 ```{r}
 data = read_csv("./data/heart_failure.csv") 
@@ -178,7 +173,7 @@ t1kable(table1) |> kable_styling(font_size = 8, latex_options = "HOLD_position")
 
 
 
-```{r fig.align='center', fig.height=5, fig.width=8}
+```{r fig.align='center', fig.height=4, fig.width=6}
 # Data contains the continuous vars only
 cont_dat = dat |> 
   dplyr::select(age, sodium, creatinine, platelets, cpk)
@@ -214,7 +209,6 @@ cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
 cate_barplot
 ```
 
-After checking the histograms, two continuous variables creatinine phosphokinase (`cpk`) and serum creatinine (`creatinine`) are right-skewed. We decide to log-transformed both of them for further model fitting. The new log-transformed variables follow a little more symmetric-like distribution and are stored as `logcre` and `logcpk`.
 
 ```{r}
 dat_log = dat |> 
@@ -227,6 +221,7 @@ dat_log = dat |>
 
 In our analysis, we applied life table, Kaplan-Meier and Fleming-Harrington curves to estimate the survival function. All three approaches can handle censored data. 
 
+\newpage
 The life table is particularly useful for larger sample sizes and when the data are grouped into intervals. The survival probability at each interval is estimated as:
   
 $$
@@ -405,6 +400,10 @@ life_table_female |> kable(booktabs = T,
 
 ### The Kaplan-Meier Curve and Fleming-Harrington Test
 
+From the survival curves in **Figure 2.1** and **Figure 2.3**, we noticed that the whole lines (as well as **confidence interval**) in both Kaplan-Meier and Fleming-Harrington are above 50\%. In other words, more than half of the individuals in this study have not experienced the event in the study period, and the median survival time is longer than 300 days (10 months), with a certain level of significance.
+
+Moreover, **Figure 2.2** and **Figure 2.4** have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.95) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
+
 ```{r}
 km_overall = survfit(Surv(time, event) ~ 1, data = nonpara_dat)
 km_overall_plot = 
@@ -424,7 +423,7 @@ km_plot =
 ```
 
 
-```{r fig.width=12, fig.height=5}
+```{r fig.width=12, fig.height=5.5}
 fh_overall = survfit(Surv(time, event) ~ 1, data = nonpara_dat, type = "fh")
 fh_overall_plot = 
   fh_overall |> autoplot() +
@@ -442,9 +441,6 @@ fh_plot =
 (km_overall_plot + km_plot) / (fh_overall_plot + fh_plot)
 ```
 
-From the survival curves in **Figure 2.1** and **Figure 2.3**, we noticed that the whole lines (as well as **confidence interval**) in both Kaplan-Meier and Fleming-Harrington are above 50\%. In other words, more than half of the individuals in this study have not experienced the event in the study period, and the median survival time is longer than 300 days (10 months), with a certain level of significance.
-
-Moreover, **Figure 2.2** and **Figure 2.4** have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.95) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
 
 ## Hypothesis Testing
 
@@ -490,6 +486,8 @@ The log-Rank test and Gehan's Wilcoxon test can be used to test for differences 
 ## Model Selection
 ### Survival Tree
 
+The survival tree depicted in the **Figure 3** stratifies patients based on factors affecting survival. At the first level, patients are divided by `EF_cat` variable, suggesting that EF is a significant factor in survival. For patients with medium to high EF, age is the next discriminator, indicating its importance in survival for this subgroup. Among those with lower EF, log-transformed creatinine levels further split the cohort, underscoring renal function's role in survival. The tree branches into additional factors such as log-transformed creatinine phosphokinase levels (`logcpk`), the presence of diabetes, and sodium levels, highlighting their contribution to survival outcomes. Terminal nodes provide risk ratios and the proportion of patients experiencing the event, illustrating the combined effect of these variables on patient survival. This tree model, therefore, offers a nuanced view of patient risk profiles, emphasizing the multifactorial nature of survival in this patient population.
+
 ```{r fig.align='center', fig.width=10, fig.height=6}
 surv_obj <- Surv(time = nonpara_dat$time, event = nonpara_dat$event)
 surv_tree <- rpart(surv_obj ~ gender + smoking + diabetes + 
@@ -499,9 +497,12 @@ surv_tree <- rpart(surv_obj ~ gender + smoking + diabetes +
 rpart.plot::rpart.plot(surv_tree, main = "Figure 3: Results of Survival Tree")
 ```
 
-The survival tree depicted in the image stratifies patients based on factors affecting survival. At the first level, patients are divided by `EF_cat` variable, suggesting that EF is a significant factor in survival. For patients with medium to high EF, age is the next discriminator, indicating its importance in survival for this subgroup. Among those with lower EF, log-transformed creatinine levels further split the cohort, underscoring renal function's role in survival. The tree branches into additional factors such as log-transformed creatinine phosphokinase levels (`logcpk`), the presence of diabetes, and sodium levels, highlighting their contribution to survival outcomes. Terminal nodes provide risk ratios and the proportion of patients experiencing the event, illustrating the combined effect of these variables on patient survival. This tree model, therefore, offers a nuanced view of patient risk profiles, emphasizing the multifactorial nature of survival in this patient population.
 
 ### Stepwise Selection
+
+Our model selection applied bidirectional stepwise selection with a suite of model assessment criteria, AIC, AICc, and SBC. In the variable selection process, we adopted specific significance thresholds, setting the entry-level at $0.25$ and the stay level at $0.15$, to ensure a robust and relevant selection of predictors for our model.
+
+The **Table 3** summarizes the Cox proportional hazards model selection process, indicating `logcre`, `age`, `EF` categories, and `BP` as persistent predictors across the top four models. The AIC favors `logcre` and `age` for their significant contributions to model fit relative to added complexity, emphasizing model fit over parameter count. 
 
 ```{r}
 # raw data
@@ -643,10 +644,6 @@ model_selection |> kable(booktabs = T,
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-Our model selection applied bidirectional stepwise selection with a suite of model assessment criteria, AIC, AICc, and SBC. In the variable selection process, we adopted specific significance thresholds, setting the entry-level at $0.25$ and the stay level at $0.15$, to ensure a robust and relevant selection of predictors for our model.
-
-The **Table 3** summarizes the Cox proportional hazards model selection process, indicating `logcre`, `age`, `EF` categories, and `BP` as persistent predictors across the top four models. The AIC favors `logcre` and `age` for their significant contributions to model fit relative to added complexity, emphasizing model fit over parameter count. 
-
 However, with large sample size, the AICc modification slightly adjusts these values, shifting the preference toward other variables like `diabetes`, which shows the lowest AICc, suggesting a strong impact on the model when accounting for sample size. The SBC, with its more substantial penalty for complexity, particularly at larger sample sizes, selects `BP` as the best variable, underscoring its contribution to the model's explanatory power without excessive complexity. 
 
 We choose AIC for model selection, given its consistency with SL findings, which jointly highlight `logcre` and `age` as key predictors. This consistent identification underscores their substantial impact on model accuracy while maintaining simplicity, justifying their selection.
@@ -762,9 +759,9 @@ ggcoxzph(cox.zph(scho), var = c("EF_cat"), df = 2, nsmo = 1000)
 
 \newpage
 
-Obviously, the curves in **Figure 4.2** are parallel with each other, indicating the proportional hazards assumption holds. For the observed survival versus estimated survival plot **Figure 5.2**, the solid curve and dashed curve are close to each other, which means the hazard ratio is proportional for creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots (**Figure 6.1**) of the fitted model. We chose to input `logcre` variables with resulted in a regression lines with a slope close to zero.
+Obviously, the curves in **Figure 4.2** are parallel with each other, indicating the proportional hazards assumption holds. For the observed survival versus estimated survival plot **Figure 5.2**, the solid curve and dashed curve are close to each other, which means the hazard ratio is proportional for creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots **Figure 6.1** of the fitted model. We chose to input `logcre` variables with resulted in a regression lines with a slope close to zero.
 
-However, after examining the `EF_cat` variable, **the curves in Figure 4.1** are not parallel. The solid and dashed curves in **Figure 5.1** are not close to each other, especially at the beginning of the study. In **Figure 6.2**, we find that the slope of the regression line for the global Schoenfeld test is clearly non-zero. These findings violate the PH assumptions, and therefore we decided to remove `EF_cat` from the model and the subsequent analyses.
+However, after examining the `EF_cat` variable, the curves in **Figure 4.1** are not parallel. The solid and dashed curves in **Figure 5.1** are not close to each other, especially at the beginning of the study. In **Figure 6.2**, we find that the slope of the regression line for the global Schoenfeld test is clearly non-zero. These findings violate the PH assumptions, and therefore we decided to remove `EF_cat` from the model and the subsequent analyses.
 
 ### Cox Model Fitting and Results
 
@@ -793,7 +790,7 @@ model_summary |> kable(booktabs = T, escape = F,
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-Our **Table 4** indicates the first five variables are statistically significant at $\alpha = 0.05$. Among these, `logcre`, `age`, and `bp` exhibit positive hazard ratios, suggesting an increased risk associated with higher values of these variables. On the other hand, `sodium` demonstrates a negative hazard ratio, indicating patient with high sodium value have a lower risk of mortality.
+The sumamry table of Cox proportional hazards model **Table 4** indicates the first five variables are statistically significant at $\alpha = 0.05$. Among these, `logcre`, `age`, and `bp` exhibit positive hazard ratios, suggesting an increased risk associated with higher values of these variables. On the other hand, `sodium` demonstrates a negative hazard ratio, indicating patient with high sodium value have a lower risk of mortality.
 
 
 ## Parametric Models
@@ -824,6 +821,8 @@ Since we have already created the $\log(-\log\hat{S}(t))$ (**Figure 4.1** and **
 
 ### Weibull Model Fitting and Results
 
+The sumamry table of Weibull proportional hazards model **Table 5** demonstrates that in the, the four variables are statistically significant at $\alpha=0.05$, which is the same as the significance variables in the Cox proportional hazards model. Additionally, the log scale value of $2.55$ implies that the baseline hazard function is scaled by $\exp(2.55)$, influencing the time to event and indicating a higher baseline hazard rate. Meanwhile, the log shape value of $-0.09$, when exponentiated to approximately $0.92$, suggests a decreasing hazard rate over time, meaning that the risk of the event occurring diminishes as time progresses.
+
 ```{r weibull}
 final_weibull <- eha::phreg(formula = Surv(time, event) ~ bp + age + sodium + 
                               logcre, data = stepwise_data, dist = "weibull")
@@ -847,7 +846,6 @@ weibull_summary |> kable(booktabs = T, escape = F,
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-The Weibull proportional hazards model demonstrates that in the, the four variables are statistically significant at $\alpha=0.05$, which is the same as the significance variables in the Cox proportional hazards model. Additionally, the log scale value of $2.55$ implies that the baseline hazard function is scaled by $\exp(2.55)$, influencing the time to event and indicating a higher baseline hazard rate. Meanwhile, the log shape value of $-0.09$, when exponentiated to approximately $0.92$, suggests a decreasing hazard rate over time, meaning that the risk of the event occurring diminishes as time progresses.
 
 ## Model Validation 
 
@@ -888,7 +886,7 @@ legend("bottomright", legend = c("50 days", "250 days"),
 abline(0, 1, col = "black", lty = 2)
 ```
 
-Using the Cox proportional hazards model with the five selected predictors, our time-dependent ROC analysis at 50 days yielded an AUC of approximately 0.742, while at 250 days, the AUC was 0.851. These values indicate that the model's ability to discriminate between those who will experience the event and those who will not improves over time. The ROC curves further visually demonstrate this improvement, with the curve for 250 days being closer to the top left corner, indicating better performance.
+Applying the Cox proportional hazards model with the five selected predictors, the time-dependent ROC analysis depicted in **Figure 8** reveals AUC is approximately 0.742, while at 250 days, the AUC is 0.851. These values indicate that the model's ability to discriminate between those who will experience the event and those who will not improves over time. The ROC curves further visually demonstrate this improvement, with the curve for 250 days being closer to the top left corner, indicating better performance.
 
 ### C-Index
 
