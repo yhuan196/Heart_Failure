@@ -388,7 +388,7 @@ life_table_female |> kable(booktabs = T,
   kable_styling(latex_options = c("HOLD_position"), font_size = 6)
 ```
 
-**Table 2.1** and **Table 2.2** represent the lifetable with a time break of 30 days (one month), stratified by gender. According to the table, we find that the last line (270-300 days) shows a survival probability larger than 0.5 for both genders (0.54 for male and 0.59 for female). This may indicate a high life expectancy and improved health care, where a significant proportion of individuals are expected to live longer than 300 days (10 months). Moreover, males have a relatively shorter survival time than females based on the life table. This hypothesis needs future testing in the following modeling fit.
+**Table 2.1** and **Table 2.2** represent the lifetable with a time break of 30 days (one month), stratified by gender. According to the table, we find that the last line (270-300 days) shows a survival probability larger than 0.5 for both genders (0.54 for male and 0.59 for female). The median survival time is longer than 300 days (10 months), indicating a high life expectancy and improved health care. Moreover, males have a relatively shorter survival time than females based on the life table. This hypothesis needs future testing in the following modeling fit.
 
 ### The Kaplan-Meier and Fleming-Harrington Model
 
