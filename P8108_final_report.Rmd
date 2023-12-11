@@ -59,6 +59,7 @@ library(rms)
 library(survivalROC)
 library(rpart)
 library(eha)
+library(pec)
 ```
 
 # Introduction
@@ -770,6 +771,7 @@ weibull_summary |> kable(booktabs = T, escape = F, caption = "Table 5: Summary o
 
 ### ROC Curves and AUC
 
+
 ```{r, fig.align='center', fig.height=5, fig.width=8}
 step_model_final <- coxph(Surv(time, event == 1) ~ EF_catHigh +EF_catMedium + bp + logcre + age + sodium, data = stepwise_data)
 
@@ -798,7 +800,7 @@ abline(0, 1, col = "black", lty = 2)
 ```
 
 
-Since all the models showed consistent results in identifying significant predictors, we chose the Cox proportional model as the final model for validation as all its assumptions were satisfied. Using the Cox proportional model with the 5 selected predictors, our time-dependent ROC analysis at 50 days yielded an AUC of approximately 0.736, while at 250 days, the AUC was 0.934. These values indicate that the model's ability to discriminate between those who will experience the event and those who will not improves over time. The ROC curves further visually demonstrate this improvement, with the curve for 250 days being closer to the top left corner, indicating better performance.
+Using the Cox proportional model with the 5 selected predictors, our time-dependent ROC analysis at 50 days yielded an AUC of approximately 0.736, while at 250 days, the AUC was 0.934. These values indicate that the model's ability to discriminate between those who will experience the event and those who will not improves over time. The ROC curves further visually demonstrate this improvement, with the curve for 250 days being closer to the top left corner, indicating better performance.
 
 ### C-Index
 
