@@ -3,7 +3,7 @@ title: '**Heart Failure Survival Study**'
 author:
 -  "Yi Huang, Runze Cui, Xuesen Zhao, Huanyu Chen, Jiahe Deng"
 - 'P8108 Final Project Report: Group 6'
-date: "Dec 7, 2023"
+date: "Dec 10, 2023"
 output:
   pdf_document:
     number_section: yes
@@ -169,7 +169,7 @@ Based on the descriptive table, we observe that the mean survival time for delet
 ```{r fig.align='center', fig.height=5, fig.width=8}
 # Data contains the continuous vars only
 cont_dat = dat |> 
-  select(age, sodium, creatinine, platelets, cpk)
+  dplyr::select(age, sodium, creatinine, platelets, cpk)
 # Long format 
 cont_dat.long = cont_dat |> 
   pivot_longer(cols = c(age, sodium, creatinine, platelets, cpk))
@@ -185,7 +185,7 @@ cont_hist
 
 # Data contains the categorical vars only
 cate_data = dat |> 
-  select(event, gender, smoking, diabetes, bp, anemia, EF_cat)
+  dplyr::select(event, gender, smoking, diabetes, bp, anemia, EF_cat)
 # Long format 
 cate_dat.long = cate_data |> 
   pivot_longer(cols = c(event, gender, smoking, diabetes, bp, anemia, EF_cat))
@@ -343,7 +343,8 @@ where $k = 0$ for the exponential model, $k = 1$ for the Weibull, log-logistic a
 ## Model Checking
 ### Graphical Approach
 
-- Cox Proportional Hazard Model:
+**Cox Proportional Hazard Model:**
+
 The Cox proportional hazard model has two main assumptions. One is that the that the hazard functions of the survival curves of the different strata are proportional at time t. The other assumption is that the relationship between the $\log h(t)$, and each covariate is linear. We can compare the survival curves visually to check the PH assumption. One of the most commonly used plot is $\log(-\log\hat{S}(t|Z = z))$ over $\log t$. Since we know:
 
 $$\log(-\log\hat{S}(t|Z = z))-\log(-\log\hat{S}_0(t)) = \beta$$
@@ -351,7 +352,8 @@ where $Z$ is a binary group indicator and the survival probability is usually es
 
 Another graphical method is to compare the differences between the fitted survival functions and observed K-M estimates from our PH model. If the fitted survival curse is closed to the observed K-M estimated survival curve, our PH assumption holds. 
 
-- Parametric Proportional Hazard Model:
+**Parametric Proportional Hazard Model:**
+
 In the parametric proportional hazard models, we can use both $-\log \hat{S}(t)$ plot and $\log(-\log\hat{S}(t))$ to confirm if the hazard rate is constant. In other words, it can help us choose a proper distribution before fitting the models. For $-\log \hat{S}(t)$ plot, a straight line means constant hazard rate and the distribution should be exponential. Otherwise, Weibull model is better. In $\log(-\log\hat{S}(t))$ plot, if the slope of the straight line equals 1, then hazard rate should be constant. And if it is not, we choose Weibull model.
 
 ## Residuals and Interaction Test
@@ -488,7 +490,8 @@ raw_data <- data |>
          anemia = anaemia)
 
 # model data
-model_data <- dat
+model_data <- dat |>
+  mutate(event = as.numeric(event))
 
 ## create dummy variable for categorical variable
 heart_data <- model.matrix(EF~ EF_cat, data = model_data)[,-1] |>
@@ -606,11 +609,11 @@ model_selection[is.na(model_selection)] <- c("-")
 
 # Create table using kable
 model_selection |> kable(booktabs = T,
-                         caption = "Table 4: Summary of Model Selection", digits = 4) |>
+                         caption = "Table 3: Summary of Model Selection", digits = 4) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-The **Table 4** summarizes the Cox model selection process, indicating `logcre`, `age`, `EF` categories, and `BP` as persistent predictors across the top four models. The AIC favors `logcre` and `age` for their significant contributions to model fit relative to added complexity, emphasizing model fit over parameter count. 
+The **Table 3** summarizes the Cox model selection process, indicating `logcre`, `age`, `EF` categories, and `BP` as persistent predictors across the top four models. The AIC favors `logcre` and `age` for their significant contributions to model fit relative to added complexity, emphasizing model fit over parameter count. 
 
 However, with large sample size, the AICc modification slightly adjusts these values, shifting the preference toward other variables like `diabetes`, which shows the lowest AICc, suggesting a strong impact on the model when accounting for sample size. The SBC, with its more substantial penalty for complexity, particularly at larger sample sizes, selects `BP` as the best variable, underscoring its contribution to the model's explanatory power without excessive complexity. 
 
@@ -701,7 +704,7 @@ ggcoxzph(cox.zph(scho), var = c("age"), df = 2, nsmo = 1000)
 
 Obviously, The curves in **Figure 4.1** and **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot (**Figure 5.1** and **Figure 5.2**), the straight curve and dashed curve are close to each other, which means the proportional hazard ratio is proportional for both age and creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots (**Figure 6.1** and **Figure 6.2**) of the fitted model. We chose to input `age` and `logcre` variables and found a regression lines with a slope close to zero for both.
 
-### Model Fitting and Results
+### Cox Model Fitting and Results
 
 ```{r final model results}
 # Create table using kable
@@ -715,7 +718,7 @@ model_summary <- model_summary |>
         `Pr(>|z|)` = as.numeric(`Pr(>|z|)`))
 
 model_summary |> kable(booktabs = T,
-      caption = "Table 5: Summary of Cox Proportional Hazard Model", 
+      caption = "Table 4: Summary of Cox Proportional Hazard Model", 
       digits = 4, row.names = TRUE) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
@@ -733,7 +736,7 @@ Lastly, `sodium` presents an HR of 0.9628, suggesting a slight decrease in hazar
 Overall, this model provides a quantitative assessment of how each predictor influences the survival probability, with `logcre`, `age`, `EF_catMedium`, `EF_catHigh`, and `bp` being significant factors in predicting survival outcomes.
 
 ## Parametric Models
-### Model Checking
+### Parametric Model Checking
 
 ```{r fig.width=10}
 mc_surv_age = survfit(Surv(time, event == 1) ~ age_cat, data = mc_dat)
@@ -755,14 +758,42 @@ legend("topleft", legend = c("High", "Low"),
 Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **Figure 4.2**) for `age` and `logcre`, and the slopes do not strictly equal to 1. Now we also check the $-\log\hat{S}(t)$ plot (**Figure 7.1** and **Figure 7.2**) for same variables. The curves for both two plots seems not to be straight and nonlinear. We suggest Weibull distributions for parametric proportional hazard models. 
 
 
-### Model Fitting
-The Weibull model obtained from Stepwise Selection using AIC contains bp, age, ef_cat, sodium, and logcre.
+### Parametric Models Fitting and Result
+
+```{r weibull}
+fit_weibull = eha::phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + 
+                  age + EF_cat+ sodium + platelets + log(creatinine+1) + log(cpk+1), 
+                data = model_data, dist = "weibull")
+# summary(fit_weibull)
+
+# AIC Both direction
+library(MASS)
+# stepAIC(fit_weibull)
+
+final_weibull <- eha::phreg(formula = Surv(time, event) ~ bp + age + EF_catMedium + 
+                          EF_catHigh + sodium + logcre, data = stepwise_data, dist = "weibull")
+
+# Extract relevant information
+weibull_summary <- data.frame(
+  Variable= c(names(final_weibull$coefficients)),
+  Coef = round(as.vector(final_weibull$coefficients),4),
+  `Exp(Coef)` = round(exp(as.vector(final_weibull$coefficients)),4),
+  `se(Coef)` = round(sqrt(as.vector(diag(final_weibull[["var"]]))),4),
+  `Wald p` = round(1-pchisq((as.vector(final_weibull$coefficients)/sqrt(as.vector(diag(final_weibull[["var"]]))))^2,1),4))
+
+# Create table using kable
+weibull_summary |> kable(booktabs = T, caption = "Table 5: Summary of Weibul PH Model Fitting", 
+                         digits = 4) |>
+  kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
+```
+
+The Weibull model obtained from Stepwise Selection using AIC contains bp, age, EF_cat, sodium, and logcre.
 
 For `bp`, it is a binary covariate (0 and 1), the coefficient is 0.559, implying a 1.749 times higher hazard of the event in level 1 compared to level 0. The Wald p-value is 0.009 < 0.05, indicating statistical significance.
 
 For `age`, for each one-unit increase in age, the hazard (risk) of the event increases by a factor of 1.049. The coefficient is statistically significant with p-value < 0.001.
 
-For `ef_cat`, it is a categorical variable with three levels: Low, Medium, and High.
+For `EF_cat`, it is a categorical variable with three levels: Low, Medium, and High.
 The medium Ejection Fraction has a coefficient of -1.145, indicating a 0.318 times lower hazard compared to the low Ejection Fraction. The Wald p-value < 0.001, which is statistically significant.
 The high Ejection Fraction has a coefficient of -0.978, implying a 0.376 times lower hazard compared to the low Ejection Fraction. The Wald p-value < 0.001, which is statistically significant.
 
@@ -772,11 +803,38 @@ For `logcre`, for each unit increase in logcre, the hazard increases by a factor
 
 The `overall p-value` = 5.55112e-16 with 6 dergree of freedom, which is statistically significant. It sugguest that there is strong evidence against the null hypothesis that none of the predictors are associated with the heart failure.
 
-The Gompertz model obtained from stepwise selection using AIC contains anaemia, sodium, bp, log(cre), ef_cat and age. 
+
+```{r gompertz}
+## gompertz
+fit_gompertz <- eha::phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + 
+                  age + EF + sodium + platelets + log(creatinine+1) + log(cpk+1), 
+                data = model_data, dist = "gompertz")
+# AIC Both direction
+# stepAIC(fit_gompertz, direction = "backward")
+
+final_gompertz <- eha::phreg(formula = Surv(time, event) ~ bp + anemia + age + EF_catMedium + 
+                          EF_catHigh + sodium + logcre, data = stepwise_data, dist = "gompertz")
+
+# Extract relevant information
+gompertz_summary <- data.frame(
+  Variable= c(names(final_gompertz$coefficients)),
+  Coef = round(as.vector(final_gompertz$coefficients),4),
+  `Exp(Coef)` = round(exp(as.vector(final_gompertz$coefficients)),4),
+  `se(Coef)` = round(sqrt(as.vector(diag(final_gompertz[["var"]]))),4),
+  `Wald p` = round(1-pchisq((as.vector(final_gompertz$coefficients)/sqrt(as.vector(diag(final_gompertz[["var"]]))))^2,1),4))
+
+# Create table using kable
+gompertz_summary %>% kable(booktabs = T, caption = "Table 6: Summary of Gompertz PH Model Fitting", 
+                           digits = 4) |>
+  kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
+
+```
+
+The Gompertz model obtained from stepwise selection using AIC contains anemia, sodium, bp, log(cre), ef_cat and age. 
 
 For `bp`, when comparing level 1 to the reference level 0, the coefficient of bp is 0.558, indicating a 1.747 times higher hazard of the event in level 1 compared to level 0. The Wald p-value is 0.009, indicating statistical significance.
 
-For `anaemia`, for the variable "anaemia," comparing level 1 to the reference level 0, the coefficient of anaemia is 0.303, suggesting a 1.354 times higher hazard of the event in individuals with anaemia compared to those without. Although its p-value = 0.149 > 0.05, it was still considered small enough to be statistically significant.
+For `anemia`, for the variable "anemia," comparing level 1 to the reference level 0, the coefficient of anemia is 0.303, suggesting a 1.354 times higher hazard of the event in individuals with anemia compared to those without. Although its p-value = 0.149 > 0.05, it was still considered small enough to be statistically significant.
 
 For `age`, for each one-unit increase in age, the hazard (risk) of the event increases by a factor of 1.049. The coefficient is statistically significant with p-value < 0.001.
 
