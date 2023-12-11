@@ -24,7 +24,7 @@ abstract: "Heart failure (HF) results from weakened heart muscles, impairing blo
   of heart failure (HF) patients between April and December 2015. Our research employs
   a comprehensive range of statistical methodologies, including exploratory data analysis,
   non-parametric approaches, semi-parametric model, parametric models, hypothesis testing, model checking,
-  and validation procedures, aiming to identify significant predictors and investigate their influences on heart failure. The significant factors identified in our study include creatinine levels, age, ejection fraction, blood pressure, and serum sodium. Additionally, the model's discriminative ability across varied samples and conditions is validated using rigorous bootstrap validation methods such as c-index and calibration slope. Our findings contribute to refining risk assessment models, enhancing clinical decision-making, and optimizing patient care for heart failure in the future. The insights gained from our modeling process offer a deeper understanding of HF progression and its risk factors, paving the way for more personalized treatment approaches and preventive strategies that could profoundly impact patient outcomes and quality of life."
+  and validation procedures, aiming to identify significant predictors and investigate their influences on heart failure. The significant factors identified in our study include creatinine levels, age, blood pressure, and serum sodium. Additionally, the model's discriminative ability across varied samples and conditions is validated using rigorous bootstrap validation methods such as c-index and calibration slope. Our findings contribute to refining risk assessment models, enhancing clinical decision-making, and optimizing patient care for heart failure in the future. The insights gained from our modeling process offer a deeper understanding of HF progression and its risk factors, paving the way for more personalized treatment approaches and preventive strategies that could profoundly impact patient outcomes and quality of life."
 editor_options:
   chunk_output_type: console
 ---
@@ -156,7 +156,7 @@ pvalue <- function(x, ...) {
     # The initial empty string places the output on the line below the variable label.
     c("", sub("<", "<", format.pval(p, digits = 3, eps = 0.001)))
 }
-caption = "Table 1: Descriptive Statistics Table"
+caption = "Table 1: Descriptive Statistics Table for Variable Characteristic"
 
 table1 = table1(~ time + age + gender + smoking + diabetes + bp + EF_cat + 
                   anemia + sodium + creatinine + cpk + platelets | event,
@@ -282,7 +282,7 @@ There are different ways to formulate the baseline hazard function $h_0(t)$, whi
 
 **Cox Proportational Hazard Model**
 
-The Cox Proportional Hazard model is a semi-parametric model which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model is given by:
+The Cox proportional hazard model is a semi-parametric model which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model is given by:
 
 $$
 h_i(t) = \tilde{h}_0(t) \exp[\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}] \\
@@ -487,8 +487,8 @@ heart_data <- model.matrix(EF~ EF_cat, data = model_data)[,-1] |>
 ## create data frame for stepwiseCox
 heart_data <- cbind(raw_data, heart_data) 
 stepwise_data <- heart_data |>
-  mutate(logcre=log(creatinine+1),
-         logcpk = log(cpk+1)) |>
+  mutate(logcre = log(creatinine + 1),
+         logcpk = log(cpk + 1)) |>
   dplyr::select(-creatinine, -cpk, -ejection_fraction)
 ```
 
@@ -596,7 +596,7 @@ model_selection[is.na(model_selection)] <- c("-")
 
 # Create table using kable
 model_selection |> kable(booktabs = T,
-                         caption = "Table 3: Summary of Model Selection", digits = 4) |>
+                         caption = "Table 3: Summary Table of Model Selection", digits = 4) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
@@ -616,7 +616,7 @@ $$
 
 ### Model Checking
 
-Before fitting the Cox Proportional Hazard model, we need to check whether our variables hold the PH assumption^[See the Method Section for details]. The $\log(-\log\hat{S}(t|Z = z))$ over $\log t$ plot and observed survival versus estimated survival curves are provided below. We have multiple variables remained after model selection, so we randomly took two of them (`age` and `logcre`) for the PH assumption check. Since both `age` and `logcre`^[Since 1.5 mg/dL is the clinical threshold of creatinine, so we categorized log(creatinine + 1) > log(2.5) as "High", otherwise, it's in "Low" group. And people in "High" group should be regarded as renal dysfunction.] are continuous variable, we categorized it into two groups and recoded as "Low" and "High", respectively. 
+Before fitting the Cox Proportional Hazard model, we need to check whether our variables hold the PH assumption^[See the Method Section for details]. The $\log(-\log\hat{S}(t|Z = z))$ over $\log t$ plot and observed survival versus estimated survival curves are provided below. We have multiple variables remained after model selection, so we randomly took two of them (`EF_cat` and `logcre`) for the PH assumption check. Since `logcre`^[Since 1.5 mg/dL is the clinical threshold of creatinine, so we categorized log(creatinine + 1) > log(2.5) as "High", otherwise, it's in "Low" group. And people in "High" group should be regarded as renal dysfunction.] is continuous variable, we categorized it into two groups and recoded as "Low" and "High", respectively. 
 
 ```{r fig.align='center', fig.width=10, fig.height=6}
 mc_dat = nonpara_dat %>% mutate(age_cat = case_when(age <= mean(age) ~ "Low", age > mean(age) ~ "High")) %>% 
@@ -624,39 +624,40 @@ mc_dat = nonpara_dat %>% mutate(age_cat = case_when(age <= mean(age) ~ "Low", ag
                              creatinine_log > log(2.5) ~ "High")) %>% 
   mutate(age_cat = factor(age_cat)) %>% 
   mutate(cre_cat = factor(cre_cat)) %>% 
+  mutate(EF_cat = factor(EF_cat, levels = c("Low", "Medium", "High"))) %>% 
   as.data.frame()
-mc_surv_age = survfit(Surv(time, event == 1) ~ age_cat, data = mc_dat)
+mc_surv_ef = survfit(Surv(time, event == 1) ~ EF_cat, data = mc_dat)
 mc_surv_cre = survfit(Surv(time, event == 1) ~ cre_cat, data = mc_dat)
-mc_age_surv_log = survfit(Surv(log(time + 1), event == 1) ~ age_cat, data = mc_dat)
+mc_ef_surv_log = survfit(Surv(log(time + 1), event == 1) ~ EF_cat, data = mc_dat)
 mc_cre_surv_log = survfit(Surv(log(time + 1), event == 1) ~ cre_cat, data = mc_dat)
 
-g1 = ggsurvplot(mc_age_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
+g1 = ggsurvplot(mc_ef_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
                 xlab = "log(time)", ylab = "log[-log(Survival Probability)]",
                 ggtheme = theme_minimal(), xlim = c(1.5, 6)) +
-  labs(title = "Figure 4.1: Log of Negative Log of Estimated Survival Functions \nby Age Group")
+  labs(title = "Figure 4.1: Log of Negative Log of Estimated Survival Functions \nby EF Group")
 g2 = ggsurvplot(mc_cre_surv_log, data = mc_dat, fun = "cloglog", risk.table = FALSE, 
                 xlab = "log(time)", ylab = "log[-log(Survival Probability)]",
                 ggtheme = theme_minimal(), xlim = c(1.5,6)) +
   labs(title = "Figure 4.2: Log of Negative Log of Estimated Survival Functions \nby Log-transformed Creatinine Group")
 gridExtra::grid.arrange(g1$plot, g2$plot, nrow = 2)
 
-g3.1 = ggsurvplot(mc_surv_age, data = mc_dat, risk.table = FALSE, ggtheme = theme_minimal())
-g3.2 = ggadjustedcurves(coxph(Surv(time, event == 1) ~ age_cat, data = mc_dat), variable = "age_cat", 
+g3.1 = ggsurvplot(mc_surv_ef, data = mc_dat, risk.table = FALSE, ggtheme = theme_minimal())
+g3.2 = ggadjustedcurves(coxph(Surv(time, event == 1) ~ EF_cat, data = mc_dat), variable = "EF_cat", 
                         data = mc_dat, ggtheme = theme_minimal())
 km_fit = g3.1$plot$data
 cox_fit = g3.2$data
-cox_fit$age_cat = cox_fit$variable
+cox_fit$EF_cat = cox_fit$variable
 
-g3 = ggplot(cox_fit, aes(x = time, y = surv, group = age_cat, color = age_cat)) + geom_step() +
-  geom_step(data = km_fit, aes(x = time, y = surv, group = age_cat, color = age_cat), lty = 3) + 
-  labs(title = "Figure 5.1: Plot of Observed vs. Fitted Survival By Age Group", y = "Survival Distribution Function Estimate", 
+g3 = ggplot(cox_fit, aes(x = time, y = surv, group = EF_cat, color = EF_cat)) + geom_step() +
+  geom_step(data = km_fit, aes(x = time, y = surv, group = EF_cat, color = EF_cat), lty = 3) + 
+  labs(title = "Figure 5.1: Plot of Observed vs. Fitted Survival By EF Group", y = "Survival Distribution Function Estimate", 
   caption = "Straight line: Fitted Survival \nDashed line: Observed Survival") +
   theme_minimal() +
   theme(legend.position = "top") +
   scale_color_manual(
-    name = "Age Group",
-    values = c("blue", "red"),
-    labels = c("Low", "High") 
+    name = "EF Group",
+    values = c("red", "green","blue"),
+    labels = c("Low", "Medium","High") 
   )
 
   
@@ -687,11 +688,15 @@ scho <- coxph(Surv(time, event == 1) ~ EF_cat + bp + creatinine_log + age + sodi
 ggcoxzph(cox.zph(scho), var = c("creatinine_log"), df = 2, nsmo = 1000)
 ```
 
-```{r fig.align='center', fig.width=10, fig.height = 4, fig.cap="Figure 6.2: Schoenfeld Test For Age"}
-ggcoxzph(cox.zph(scho), var = c("age"), df = 2, nsmo = 1000)
+```{r fig.align='center', fig.width=10, fig.height = 4, fig.cap="Figure 6.2: Schoenfeld Test For EF\\_cat"}
+ggcoxzph(cox.zph(scho), var = c("EF_cat"), df = 2, nsmo = 1000)
 ```
 
-Obviously, the curves in **Figure 4.1** and **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot (**Figure 5.1** and **Figure 5.2**), the straight curve and dashed curve are close to each other, which means the proportional hazard ratio is proportional for both age and creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots (**Figure 6.1** and **Figure 6.2**) of the fitted model. We chose to input `age` and `logcre` variables and found a regression lines with a slope close to zero for both.
+\newpage
+
+Obviously, the curves in **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot **Figure 5.2**, the straight curve and dashed curve are close to each other, which means the proportional hazard ratio is proportional for creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots **Figure 6.1** of the fitted model. We chose to input `logcre` variables and found a regression lines with a slope close to zero.
+
+However, after checking the `EF_cat` variable, the curves in **Figure 4.1** are not parallel, the straight curve and dashed curve in **Figure 5.1** are not close to each other, especically at the beginning of the study. And there is an obvious slope for the regression line in Globall Schoenfeld test in **Figure 6.2**. The PH assumption is violated and we decide to remove this variable from our models.
 
 ### Cox Model Fitting and Results
 
@@ -711,7 +716,7 @@ model_summary <- model_summary |>
 model_summary |> kable(booktabs = T, escape = F,
       caption = "Table 4: Summary of Cox Proportional Hazard Model", 
       digits = 4, row.names = TRUE, 
-      col.names = c("Variable", "$\\beta$", "$exp(\\beta)$", "$SE(\\beta)$", "Z test statistics","P-value")) |>
+      col.names = c("Variable", "$\\beta$", "$exp(\\beta)$", "$SE(\\beta)$", "Z test statistics", "P-value")) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
@@ -745,19 +750,18 @@ Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **F
 
 ```{r weibull}
 fit_weibull = eha::phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + 
-                  age + EF_cat+ sodium + platelets + log(creatinine+1) + log(cpk+1), 
+                  age + sodium + platelets + log(creatinine+1) + log(cpk+1), 
                 data = model_data, dist = "weibull")
 
 # AIC Both direction
 library(MASS)
 # stepAIC(fit_weibull)
 
-final_weibull <- eha::phreg(formula = Surv(time, event) ~ bp + age + EF_catMedium + 
-                          EF_catHigh + sodium + logcre, data = stepwise_data, dist = "weibull")
+final_weibull <- eha::phreg(formula = Surv(time, event) ~ bp + age + sodium + logcre, data = stepwise_data, dist = "weibull")
 
 # Extract relevant information
 weibull_summary <- tibble(
-  Variable = c("bp", "age", "EF\\_catMedium", "EF\\_catHigh", "sodium", "logcre", "log(scale)", "log(shape)"),
+  Variable = c("bp", "age", "sodium", "logcre", "log(scale)", "log(shape)"),
   Coef = round(as.vector(final_weibull$coefficients),4),
   `Exp(Coef)` = round(exp(as.vector(final_weibull$coefficients)),4),
   `se(Coef)` = round(sqrt(as.vector(diag(final_weibull[["var"]]))),4),
@@ -769,7 +773,7 @@ weibull_summary |> kable(booktabs = T, escape = F, caption = "Table 5: Summary o
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-The Weibull Proportional Hazards model demonstrates that in the, the first five variables are statistically significant at $\alpha=0.05$. Which is the same as the significance variables in the Cox model. Additionally, the log scale value of $4.46$ implies that the baseline hazard function is scaled by $exp(4.46)$, influencing the time to event and indicating a higher baseline hazard rate. Meanwhile, the log shape value of $-0.06$, when exponentiated to approximately $0.94$, suggests a decreasing hazard rate over time, meaning that the risk of the event occurring diminishes as time progresses.
+The Weibull proportional hazard model demonstrates that in the, the first four variables are statistically significant at $\alpha=0.05$, which is the same as the significance variables in the Cox proportional hazard model. Additionally, the log scale value of $2.547$ implies that the baseline hazard function is scaled by $\exp(2.547)$, influencing the time to event and indicating a higher baseline hazard rate. Meanwhile, the log shape value of $-0.0875$, when exponentiated to approximately $0.9162$, suggests a decreasing hazard rate over time, meaning that the risk of the event occurring diminishes as time progresses.
 
 ## Model Validation 
 
@@ -874,8 +878,6 @@ Both the **Cox PH model** and the **Weibull PH Model** reveals significant predi
 The Weibull model, in addition to confirming these findings, brings additional insights due to its parametric nature. The model emphasis on `bp`, `age`, and `EF_cat` with notably small p-values highlights their robustness as predictors. For `sodium`, the relationship with survival outcomes is more complex. In the Cox model, it is approach to significance level $\alpha=0.1$,  but remains statistically non-significant. The consistency between the Cox and Weibull models in identifying the key predictors provides credibility to these findings. 
 
 Supporting this, A study published in Frontiers in Cardiovascular Medicine found that postoperative serum creatinine is a significant prognostic factor for cardiac surgery patients (Zhong et al., 2021). This study showed that higher levels of postoperative serum creatinine were linked to increased hospital mortality and longer stays in the intensive care unit. Specifically, it found that patients who did not survive had significantly higher postoperative serum creatinine levels, and there was a positive correlation between these levels and lengths of ICU stay.
-
-<!-- Importantly, this model's emphasis on creatinine levels (`logcre`) as a key factor aligns with findings from a study in Revista Española de Cardiología (Zamora et al., 2007). This study highlighted that normal creatinine levels might mask underlying kidney failure, a significant prognostic factor in heart failure (Zamora et al., 2007). It identified factors such as age, gender, cause of heart failure, left ventricular ejection fraction, diabetes, and hypertension as influential, but particularly underscored creatinine clearance as an independent mortality predictor (Zamora et al., 2007). Thus, the results from the Weibull model, supported by this study, underscore the importance of considering age, ejection fraction, and creatinine levels in assessing heart failure risk, aiding in early identification and targeted interventions in clinical practice. -->
 
 The nuanced findings from our model validation analysis provide a comprehensive view of our Cox model's performance. While the model exhibits strong discriminative ability, as indicated by the AUC values and C-index, our calibration assessment, particularly the calibration slope, suggests areas where improvement is needed. Notably, the calibration slope, slightly over the ideal value of one, implies a mild overestimation in risk predictions. This indicates a complex calibration scenario where the model might be overfitting to some extent.
 
