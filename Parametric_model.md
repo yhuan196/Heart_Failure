@@ -247,7 +247,7 @@ weibull_summary <- data.frame(
   `Wald p` = round(1-pchisq((as.vector(final_weibull$coefficients)/sqrt(as.vector(diag(final_weibull[["var"]]))))^2,1),4))
 
 # Create table using kable
-kable(as.data.frame(weibull_summary), caption = "Summary of Gompertz PH Model Fitting", digits = 4) 
+kable(weibull_summary, caption = "Summary of Gompertz PH Model Fitting", digits = 4) 
 ```
 
 <table>
@@ -596,7 +596,32 @@ stepAIC(fit_gompertz, direction = "backward")
 ``` r
 final_gompertz <- phreg(formula = Surv(time, event) ~ bp + anaemia + age + ef_catMedium + 
                           ef_catHigh + sodium + logcre, data = stepwise_data, dist = "gompertz")
+
+final_gompertz
 ```
+
+    ## Call:
+    ## phreg(formula = Surv(time, event) ~ bp + anaemia + age + ef_catMedium + 
+    ##     ef_catHigh + sodium + logcre, data = stepwise_data, dist = "gompertz")
+    ## 
+    ## Covariate          W.mean      Coef Exp(Coef)  se(Coef)    Wald p
+    ## bp                  0.295     0.558     1.747     0.212     0.009 
+    ## anaemia             0.390     0.303     1.354     0.210     0.149 
+    ## age                59.251     0.048     1.049     0.009     0.000 
+    ## ef_catMedium        0.481    -1.116     0.328     0.250     0.000 
+    ## ef_catHigh          0.249    -1.001     0.368     0.278     0.000 
+    ## sodium            136.855    -0.042     0.959     0.024     0.080 
+    ## logcre              0.792     1.110     3.035     0.289     0.000 
+    ## 
+    ## log(scale)                   16.661             163.817     0.919 
+    ## log(shape)                   12.781             163.852     0.938 
+    ## 
+    ## Events                    96 
+    ## Total time at risk         38948 
+    ## Max. log. likelihood      -627.79 
+    ## LR test statistic         89.50 
+    ## Degrees of freedom        7 
+    ## Overall p-value           1.11022e-16
 
 ``` r
 # Extract relevant information
@@ -608,7 +633,7 @@ gompertz_summary <- data.frame(
   `Wald p` = round(1-pchisq((as.vector(final_gompertz$coefficients)/sqrt(as.vector(diag(final_gompertz[["var"]]))))^2,1),4))
 
 # Create table using kable
-kable(as.data.frame(weibull_summary), caption = "Summary of Weibul PH Model Fitting", digits = 4) 
+kable(gompertz_summary, caption = "Summary of Weibul PH Model Fitting", digits = 4) 
 ```
 
 <table>
@@ -640,16 +665,33 @@ Wald.p
 bp
 </td>
 <td style="text-align:right;">
-0.5591
+0.5579
 </td>
 <td style="text-align:right;">
-1.7492
+1.747100e+00
 </td>
 <td style="text-align:right;">
-0.2132
+0.2121
 </td>
 <td style="text-align:right;">
-0.0087
+0.0085
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+anaemia
+</td>
+<td style="text-align:right;">
+0.3030
+</td>
+<td style="text-align:right;">
+1.353900e+00
+</td>
+<td style="text-align:right;">
+0.2102
+</td>
+<td style="text-align:right;">
+0.1494
 </td>
 </tr>
 <tr>
@@ -657,13 +699,13 @@ bp
 age
 </td>
 <td style="text-align:right;">
-0.0480
+0.0479
 </td>
 <td style="text-align:right;">
-1.0492
+1.049100e+00
 </td>
 <td style="text-align:right;">
-0.0092
+0.0090
 </td>
 <td style="text-align:right;">
 0.0000
@@ -674,13 +716,13 @@ age
 ef_catMedium
 </td>
 <td style="text-align:right;">
--1.1446
+-1.1162
 </td>
 <td style="text-align:right;">
-0.3183
+3.275000e-01
 </td>
 <td style="text-align:right;">
-0.2492
+0.2498
 </td>
 <td style="text-align:right;">
 0.0000
@@ -691,16 +733,16 @@ ef_catMedium
 ef_catHigh
 </td>
 <td style="text-align:right;">
--0.9780
+-1.0007
 </td>
 <td style="text-align:right;">
-0.3761
+3.676000e-01
 </td>
 <td style="text-align:right;">
-0.2780
+0.2778
 </td>
 <td style="text-align:right;">
-0.0004
+0.0003
 </td>
 </tr>
 <tr>
@@ -708,16 +750,16 @@ ef_catHigh
 sodium
 </td>
 <td style="text-align:right;">
--0.0376
+-0.0423
 </td>
 <td style="text-align:right;">
-0.9631
+9.586000e-01
 </td>
 <td style="text-align:right;">
-0.0240
+0.0242
 </td>
 <td style="text-align:right;">
-0.1174
+0.0800
 </td>
 </tr>
 <tr>
@@ -725,13 +767,13 @@ sodium
 logcre
 </td>
 <td style="text-align:right;">
-1.1099
+1.1103
 </td>
 <td style="text-align:right;">
-3.0342
+3.035200e+00
 </td>
 <td style="text-align:right;">
-0.2924
+0.2885
 </td>
 <td style="text-align:right;">
 0.0001
@@ -742,16 +784,16 @@ logcre
 log(scale)
 </td>
 <td style="text-align:right;">
-4.3611
+16.6607
 </td>
 <td style="text-align:right;">
-78.3415
+1.720524e+07
 </td>
 <td style="text-align:right;">
-3.5518
+163.8169
 </td>
 <td style="text-align:right;">
-0.2195
+0.9190
 </td>
 </tr>
 <tr>
@@ -759,16 +801,16 @@ log(scale)
 log(shape)
 </td>
 <td style="text-align:right;">
--0.0613
+12.7806
 </td>
 <td style="text-align:right;">
-0.9405
+3.552527e+05
 </td>
 <td style="text-align:right;">
-0.0890
+163.8523
 </td>
 <td style="text-align:right;">
-0.4911
+0.9378
 </td>
 </tr>
 </tbody>

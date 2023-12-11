@@ -133,7 +133,7 @@ weibull_summary <- data.frame(
   `Wald p` = round(1-pchisq((as.vector(final_weibull$coefficients)/sqrt(as.vector(diag(final_weibull[["var"]]))))^2,1),4))
 
 # Create table using kable
-kable(as.data.frame(weibull_summary), caption = "Summary of Gompertz PH Model Fitting", digits = 4) 
+kable(weibull_summary, caption = "Summary of Gompertz PH Model Fitting", digits = 4) 
 # |> kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
@@ -151,6 +151,7 @@ stepAIC(fit_gompertz, direction = "backward")
 final_gompertz <- phreg(formula = Surv(time, event) ~ bp + anaemia + age + ef_catMedium + 
                           ef_catHigh + sodium + logcre, data = stepwise_data, dist = "gompertz")
 
+final_gompertz
 ```
 
 ```{r}
@@ -163,7 +164,7 @@ gompertz_summary <- data.frame(
   `Wald p` = round(1-pchisq((as.vector(final_gompertz$coefficients)/sqrt(as.vector(diag(final_gompertz[["var"]]))))^2,1),4))
 
 # Create table using kable
-kable(as.data.frame(weibull_summary), caption = "Summary of Weibul PH Model Fitting", digits = 4) 
+kable(gompertz_summary, caption = "Summary of Weibul PH Model Fitting", digits = 4) 
 # |> kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
