@@ -299,18 +299,6 @@ $$
 
 where $\lambda$ is the scale parameter, and $\gamma$ is the shape parameter.
 
-### Gompertz Proportional Hazard Model
-
-The Gompertz model, a parametric approach in survival analysis, assumes an exponential increase or decrease in the hazard function over time. This approach is suitable for studies where hazard rates show distinct exponential trends. 
-
-$$
-\begin{aligned}
-h_i(t) &= \lambda \exp(\eta t + \beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}) \\
-\end{aligned}
-$$
-
-where $\lambda$ is the scale parameter, and $\eta$ is the rate of increase or decrease in hazard.
-
 ## Model Selection
 ### Survival Tree
 
@@ -708,18 +696,21 @@ Obviously, The curves in **Figure 4.1** and **Figure 4.2** are parallel with eac
 
 ```{r final model results}
 # Create table using kable
-model_summary <- tibble(stepwise_model2$`Coefficients of the Selected Variables`)
+model_summary <- tibble(stepwise_model2$`Coefficients of the Selected Variables`) %>% select(-Variable)
 
 model_summary <- model_summary |>
-  mutate(coef = as.numeric(coef),
+  mutate(var = c("logcre", "age", "EF\\_catMedium", "EF\\_catHigh", "bp", "sodium"),
+         coef = as.numeric(coef),
         `exp(coef)` = as.numeric(`exp(coef)`),
         `se(coef)` = as.numeric(`se(coef)`),
         z = as.numeric(z),
-        `Pr(>|z|)` = as.numeric(`Pr(>|z|)`))
+        `Pr(>|z|)` = as.numeric(`Pr(>|z|)`)) %>% 
+  relocate(var, coef, `exp(coef)`, `se(coef)`, z, `Pr(>|z|)`)
 
-model_summary |> kable(booktabs = T,
+model_summary |> kable(booktabs = T, escape = F,
       caption = "Table 4: Summary of Cox Proportional Hazard Model", 
-      digits = 4, row.names = TRUE) |>
+      digits = 4, row.names = TRUE, 
+      col.names = c("Variable", "$\\beta$", "$E(\\beta)$", "$Var(\\beta)$", "Z test statistics","P-value")) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
@@ -748,7 +739,7 @@ plot(mc_surv_age, col = c("red", "blue"),
 legend("topleft", legend = c("High", "Low"), 
        title = "Age Group", col = c("red", "blue"), lty = 1)
 
-plot(mc_surv_age, col = c("red", "blue"), 
+plot(mc_surv_cre, col = c("red", "blue"), 
      fun = "cumhaz", xlab = "Time(Days)", ylab = "-logS(t)", 
      main = "Figure 7.2: Negative Log of Estimated Survival Functions For Creatinine Groups")
 legend("topleft", legend = c("High", "Low"), 
@@ -774,80 +765,18 @@ final_weibull <- eha::phreg(formula = Surv(time, event) ~ bp + age + EF_catMediu
                           EF_catHigh + sodium + logcre, data = stepwise_data, dist = "weibull")
 
 # Extract relevant information
-weibull_summary <- data.frame(
-  Variable= c(names(final_weibull$coefficients)),
+weibull_summary <- tibble(
+  Variable = c("bp", "age", "EF\\_catMedium", "EF\\_catHigh", "sodium", "logcre", "log(scale)", "log(shape)"),
   Coef = round(as.vector(final_weibull$coefficients),4),
   `Exp(Coef)` = round(exp(as.vector(final_weibull$coefficients)),4),
   `se(Coef)` = round(sqrt(as.vector(diag(final_weibull[["var"]]))),4),
-  `Wald p` = round(1-pchisq((as.vector(final_weibull$coefficients)/sqrt(as.vector(diag(final_weibull[["var"]]))))^2,1),4))
+  `Wald p` = round(1 - pchisq((as.vector(final_weibull$coefficients)/sqrt(as.vector(diag(final_weibull[["var"]]))))^2,1),4))
 
 # Create table using kable
-weibull_summary |> kable(booktabs = T, caption = "Table 5: Summary of Weibul PH Model Fitting", 
-                         digits = 4) |>
+weibull_summary |> kable(booktabs = T, escape = F, caption = "Table 5: Summary of Weibull PH Model Fitting", 
+                         digits = 4, col.names = c("Variable", "$\\beta$", "$E(\\beta)$", "$Var(\\beta)$", "Wald P-value")) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
-
-The Weibull model obtained from Stepwise Selection using AIC contains bp, age, EF_cat, sodium, and logcre.
-
-For `bp`, it is a binary covariate (0 and 1), the coefficient is 0.559, implying a 1.749 times higher hazard of the event in level 1 compared to level 0. The Wald p-value is 0.009 < 0.05, indicating statistical significance.
-
-For `age`, for each one-unit increase in age, the hazard (risk) of the event increases by a factor of 1.049. The coefficient is statistically significant with p-value < 0.001.
-
-For `EF_cat`, it is a categorical variable with three levels: Low, Medium, and High.
-The medium Ejection Fraction has a coefficient of -1.145, indicating a 0.318 times lower hazard compared to the low Ejection Fraction. The Wald p-value < 0.001, which is statistically significant.
-The high Ejection Fraction has a coefficient of -0.978, implying a 0.376 times lower hazard compared to the low Ejection Fraction. The Wald p-value < 0.001, which is statistically significant.
-
-For `sodium`, for each unit increase in sodium level, the hazard decreases by a factor of 0.963. Although its p-value = 0.117 > 0.05, it was still considered small enough to be statistically significant.
-
-For `logcre`, for each unit increase in logcre, the hazard increases by a factor of 3.034. The coefficient is statistically significant with p-value: < 0.001.
-
-The `overall p-value` = 5.55112e-16 with 6 dergree of freedom, which is statistically significant. It sugguest that there is strong evidence against the null hypothesis that none of the predictors are associated with the heart failure.
-
-
-```{r gompertz}
-## gompertz
-fit_gompertz <- eha::phreg(Surv(time, event) ~ gender + smoking + diabetes + bp + anemia + 
-                  age + EF + sodium + platelets + log(creatinine+1) + log(cpk+1), 
-                data = model_data, dist = "gompertz")
-# AIC Both direction
-# stepAIC(fit_gompertz, direction = "backward")
-
-final_gompertz <- eha::phreg(formula = Surv(time, event) ~ bp + anemia + age + EF_catMedium + 
-                          EF_catHigh + sodium + logcre, data = stepwise_data, dist = "gompertz")
-
-# Extract relevant information
-gompertz_summary <- data.frame(
-  Variable= c(names(final_gompertz$coefficients)),
-  Coef = round(as.vector(final_gompertz$coefficients),4),
-  `Exp(Coef)` = round(exp(as.vector(final_gompertz$coefficients)),4),
-  `se(Coef)` = round(sqrt(as.vector(diag(final_gompertz[["var"]]))),4),
-  `Wald p` = round(1-pchisq((as.vector(final_gompertz$coefficients)/sqrt(as.vector(diag(final_gompertz[["var"]]))))^2,1),4))
-
-# Create table using kable
-gompertz_summary %>% kable(booktabs = T, caption = "Table 6: Summary of Gompertz PH Model Fitting", 
-                           digits = 4) |>
-  kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
-
-```
-
-The Gompertz model obtained from stepwise selection using AIC contains anemia, sodium, bp, log(cre), ef_cat and age. 
-
-For `bp`, when comparing level 1 to the reference level 0, the coefficient of bp is 0.558, indicating a 1.747 times higher hazard of the event in level 1 compared to level 0. The Wald p-value is 0.009, indicating statistical significance.
-
-For `anemia`, for the variable "anemia," comparing level 1 to the reference level 0, the coefficient of anemia is 0.303, suggesting a 1.354 times higher hazard of the event in individuals with anemia compared to those without. Although its p-value = 0.149 > 0.05, it was still considered small enough to be statistically significant.
-
-For `age`, for each one-unit increase in age, the hazard (risk) of the event increases by a factor of 1.049. The coefficient is statistically significant with p-value < 0.001.
-
-For `ef_cat`, Compared to the reference level Low, the Medium Ejection Fraction has a coefficient of -1.116, indicating a 0.328 times lower hazard compared to the Low Ejection Fraction. The effect is statistically significant with Wald p-value: < 0.001.
-Compared to the reference level Low, The High Ejection Fraction has a coefficient of -1.001, implying a 0.368 times lower hazard compared to the Low Ejection Fraction. The effect is statistically significant with Wald p-value: < 0.001.
-
-For `sodium`, for each unit increase in sodium level, the hazard decreases by a factor of 0.959. Although its Wald p-value: 0.08, it was still considered small enough to be statistically significant.
-
-For `logcre`, for each unit increase in logcre, the hazard increases by a factor of 3.035. The coefficient is statistically significant with Wald p-value: < 0.001.
-
-The `overall p-value`=1.11022e-16 with 7 degree of freedom, which is statistically significant. It sugguest that there is strong evidence against the null hypothesis that none of the predictors are associated with heart failure. Therefore, it indicates the statistical significance of the overall model, implying that at least one predictor in the model is significantly associated with heart failure.
-
-
 
 ## Model Validation 
 
