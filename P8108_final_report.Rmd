@@ -289,17 +289,17 @@ $$\frac{h(t|X = x)}{h(t|X = x')} = e^{\beta({x-x'})}$$
 
 There are different ways to formulate the baseline hazard function $h_0(t)$, which lead to different models and estimations. 
 
-**Cox Proportational Hazard Model**
+#### Cox Proportational Hazard Model
 
-The Cox proportional hazard model is a semi-parametric model which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model is given by:
+The Cox proportional hazard model is a **semi-parametric model** which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model is given by:
 
 $$
 h_i(t) = \tilde{h}_0(t) \exp[\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}] \\
 $$
 
-**Weibull Proportional Hazard Model**
+## Weibull Proportional Hazard Model
 
-The Weibull model is a popular parametric proportional hazard model which assumes a specific functional form for the hazard rate, which can either increase or decrease over time. Its parameters are intuitively interpretable, with the shape parameter distinctly indicating whether the hazard rate is increasing, decreasing, or constant.
+The Weibull proportional hazard model is a popular **parametric model** which assumes a specific functional form for the hazard rate, which can either increase or decrease over time. Its parameters are intuitively interpretable, with the shape parameter distinctly indicating whether the hazard rate is increasing, decreasing, or constant.
 
 $$
 \begin{aligned}
