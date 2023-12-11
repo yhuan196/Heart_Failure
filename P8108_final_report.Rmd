@@ -70,12 +70,20 @@ Heart failure (HF) occurs when the muscles in the heart wall weaken and enlarge,
 
 According to the statistics, heart failure affects 1-2\% of adults in the general population and is more common in older individuals, with over 10\% of those aged over 70 years being diagnosed. The actual prevalence might be as high as 4\%, as heart failure is often undiagnosed or misdiagnosed, especially in the elderly. Since 2002, the prevalence of heart failure has increased by nearly 25\%, driven by factors such as an aging population, better survival rates post-coronary events, and a rise in risk factors like hypertension and atrial fibrillation. (Jones et al., 2019). 
 
+In Pakistan, heart failure poses a significant health challenge, with the rate estimated to be 110 per million (Ahmad et al., 2017). The prevalence is driven by factors like coronary heart disease, diabetes, high blood pressure, and lifestyle factors such as poor diet and lack of exercise (Ahmad et al., 2017). The study conducted by (Ahmad et al., 2017) specifically focuses on patients from the Institute of Cardiology and Allied Hospital, Faisalabad, illustrating the local impact and importance of understanding heart failure in the Pakistani context.
+
+Despite this alarming situation, reliable estimates of heart failure incidence and prevalence specific to this region are lacking. The need for localized data is particularly pressing in Pakistan, where diet and lifestyle factors differ significantly from Western countries and even other South Asian nations (Ahmad et al., 2017). Unlike India, Bangladesh, Nepal, and Sri Lanka, Pakistan exhibits distinct dietary patterns, which may influence heart failure progression differently (Ahmad et al., 2017). This difference necessitates a region-specific study to understand how different factors contribute to heart failure risk and progression.
+
+Moreover, the scarcity of studies focusing on heart failure in Pakistan points to a critical research gap. Such a gap hinders the development of effective, region-specific heart failure management strategies. Our study aims to fill this void by providing data and insights relevant to the Pakistani population. By doing so, it contributes to a more nuanced understanding of heart failure in the region, paving the way for potential tailored prevention and treatment strategies that are attuned to the unique needs of the local population.
+
 ## Objective
 
-Our project aims to assess the influence of key physiological and clinical factors on the outcomes of heart failure patients at the Institute of Cardiology and Allied Hospital, Faisalabad, Pakistan, during April-December 2015. We will examine variables such as creatinine levels, gender, age, ejection fraction, blood pressure, anemia, and serum sodium to determine their impact on patient prognosis. Utilizing a range of analytic techniques including exploratory data analysis, nonparametric methods, hypothesis testing, semi-parametric modeling, parametric survival models, model checking, and validation procedures, our study is designed to identify crucial predictors of heart failure and to investigate their influences on the outcome. The insights gained from this analysis are expected to contribute significantly to the development of tailored treatment strategies and improved risk stratification models, thereby enhancing clinical decision-making and patient care for heart failure management.
+Our project aims to assess the influence of key physiological and clinical factors on the outcomes of heart failure patients admitted to the Institute of Cardiology and Allied Hospital, Faisalabad, Pakistan, from April to December 2015. We will examine variables such as creatinine levels, gender, age, ejection fraction, blood pressure, anemia, and serum sodium to determine their impact on patient prognosis. Utilizing a range of analytic techniques including exploratory data analysis, nonparametric methods, hypothesis testing, semi-parametric modeling, parametric survival models, model checking, and validation procedures, our study is designed to identify crucial predictors of heart failure and to investigate their influences on patient outcomes. The insights gained from this analysis are expected to contribute significantly to the development of tailored treatment strategies and improved risk stratification models, thereby enhancing clinical decision-making and patient care for heart failure management.
 
 
-# Exploratory Data Analysis (EDA)
+# Methods
+
+## Exploratory Data Analysis (EDA)
 
 The present study focuses on 299 heart failure patients, including 105 women and 194 men. All participants were over 40 years old and diagnosed with left ventricular systolic dysfunction, classified under NYHA classes III and IV. The follow-up duration ranged from 4 to 285 days, with an average of 130 days. Diagnosis of the disease was confirmed through cardiac echo-cardiogram reports or physician's notes. A brief description of variables in the dataset is shown below:
 
@@ -93,7 +101,7 @@ The present study focuses on 299 heart failure patients, including 105 women and
 - **platelets**: Platelets in mcL
 - **cpk**: Creatinine phosphokinase in U/L
 
-This study falls into the category of Overall Survival (OS), where event indicator equals 1 indicates the death of the subject and is the endpoint of survival. Specifically, 203 subjects were right-censored and 96 subjects have event. Detailed descriptive statistics table stratified by survival status are presented below. 
+This study falls into the category of Overall Survival (OS), where event indicator equals 1 indicates the death of the subject and is the endpoint of survival. Specifically, 203 subjects were **right-censored** and 96 subjects have event. Detailed descriptive statistics table stratified by survival status are presented below. 
 
 ```{r}
 data = read_csv("./data/heart_failure.csv") 
@@ -212,7 +220,7 @@ dat_log = dat |>
          creatinine_log = log(creatinine + 1))
 ```
 
-# Methods
+
 ## Nonparametric Methods
 
 In our analysis, we applied life table, Kaplan-Meier and Fleming-Harrington Curves to estimate the survival function. All three approaches can handle censored data. 
