@@ -174,7 +174,7 @@ table1 = table1(~ time + age + gender + smoking + diabetes + bp + EF_cat +
 t1kable(table1) |> kable_styling(font_size = 8, latex_options = "HOLD_position")
 ```
 
-Based on the descriptive table, we observe that the mean survival time for deletions and events is 158 days and 70.9 days, respectively. Since we have the complete dataset, there is no need to concern about missing values issue. The table also lists the p-values for each variable with some having relatively large p-values. However, we still need to check the distribution of each variable ^[Histograms for continuous variables and bar charts for categorical variables] and determine which variables need to be transformed.
+Based on the descriptive table (**Table 1**), we observed that the mean survival time for deletions and events is 158 days and 70.9 days, respectively. Since the dataset is complete, we don't need to worry about missingness issue. The descriptive table also presents p-values for each variable, with some exhibiting relatively high values. However, we still need to check the distribution of each variable ^[Histograms for continuous variables and bar charts for categorical variables] and determine which variables need to be transformed.
 
 ```{r fig.align='center', fig.height=5, fig.width=8}
 # Data contains the continuous vars only
@@ -212,7 +212,7 @@ cate_barplot = ggplot(cate_dat.long, aes(x = value, fill = value)) +
 cate_barplot
 ```
 
-After checking the histograms, two continuous variables creatinine phosphokinase (cpk) and serum creatinine are right-skewed. We decide to log-transformed both of them for further model fitting. The new log-transformed variables follow a little more symmetric-like distribution and are stored as `logcre` and `logcpk`.
+After checking the histograms, two continuous variables creatinine phosphokinase (`cpk`) and serum creatinine (`creatinine`) are right-skewed. We decide to log-transformed both of them for further model fitting. The new log-transformed variables follow a little more symmetric-like distribution and are stored as `logcre` and `logcpk`.
 
 ```{r}
 dat_log = dat |> 
@@ -223,7 +223,7 @@ dat_log = dat |>
 
 ## Nonparametric Methods
 
-In our analysis, we applied life table, Kaplan-Meier and Fleming-Harrington Curves to estimate the survival function. All three approaches can handle censored data. 
+In our analysis, we applied life table, Kaplan-Meier and Fleming-Harrington curves to estimate the survival function. All three approaches can handle censored data. 
 
 The life table is particularly useful for larger sample sizes and when the data are grouped into intervals. The survival probability at each interval is estimated as:
   
@@ -263,13 +263,13 @@ $$
 \frac{L}{\sqrt{\text{Var}(L)}} = \frac{\sum_{i=1}^{k}n_i(d_{0i} - e_{0i})}{\sum_{i=1}^{k}\sqrt{\frac{n_{0i}n_{1i}d_i(n_i-d_i)}{n_i-1}}} \sim N(0,1)
 $$
 
-The Gehan's Wilcoxon test is actually a special case of weighted log-rank test for weight equals $n_i$.
+The Gehan's Wilcoxon test is actually a special case of weighted log-rank test for weight term equals $n_i$.
     
     
-## Proportional Hazard Models
+## Proportional Hazards Models
     
-We use two proportional hazard models to evaluate the effect of several factors on survival time. It allows us to examine how specified factors influence the rate of the event that we are interested in at a particular point in time. The rate here is the hazard rate. Proportional hazard model is the primary regression model to investigate the effectiveness of treatment $X$ over survival time $T$, where the $i_{th}$ patient at a time $t$ \
-is\
+The study also used two proportional hazards models to evaluate the effect of several factors on survival time. It allowed us to examine how specified factors influence the rate of the event that we are interested in at a particular time point. The "rate" here is the hazard rate. Proportional hazards model is the primary regression model to investigate the effectiveness of treatment $X$ over survival time $T$, where the $i_{th}$ patient at a time $t$ \
+is: \
 $$h_i(t) = h_0(t)\exp[{\beta_1X_{i1}+\beta_2X_{i2}+\ldots+\beta_p X_{ip}}]$$
 where
 
@@ -283,23 +283,23 @@ where
     
 \end{itemize}
     
-The **proportional hazard** can be expressed as ratio of two hazard functions at time t in two individuals or groups with covariates $X$ and $X'$, and does not depend on $t$. 
+The **proportional hazards** can be expressed as ratio of two hazard functions at time t in two individuals or groups with covariates $X$ and $X'$, and does not depend on $t$. 
 
 $$\frac{h(t|X = x)}{h(t|X = x')} = e^{\beta({x-x'})}$$
 
-There are different ways to formulate the baseline hazard function $h_0(t)$, which lead to different models and estimations. 
+There are different ways to formulate the baseline hazard function $h_0(t)$, corresponding with different models and estimations. 
 
 ### Cox Proportational Hazard Model
 
-The Cox proportional hazard model is a **semi-parametric model** which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric PH models which use the full likelihood, the Cox PH model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model is given by:
+The Cox proportional hazards model is a **semi-parametric model** which does not assume a particular baseline hazard function $\tilde{h}_0(t)$. In contrast to parametric proportional hazards models which use the full likelihood, the Cox proportional hazards model is formulated by partial likelihood because there is very limited information on $\beta$ beyond $L_p(\beta)$. The model is given by:
 
 $$
 h_i(t) = \tilde{h}_0(t) \exp[\beta_1 X_{i1} + \beta_2 X_{i2} + \ldots + \beta_p X_{ip}] \\
 $$
 
-### Weibull Proportional Hazard Model
+### Weibull Proportional Hazards Model
 
-The Weibull proportional hazard model is a popular **parametric model** which assumes a specific functional form for the hazard rate, which can either increase or decrease over time. Its parameters are intuitively interpretable, with the shape parameter distinctly indicating whether the hazard rate is increasing, decreasing, or constant.
+The Weibull proportional hazards model is a popular **parametric model** which assumes a specific functional form for the hazard rate, which can either increase or decrease over time. Its parameters are intuitively interpretable, with the shape parameter distinctly describing whether the hazard rate is increasing, decreasing, or constant.
 
 $$
 \begin{aligned}
@@ -339,27 +339,22 @@ $$
 
 where $k = 0$ for the exponential model, $k = 1$ for the Weibull, log-logistic and log-normal models, and $k = 2$ for the generalized gamma model.
 
-## Model Checking in the Proportional Hazard Model
+## Model Checking in the Proportional Hazards Model
 
 **Graphical Approach**
 
-The Cox Proportional Hazard model has two main assumptions. One is that the hazard functions of the survival curves of the different strata are proportional at time t. The other assumption is that the relationship between the $\log h(t)$ and each covariate is linear. We can compare the survival curves visually to check the PH assumption. One of the most commonly used plot is $\log(-\log\hat{S}(t|Z = z))$ over $\log t$. Since we know:
+The Cox proportional hazards model has two main assumptions. One is that the hazard functions of the survival curves of the different strata are proportional at time t. The other assumption is that the relationship between the $\log h(t)$ and each covariate is linear. We can compare the survival curves visually to check the PH assumption. One of the most commonly used plot is $\log(-\log\hat{S}(t|Z = z))$ over $\log t$. Since we know:
 
 $$\log(-\log\hat{S}(t|Z = z))-\log(-\log\hat{S}_0(t)) = \beta$$
 where $Z$ is a binary group indicator and the survival probability is usually estimated by K-M estimator. The parallel curves in the plot indicates the hazard ratio across the variable of interest is proportional at time t.
 
-Another graphical method is to compare the differences between the fitted survival functions and observed K-M estimates from our PH model. If the fitted survival curse is closed to the observed K-M estimated survival curve, our PH assumption holds. 
-
-
-In the parametric proportional hazard models, we can use both $-\log \hat{S}(t)$ plot and $\log(-\log\hat{S}(t))$ to confirm if the hazard rate is constant. In other words, it can help us choose a proper distribution before fitting the models. For the $-\log \hat{S}(t)$ plot, a straight line means constant hazard rate and the distribution should be exponential. Otherwise, Weibull model is better. In the $\log(-\log\hat{S}(t))$ plot, if the slope of the straight line equals 1, then hazard rate should be constant. And if it is not, we choose Weibull model.
+Another graphical method is to compare the differences between the fitted survival functions and observed K-M estimates from our proportional hazards models. If the fitted survival curves are closed to the observed K-M estimated survival curves, our PH assumption holds. 
+In the parametric proportional hazards models, we can use both $-\log \hat{S}(t)$ plot and $\log(-\log\hat{S}(t))$ plot to confirm whether the hazard rate is constant. In other words, it can help us choose a proper distribution before fitting the models. For the $-\log \hat{S}(t)$ plot, a straight line represents constant hazard rate and the distribution of time should be exponential. Otherwise, Weibull model is preferred. In the $\log(-\log\hat{S}(t))$ plot, if the slope of the straight line equals 1, the hazard rate should be constant which also means our survival time is exponentially distributed. And if it is not, the survival time should follows Weibull distribution.
 
 
 **Schoenfeld Residuals Test**
 
 The Schoenfeld residuals test evaluating the proportional hazards assumption in Cox regression models. It involves plotting the residuals against time; a lack of systematic trends in this plot generally indicates that the assumption holds. A smoothed curve can also be added to the plot to aid in interpretation. Conversely, if the residuals display a distinct trend over time, it suggests a violation of the proportional hazards assumption. Such a violation may occur if the effect of a covariate on the hazard rate changes over time, leading to non-constant hazard ratios. This could be attributed to time-varying covariates or time-dependent effects, which alter the relationship between the covariates and the survival outcome throughout the study period.
-
-
-
 
 ## Model Validation
 
@@ -445,7 +440,7 @@ fh_plot =
 (km_overall_plot + km_plot) / (fh_overall_plot + fh_plot)
 ```
 
-From the survival curves in **Figure 2.1** and **Figure 2.3**, we noticed that the whole lines (as well as confidence interval) in both Kaplan-Meier and Fleming-Harrington are above 50 percent. In other words, more than half of the individuals in this study have not experienced the event in the study period, and the median survival time is longer than 300 days (10 months), with a certain level of significance.
+From the survival curves in **Figure 2.1** and **Figure 2.3**, we noticed that the whole lines (as well as **confidence interval**) in both Kaplan-Meier and Fleming-Harrington are above 50\%. In other words, more than half of the individuals in this study have not experienced the event in the study period, and the median survival time is longer than 300 days (10 months), with a certain level of significance.
 
 Moreover, **Figure 2.2** and **Figure 2.4** have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.95) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
 
@@ -481,14 +476,14 @@ col.names = c("Gender", "N", "Observed", "Expected", "$\\frac{(O-E)^2}{E}$",
   kable_styling(latex_options = c("HOLD_position"))
 
 results_table2 <- kable(results2, align = "c", booktabs = T, 
-caption = "Figure 3.2: P-values for the Log-rank and Gehan's Wilcoxon test") |>
+caption = "Figure 3.2: P-value for the Log-rank and Gehan's Wilcoxon Tests") |>
   kable_styling(latex_options = c("HOLD_position"))
 
 results_table1
 results_table2
 ```
 
-The Log-Rank test and the Gehan's Wilcoxon test can be used to test for differences in survival experience between genders. Reviewing the results from the table, we find that both the Log-Rank test and the Gehan's Wilcoxon test have provided a similar result and gave a p-value greater than 0.05. This indicates that we failed to reject the null hypothesis at the significance level of 0.05, and we can state there is no statistically significant difference in survival experiences between males and females.
+The log-Rank test and Gehan's Wilcoxon test can be used to test for differences in survival experience between genders. Reviewing the results from the table, we find that both the Log-Rank test and the Gehan's Wilcoxon test have provided a similar result and provided a p-value greater than 0.05. This finding indicates that we failed to reject the null hypothesis at the significance level of 0.05, and we can state there is no statistically significant difference in survival experiences between males and females.
 
 ## Model Selection
 ### Survival Tree
@@ -502,7 +497,7 @@ surv_tree <- rpart(surv_obj ~ gender + smoking + diabetes +
 rpart.plot::rpart.plot(surv_tree, main = "Figure 3: Results of Survival Tree")
 ```
 
-The survival tree depicted in the image stratifies patients based on factors affecting survival. At the first level, patients are divided by `EF_cat`, suggesting that EF is a significant factor in survival. For patients with medium to high EF, age is the next discriminator, indicating its importance in survival for this subgroup. Among those with lower EF, log-transformed creatinine levels further split the cohort, underscoring renal function's role in survival. The tree branches into additional factors such as log-transformed cpk levels, the presence of diabetes, and sodium levels, highlighting their contribution to survival outcomes. Terminal nodes provide risk ratios and the proportion of patients experiencing the event, illustrating the combined effect of these variables on patient survival. This tree model, therefore, offers a nuanced view of patient risk profiles, emphasizing the multifactorial nature of survival in this patient population.
+The survival tree depicted in the image stratifies patients based on factors affecting survival. At the first level, patients are divided by `EF_cat` variable, suggesting that EF is a significant factor in survival. For patients with medium to high EF, age is the next discriminator, indicating its importance in survival for this subgroup. Among those with lower EF, log-transformed creatinine levels further split the cohort, underscoring renal function's role in survival. The tree branches into additional factors such as log-transformed creatinine phosphokinase levels (`logcpk`), the presence of diabetes, and sodium levels, highlighting their contribution to survival outcomes. Terminal nodes provide risk ratios and the proportion of patients experiencing the event, illustrating the combined effect of these variables on patient survival. This tree model, therefore, offers a nuanced view of patient risk profiles, emphasizing the multifactorial nature of survival in this patient population.
 
 ### Stepwise Selection
 
@@ -648,7 +643,7 @@ model_selection |> kable(booktabs = T,
 
 Our model selection applied bidirectional stepwise selection with a suite of model assessment criteria, AIC, AICc, and SBC. In the variable selection process, we adopted specific significance thresholds, setting the entry-level at $0.25$ and the stay level at $0.15$, to ensure a robust and relevant selection of predictors for our model.
 
-The **Table 3** summarizes the Cox model selection process, indicating `logcre`, `age`, `EF` categories, and `BP` as persistent predictors across the top four models. The AIC favors `logcre` and `age` for their significant contributions to model fit relative to added complexity, emphasizing model fit over parameter count. 
+The **Table 3** summarizes the Cox proportional hazards model selection process, indicating `logcre`, `age`, `EF` categories, and `BP` as persistent predictors across the top four models. The AIC favors `logcre` and `age` for their significant contributions to model fit relative to added complexity, emphasizing model fit over parameter count. 
 
 However, with large sample size, the AICc modification slightly adjusts these values, shifting the preference toward other variables like `diabetes`, which shows the lowest AICc, suggesting a strong impact on the model when accounting for sample size. The SBC, with its more substantial penalty for complexity, particularly at larger sample sizes, selects `BP` as the best variable, underscoring its contribution to the model's explanatory power without excessive complexity. 
 
@@ -664,7 +659,7 @@ $$
 
 ### Model Checking
 
-Before fitting the Cox Proportional Hazard model, we need to check whether our variables hold the PH assumption^[See the Method Section for details]. The $\log(-\log\hat{S}(t|Z = z))$ over $\log t$ plot and observed survival versus estimated survival curves are provided below. We have multiple variables remained after model selection, so we randomly took two of them (`EF_cat` and `logcre`) for the PH assumption check. Since `logcre`^[Since 1.5 mg/dL is the clinical threshold of creatinine, so we categorized log(creatinine + 1) > log(2.5) as "High", otherwise, it's in "Low" group. And people in "High" group should be regarded as renal dysfunction.] is continuous variable, we categorized it into two groups and recoded as "Low" and "High", respectively. 
+Before fitting the Cox proportional hazards model, we need to check whether our variables hold the PH assumption^[See the Method Section for details]. The $\log(-\log\hat{S}(t|Z = z))$ over $\log t$ plot and observed survival versus estimated survival curves are provided below. We have multiple variables remained after model selection, so we randomly took two of them (`EF_cat` and `logcre`) for the PH assumption check. Since `logcre`^[Since 1.5 mg/dL is the clinical threshold of creatinine, so we categorized log(creatinine + 1) > log(2.5) as "High", otherwise, it's in "Low" group. And people in "High" group should be regarded as renal dysfunction.] is continuous variable, we categorized it into two groups and recoded as "Low" and "High", respectively. 
 
 ```{r fig.align='center', fig.width=10, fig.height=6}
 mc_dat = nonpara_dat %>% mutate(age_cat = 
@@ -765,13 +760,13 @@ ggcoxzph(cox.zph(scho), var = c("EF_cat"), df = 2, nsmo = 1000)
 
 \newpage
 
-Obviously, the curves in **Figure 4.2** are parallel with each other, indicating the proportional hazard assumption hold. For the observed survival versus estimated survival plot **Figure 5.2**, the straight curve and dashed curve are close to each other, which means the hazard ratio is proportional for creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots (**Figure 6.1**) of the fitted model. We chose to input `logcre` variables and found a regression lines with a slope close to zero.
+Obviously, the curves in **Figure 4.2** are parallel with each other, indicating the proportional hazards assumption holds. For the observed survival versus estimated survival plot **Figure 5.2**, the solid curve and dashed curve are close to each other, which means the hazard ratio is proportional for creatinine groups. These findings are also consistent with what we observed in the Schoenfeld residual plots (**Figure 6.1**) of the fitted model. We chose to input `logcre` variables with resulted in a regression lines with a slope close to zero.
 
-However, after checking the `EF_cat` variable, the curves in **Figure 4.1** are not parallel, the straight curve and dashed curve in **Figure 5.1** are not close to each other, especially at the beginning of the study. And there is an obviously non-zero slope for the regression line in Global Schoenfeld test in **Figure 6.2**. The PH assumption is then violated and we decide to remove this variable from our models and subsequent analyses.
+However, after examining the `EF_cat` variable, **the curves in Figure 4.1** are not parallel. The solid and dashed curves in **Figure 5.1** are not close to each other, especially at the beginning of the study. In **Figure 6.2**, we find that the slope of the regression line for the global Schoenfeld test is clearly non-zero. These findings violate the PH assumptions, and therefore we decided to remove `EF_cat` from the model and the subsequent analyses.
 
 ### Cox Model Fitting and Results
 
-Following the model checking in the Cox proportional hazards analysis, we exclude ejection fraction due to its violation of proportional hazard assumption. The final model thus includes the covariates: creatinine, age, blood pressure status, and sodium. This final model is as follows:
+Following the model checking in the Cox proportional hazards analysis, we excluded ejection fraction due to its violation of PH assumption. The final model thus includes the covariates: creatinine, age, blood pressure status, and sodium. This final model is as follows:
 
 $$
 h(t) = h_0(t)\exp[\beta_1{Age} + \beta_2{BP}+\beta_3{Sodium} + \beta_4\log({Creatinine}+1)]
@@ -789,14 +784,14 @@ model_summary <- tibble(Variable = base::rownames(cox_summary$coefficients),
   dplyr::select(-z)
 
 model_summary |> kable(booktabs = T, escape = F,
-      caption = "Table 4: Summary of Cox Proportional Hazard Model", 
+      caption = "Table 4: Summary of Cox Proportional Hazards Model", 
       digits = 4, row.names = TRUE, 
       col.names = c("Variable", 
                     "$\\beta$", "$exp(\\beta)$", "$SE(\\beta)$",  "P-value")) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-**Table 4** indicates that the first five variables are statistically significant at $\alpha = 0.05$. Among these, `logcre`, `age`, and `bp` exhibit positive hazard ratios, suggesting an increased risk associated with higher values of these variables. On the other hand, `sodium` demonstrates a negative hazard ratio, indicating patient with high sodium value have a lower risk of mortality.
+Our **Table 4** indicates the first five variables are statistically significant at $\alpha = 0.05$. Among these, `logcre`, `age`, and `bp` exhibit positive hazard ratios, suggesting an increased risk associated with higher values of these variables. On the other hand, `sodium` demonstrates a negative hazard ratio, indicating patient with high sodium value have a lower risk of mortality.
 
 
 ## Parametric Models
@@ -822,7 +817,7 @@ legend("topleft", legend = c("High", "Low"),
        title = "Creatinine Group", col = c("red", "blue"), lty = 1)
 ```
 
-Since we have already created the $\log(-\log\hat{S}(t)$ (**Figure 4.1** and **Figure 4.2**) for `age` and `logcre`, and the slopes do not strictly equal to 1. Now we also check the $-\log\hat{S}(t)$ plot (**Figure 7.1** and **Figure 7.2**) for same variables. The curves for both two plots seems not to be straight and linear. We suggest fitting Weibull distributions for parametric PH model. 
+Since we have already created the $\log(-\log\hat{S}(t))$ (**Figure 4.1** and **Figure 4.2**) for `age` and `logcre`, and the slopes do not strictly equal to 1. In addition, we also check the $-\log\hat{S}(t)$ plot (**Figure 7.1** and **Figure 7.2**) for same variables, and the curves for both two plots seems not to be straight and linear. We then suggest fitting the survival time of the Weibull distribution in a parametric proportional hazards model.
 
 
 ### Weibull Model Fitting and Results
@@ -837,7 +832,7 @@ weibull_summary <- tibble(
   Coef = round(as.vector(final_weibull$coefficients),4),
   `Exp(Coef)` = round(exp(as.vector(final_weibull$coefficients)),4),
   `se(Coef)` = round(sqrt(as.vector(diag(final_weibull[["var"]]))),4),
-  `Wald p` = round(1 - pchisq((as.vector(final_weibull$coefficients)/
+  `Wald p` = round(1 - pchisq((as.vector(final_weibull$coefficients) /
                                  sqrt(as.vector(
                                    diag(final_weibull[["var"]]))))^2,1),4))
 
@@ -850,7 +845,7 @@ weibull_summary |> kable(booktabs = T, escape = F,
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-The Weibull proportional hazard model demonstrates that in the, the four variables are statistically significant at $\alpha=0.05$, which is the same as the significance variables in the Cox proportional hazard model. Additionally, the log scale value of $2.55$ implies that the baseline hazard function is scaled by $\exp(2.55)$, influencing the time to event and indicating a higher baseline hazard rate. Meanwhile, the log shape value of $-0.09$, when exponentiated to approximately $0.92$, suggests a decreasing hazard rate over time, meaning that the risk of the event occurring diminishes as time progresses.
+The Weibull proportional hazards model demonstrates that in the, the four variables are statistically significant at $\alpha=0.05$, which is the same as the significance variables in the Cox proportional hazards model. Additionally, the log scale value of $2.55$ implies that the baseline hazard function is scaled by $\exp(2.55)$, influencing the time to event and indicating a higher baseline hazard rate. Meanwhile, the log shape value of $-0.09$, when exponentiated to approximately $0.92$, suggests a decreasing hazard rate over time, meaning that the risk of the event occurring diminishes as time progresses.
 
 ## Model Validation 
 
@@ -891,7 +886,7 @@ legend("bottomright", legend = c("50 days", "250 days"),
 abline(0, 1, col = "black", lty = 2)
 ```
 
-Using the Cox proportional model with the 5 selected predictors, our time-dependent ROC analysis at 50 days yielded an AUC of approximately 0.742, while at 250 days, the AUC was 0.851. These values indicate that the model's ability to discriminate between those who will experience the event and those who will not improves over time. The ROC curves further visually demonstrate this improvement, with the curve for 250 days being closer to the top left corner, indicating better performance.
+Using the Cox proportional hazards model with the five selected predictors, our time-dependent ROC analysis at 50 days yielded an AUC of approximately 0.742, while at 250 days, the AUC was 0.851. These values indicate that the model's ability to discriminate between those who will experience the event and those who will not improves over time. The ROC curves further visually demonstrate this improvement, with the curve for 250 days being closer to the top left corner, indicating better performance.
 
 ### C-Index
 
@@ -920,7 +915,7 @@ boot_c_statistic <- function(original_data, indices) {
  #print(mean_c_stat)
 ```
 
-The average C-index calculated through bootstrapping (n = 400) was 0.703 This suggests that in about 70% of pairwise comparisons, our model correctly ranks the survival times. A C-index of around 0.70 is generally indicative of good predictive ability, especially in clinical settings where accurate risk stratification is crucial for treatment planning.
+The average C-index calculated through bootstrapping (n = 400) was 0.703 This suggests that in about 70\% of pairwise comparisons, our model correctly ranks the survival times. A C-index of around 0.70 is generally indicative of good predictive ability, especially in clinical settings where accurate risk stratification is crucial for treatment planning.
 
 
 ### Calibration Slope
@@ -962,11 +957,11 @@ In our analysis, the calibration of the Cox proportional hazards model was evalu
 
 # Discussion
 
-Our comprehensive analysis, employing both semi-parametric and parametric models, has successfully achieved the objective of elucidating the predictors associated with heart failure prognosis. By integrating the Cox Proportional Hazards model and the Weibull model, we have identified key factors such as creatinine levels, age, blood pressure, and sodium, which play significant roles in the survival outcomes of heart failure patients. Our findings have not only underscored the importance of these established risk factors but have also shed light on how their impact evolves over time.
+Our comprehensive analysis, employing both semi-parametric and parametric models, has successfully achieved the objective of elucidating the predictors associated with heart failure prognosis. By integrating the Cox Proportional Hazards model and the Weibull proportional hazards model, we have identified key factors such as creatinine levels, age, blood pressure, and sodium, which play significant roles in the survival outcomes of heart failure patients. Our findings have not only underscored the importance of these established risk factors but have also shed light on how their impact evolves over time.
 
 Moreover, according to the non-parametric methods, we found that the median survival time is longer than 300 days (10 months), indicating that more than half of the individuals in this study have not experienced the event in the study period. Meanwhile, according to the life table, we find that there is a slight difference in survival probability between male and female. However, the hypothesis test and model selection show that there is actually no difference. Similarities in heart failure presentation, treatment regimen, and sample size may explain the absence of sex-based differences in survival. Specifically, if the severity of heart failure was not related to gender or if patients received appropriate gender-based treatment and the sample size or characteristics of the study limited gender-specific analyses, potential differences could be masked.
 
-Both the **Cox PH model** and the **Weibull PH Model** reveals significant predictors of survival outcomes in heart failure patients. Key among these is `logcre`, with the Cox PH model showing a HR of 3.54, indicating a substantial risk increase with elevated levels. `Age` with the Cox PH model suggesting a $4%$ increase in risk per year, implies people with advancing age face higher hazard. `bp` similarly shows a significant impact on hazard, with a $62%$ increase in risk for higher levels in the Cox PH model, a finding mirrored in the Weibull analysis.
+Both the **Cox proportional hazards model** and the **Weibull proportional hazards Model** reveals significant predictors of survival outcomes in heart failure patients. Key among these is `logcre`, with the Cox PH model showing a HR of 3.54, indicating a substantial risk increase with elevated levels. `Age` with the Cox PH model suggesting a $4%$ increase in risk per year, implies people with advancing age face higher hazard. `bp` similarly shows a significant impact on hazard, with a $62%$ increase in risk for higher levels in the Cox PH model, a finding mirrored in the Weibull analysis.
 
 The Weibull PH model, in addition to confirming these findings, brings additional insights due to its parametric nature. The model emphasis on `bp`, `age`, and `logcre` with notably small p-values highlights their robustness as predictors. For `sodium`, the relationship with survival outcomes negative, a higher sodium value have lower risk of mortality. Both model shows this variable is statistically significant. The consistency between the Cox and Weibull models in identifying the key predictors provides credibility to these findings. 
 
@@ -976,7 +971,7 @@ Building on the preceding discussion, our analysis further delved into the model
 
 Furthermore, the calibration slope obtained from the bootstrap analysis (400 samples) was approximately 0.627. This value indicates a reasonable level of calibration, suggesting that the predicted risks generated by the model are in good alignment with the observed outcomes. The calibration slope is a vital metric in evaluating how well a model's predictions correspond to actual event probabilities, and in this case, it demonstrates the model’s reliability in risk prediction.
 
-Additionally, the average C-index, determined through bootstrapping, was 0.703. This indicates that in about 70% of pairwise comparisons, the model correctly ranks the survival times. A C-index of this magnitude reflects good predictive performance, especially important in clinical settings where accurate risk assessment is pivotal for treatment planning and patient care.
+Additionally, the average C-index, determined through bootstrapping, was 0.703. This indicates that in about 70\% of pairwise comparisons, the model correctly ranks the survival times. A C-index of this magnitude reflects good predictive performance, especially important in clinical settings where accurate risk assessment is pivotal for treatment planning and patient care.
 
 In concluding our discussion, it's important to recognize certain limitations inherent in our study. A key limitation of our model is linked to its adherence to the Proportional Hazards (PH) assumption, which influenced our selection of variables. This adherence necessitated a careful choice of variables, potentially limiting the breadth of predictors included in the model. As a result, this constraint may have impacted the model's overall predictive performance. By focusing exclusively on variables that satisfy the PH assumption, there's a possibility that other significant factors, which could have enhanced the model’s predictive capacity, were not considered. This selective approach, while methodologically sound, may have inadvertently narrowed the scope of our analysis, potentially omitting crucial predictors.
 
@@ -988,7 +983,7 @@ Despite these limitations, the insights gained contribute significantly to under
 
 # Conclusions
 
-In conclusion, our study, utilizing both the Cox Proportional Hazards and Weibull models, has effectively identified crucial predictors of survival outcomes in heart failure patients. The significant factors we highlighted include creatinine levels (logcre), age, blood pressure (bp), and sodium levels (sodium).
+In conclusion, our study, utilizing both the Cox Proportional Hazards and Weibull models, has effectively identified crucial predictors of survival outcomes in heart failure patients. The significant factors we highlighted include creatinine levels, age, blood pressure, and sodium levels.
 
 While acknowledging certain methodological limitations, notably the adherence to the Proportional Hazards assumption and the study's reliance on data from a single institution, our findings provide valuable insights into heart failure management. They underscore the importance of these predictors in clinical decision-making and patient care. By enhancing our understanding of heart failure progression, this research contributes to the development of more effective, personalized treatment strategies, ultimately aiming to improve patient outcomes in heart failure.
 
@@ -1011,8 +1006,6 @@ Future research should aim to expand upon these findings, exploring a broader ra
 6. Steyerberg, E. W., & Vergouwe, Y. (2014). Towards better clinical prediction models: Seven steps for development and an ABCD for validation. European Heart Journal, 35(29), 1925–1931. https://doi.org/10.1093/eurheartj/ehu207
 
 7. Zhong, J., Gao, J., Luo, J. C., Zheng, J. L., Tu, G. W., & Xue, Y. (2021). Serum creatinine as a predictor of mortality in patients readmitted to the intensive care unit after cardiac surgery: a retrospective cohort study in China. Journal of thoracic disease, 13(3), 1728–1736. https://doi.org/10.21037/jtd-20-3205
-
-<!-- Zamora, E., Lupón, J., Urrutia, A., González, B., Mas, D., Díez, C., Altimir, S., &amp; Valle, V. (2007, December 1). Prognostic significance of creatinine clearance rate in patients with heart failure and normal serum creatinine: Revista Española de Cardiología. Revista Española de Cardiología (English Edition). https://www.revespcardiol.org/en-prognostic-significance-creatinine-clearance-rate-articulo-13114181  -->
 
 \newpage
 
