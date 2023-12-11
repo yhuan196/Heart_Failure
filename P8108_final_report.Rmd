@@ -609,11 +609,11 @@ model_selection[is.na(model_selection)] <- c("-")
 
 # Create table using kable
 model_selection |> kable(booktabs = T,
-                         caption = "Table 4: Summary of Model Selection", digits = 4) |>
+                         caption = "Table 3: Summary of Model Selection", digits = 4) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-The **Table 4** summarizes the Cox model selection process, indicating `logcre`, `age`, `EF` categories, and `BP` as persistent predictors across the top four models. The AIC favors `logcre` and `age` for their significant contributions to model fit relative to added complexity, emphasizing model fit over parameter count. 
+The **Table 3** summarizes the Cox model selection process, indicating `logcre`, `age`, `EF` categories, and `BP` as persistent predictors across the top four models. The AIC favors `logcre` and `age` for their significant contributions to model fit relative to added complexity, emphasizing model fit over parameter count. 
 
 However, with large sample size, the AICc modification slightly adjusts these values, shifting the preference toward other variables like `diabetes`, which shows the lowest AICc, suggesting a strong impact on the model when accounting for sample size. The SBC, with its more substantial penalty for complexity, particularly at larger sample sizes, selects `BP` as the best variable, underscoring its contribution to the model's explanatory power without excessive complexity. 
 
@@ -718,7 +718,7 @@ model_summary <- model_summary |>
         `Pr(>|z|)` = as.numeric(`Pr(>|z|)`))
 
 model_summary |> kable(booktabs = T,
-      caption = "Table 5: Summary of Cox Proportional Hazard Model", 
+      caption = "Table 4: Summary of Cox Proportional Hazard Model", 
       digits = 4, row.names = TRUE) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
@@ -782,7 +782,8 @@ weibull_summary <- data.frame(
   `Wald p` = round(1-pchisq((as.vector(final_weibull$coefficients)/sqrt(as.vector(diag(final_weibull[["var"]]))))^2,1),4))
 
 # Create table using kable
-weibull_summary %>% kable(caption = "Table 6: Summary of Weibul PH Model Fitting", digits = 4) |>
+weibull_summary |> kable(booktabs = T, caption = "Table 5: Summary of Weibul PH Model Fitting", 
+                         digits = 4) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
@@ -823,7 +824,8 @@ gompertz_summary <- data.frame(
   `Wald p` = round(1-pchisq((as.vector(final_gompertz$coefficients)/sqrt(as.vector(diag(final_gompertz[["var"]]))))^2,1),4))
 
 # Create table using kable
-gompertz_summary %>% kable(caption = "Summary of Gompertz PH Model Fitting", digits = 4) |>
+gompertz_summary %>% kable(booktabs = T, caption = "Table 6: Summary of Gompertz PH Model Fitting", 
+                           digits = 4) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 
 ```
