@@ -24,7 +24,7 @@ abstract: "Heart failure (HF) results from weakened heart muscles, impairing blo
   of heart failure (HF) patients between April and December 2015. Our research employs
   a comprehensive range of statistical methodologies, including exploratory data analysis,
   non-parametric approaches, semi-parametric model, parametric models, hypothesis testing, model checking,
-  and validation procedures, aiming to identify significant predictors and investigate their influences on heart failure. The significant factors identified in our study include creatinine levels, age, blood pressure, ejection fraction, and serum sodium. Additionally, the model's discriminative ability across varied samples and conditions is validated using rigorous bootstrap validation methods such as c-index and calibration slope. Our findings contribute to refining risk assessment models, enhancing clinical decision-making, and optimizing patient care for heart failure in the future. The insights gained from our modeling process offer a deeper understanding of HF progression and its risk factors, paving the way for more personalized treatment approaches and preventive strategies that could profoundly impact patient outcomes and quality of life."
+  and validation procedures, aiming to identify significant predictors and investigate their influences on heart failure. The significant factors identified in our study include creatinine levels, age, blood pressure, and serum sodium. Additionally, the model's discriminative ability across varied samples and conditions is validated using rigorous bootstrap validation methods such as c-index and calibration slope. Our findings contribute to refining risk assessment models, enhancing clinical decision-making, and optimizing patient care for heart failure in the future. The insights gained from our modeling process offer a deeper understanding of HF progression and its risk factors, paving the way for more personalized treatment approaches and preventive strategies that could profoundly impact patient outcomes and quality of life."
 editor_options:
   chunk_output_type: console
 ---
@@ -396,7 +396,7 @@ life_table_female |> kable(booktabs = T,
 
 **Table 2.1** and **Table 2.2** represent the lifetable with a time break of 30 days (one month), stratified by gender. According to the table, we find that the last line (270-300 days) shows a survival probability larger than 0.5 for both genders (0.54 for male and 0.59 for female). This may indicate a high life expectancy and improved health care, where a significant proportion of individuals are expected to live longer than 300 days (10 months). Moreover, males have a relatively shorter survival time than females based on the life table. This hypothesis needs future testing in the following modeling fit.
 
-### The Kaplan-Meier and Fleming-Harrington Model
+### The Kaplan-Meier Curve and Fleming-Harrington Test
 
 ```{r}
 km_overall = survfit(Surv(time, event) ~ 1, data = nonpara_dat)
@@ -722,27 +722,29 @@ However, after checking the `EF_cat` variable, the curves in **Figure 4.1** are 
 
 ### Cox Model Fitting and Results
 
-```{r final model results}
-# Create table using kable
-model_summary <- tibble(stepwise_model2$`Coefficients of the Selected Variables`) %>% select(-Variable)
+Following the model checking in the Cox proportional hazards analysis, we exclude ejection fraction due to its violation of proportional hazard assumption. The final model thus includes the covariates: creatinine, age, blood pressure status, and sodium. This final model is as follows:
 
-model_summary <- model_summary |>
-  mutate(var = c("logcre", "age", "EF\\_catMedium", "EF\\_catHigh", "bp", "sodium"),
-         coef = as.numeric(coef),
-        `exp(coef)` = as.numeric(`exp(coef)`),
-        `se(coef)` = as.numeric(`se(coef)`),
-        z = as.numeric(z),
-        `Pr(>|z|)` = as.numeric(`Pr(>|z|)`)) %>% 
-  relocate(var, coef, `exp(coef)`, `se(coef)`, z, `Pr(>|z|)`)
+$$
+h(t) = h_0(t)\exp[\beta_1{Age} + \beta_2{BP}+\beta_3{Sodium} + \beta_4\log({Creatinine}+1)]
+$$
+
+```{r final model results}
+# final model
+cox_model <- coxph(Surv(time, event) ~ logcre + age + bp + sodium, data = stepwise_data)
+
+cox_summary <- summary(cox_model)
+
+model_summary <- tibble(Variable = base::rownames(cox_summary$coefficients), 
+                         as.data.frame(cox_summary$coefficients)) |> dplyr::select(-z)
 
 model_summary |> kable(booktabs = T, escape = F,
       caption = "Table 4: Summary of Cox Proportional Hazard Model", 
       digits = 4, row.names = TRUE, 
-      col.names = c("Variable", "$\\beta$", "$exp(\\beta)$", "$SE(\\beta)$", "Z test statistics", "P-value")) |>
+      col.names = c("Variable", "$\\beta$", "$exp(\\beta)$", "$SE(\\beta)$",  "P-value")) |>
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-**Table 4** indicates that the first five variables are statistically significant at $\alpha = 0.05$. Among these, `logcre`, `age`, and `bp` exhibit positive hazard ratios, suggesting an increased risk associated with higher values of these variables. On the other hand, `EF_cat` demonstrates a negative hazard ratio, indicating patient with high or medium ejection fractions value have a lower risk compared to those with low ejection fraction values.
+**Table 4** indicates that the first five variables are statistically significant at $\alpha = 0.05$. Among these, `logcre`, `age`, and `bp` exhibit positive hazard ratios, suggesting an increased risk associated with higher values of these variables. On the other hand, `sodium` demonstrates a negative hazard ratio, indicating patient with high sodium value have a lower risk of mortality.
 
 
 ## Parametric Models
@@ -787,7 +789,7 @@ weibull_summary |> kable(booktabs = T, escape = F, caption = "Table 5: Summary o
   kable_styling(latex_options = c("HOLD_position"), font_size = 10) 
 ```
 
-The Weibull PH model demonstrates that in the first four variables are statistically significant at $\alpha=0.05$, which is the same as the significance variables in the Cox proportional hazard model. Additionally, the log scale value of $2.547$ implies that the baseline hazard function is scaled by $\exp(2.547)$, influencing the time to event and indicating a higher baseline hazard rate. Meanwhile, the log shape value of $-0.0875$, when exponentiated to approximately $0.9162$, suggests a decreasing hazard rate over time, meaning that the risk of the event occurring diminishes as time progresses.
+The Weibull proportional hazard model demonstrates that in the, the four variables are statistically significant at $\alpha=0.05$, which is the same as the significance variables in the Cox proportional hazard model. Additionally, the log scale value of $2.55$ implies that the baseline hazard function is scaled by $\exp(2.55)$, influencing the time to event and indicating a higher baseline hazard rate. Meanwhile, the log shape value of $-0.09$, when exponentiated to approximately $0.92$, suggests a decreasing hazard rate over time, meaning that the risk of the event occurring diminishes as time progresses.
 
 ## Model Validation 
 
@@ -888,9 +890,10 @@ In our analysis, the calibration of the Cox proportional hazards model was evalu
 
 According to the non-parametric methods, we found that the median survival time is longer than 300 days (10 months), indicating that more than half of the individuals in this study have not experienced the event in the study period. Meanwhile, according to the life table, we find that there is a slight difference in survival probability between male and female. However, the hypothesis test and model selection show that there is actually no difference. Similarities in heart failure presentation, treatment regimen, and sample size may explain the absence of sex-based differences in survival. Specifically, if the severity of heart failure was not related to gender or if patients received appropriate gender-based treatment and the sample size or characteristics of the study limited gender-specific analyses, potential differences could be masked.
 
-Both the **Cox PH model** and the **Weibull PH Model** reveals significant predictors of survival outcomes in heart failure patients. Key among these is `logcre`, with the Cox PH model showing a HR of 3.06, indicating a substantial risk increase with elevated levels. `Age` with the Cox PH model suggesting a $5%$ increase in risk per year, implies people with advancing age face higher hazard. `bp` similarly shows a significant impact on hazard, with a 72% increase in risk for higher levels in the Cox PH model, a finding mirrored in the Weibull analysis.
+Both the **Cox PH model** and the **Weibull PH Model** reveals significant predictors of survival outcomes in heart failure patients. Key among these is `logcre`, with the Cox PH model showing a HR of 3.54, indicating a substantial risk increase with elevated levels. `Age` with the Cox PH model suggesting a $4%$ increase in risk per year, implies people with advancing age face higher hazard. `bp` similarly shows a significant impact on hazard, with a $62%$ increase in risk for higher levels in the Cox PH model, a finding mirrored in the Weibull analysis.
 
-The Weibull PH model, in addition to confirming these findings, brings additional insights due to its parametric nature. The model emphasis on `bp`, `age`, and `logcre` with notably small p-values highlights their robustness as predictors. For `sodium`, the relationship with survival outcomes is more complex. In the Cox PH model, it is approach to significance level $\alpha=0.1$,  but remains statistically non-significant. The consistency between the Cox and Weibull models in identifying the key predictors provides credibility to these findings. 
+The Weibull PH model, in addition to confirming these findings, brings additional insights due to its parametric nature. The model emphasis on `bp`, `age`, and `logcre` with notably small p-values highlights their robustness as predictors. For `sodium`, the relationship with survival outcomes negative, a higher sodium value have lower risk of mortality. Both model shows this variable is statistically significant. The consistency between the Cox and Weibull models in identifying the key predictors provides credibility to these findings. 
+
 Supporting this, A study published in Frontiers in Cardiovascular Medicine found that postoperative serum creatinine is a significant prognostic factor for cardiac surgery patients (Zhong et al., 2021). This study showed that higher levels of postoperative serum creatinine were linked to increased hospital mortality and longer stays in the intensive care unit. Specifically, it found that patients who did not survive had significantly higher postoperative serum creatinine levels, and there was a positive correlation between these levels and lengths of ICU stay.
 
 Building on the preceding discussion, our analysis further delved into the model's predictive capabilities using time-dependent ROC analysis and C-index evaluation. Our time-dependent ROC analysis revealed an Area Under the Curve (AUC) of approximately 0.742 at 50 days, which increased to 0.851 at 250 days. These AUC values signify the model's ability to effectively discriminate between patients at different risk levels, with an improvement observed over time. The increased AUC at 250 days suggests enhanced predictive accuracy for longer-term outcomes, a crucial aspect for patient management in heart failure.
@@ -903,7 +906,7 @@ In conclusion, the inclusion of key variables such as creatinine levels (`logcre
 
 # Conclusions
 
-The non-parametric method showed that more than 50% of both genders (54% for males and 59% for females) can survive for over 300 days. This may indicate a high life expectancy and improved health care. Moreover, the non-parametric method showed no significant difference in survival probability between genders. This result was later consistent with the results of the model selection. In conclusion, incorporating the insights from both semi-parametric and parametric models, particularly the Cox Proportional model, our study offers a holistic view of heart failure prognosis. The findings not only reinforce the critical role of established risk factors but also highlight the evolving nature of these risks over time. While the Cox model demonstrates strong discriminative ability, it also suggests the need for refinement in risk predictions and addressing slight over-estimation. Future work will focus on refining the model's complexity, exploring alternative approaches, and conducting external validation to enhance its accuracy and applicability in diverse clinical settings. This study, by identifying significant predictors such as creatinine levels, age, ejection fraction, and blood pressure, contributes to a deeper understanding of heart failure progression and lays the groundwork for more personalized and effective patient management strategies.
+The non-parametric method showed that more than 50% of both genders (54% for males and 59% for females) can survive for over 300 days. This may indicate a high life expectancy and improved health care. Moreover, the non-parametric method showed no significant difference in survival probability between genders. This result was later consistent with the results of the model selection. In conclusion, incorporating the insights from both semi-parametric and parametric models, particularly the Cox Proportional model, our study offers a holistic view of heart failure prognosis. The findings not only reinforce the critical role of established risk factors but also highlight the evolving nature of these risks over time. While the Cox model demonstrates strong discriminative ability, it also suggests the need for refinement in risk predictions and addressing slight over-estimation. Future work will focus on refining the model's complexity, exploring alternative approaches, and conducting external validation to enhance its accuracy and applicability in diverse clinical settings. This study, by identifying significant predictors such as creatinine levels, age, blood pressure, and sodium contributes to a deeper understanding of heart failure progression and lays the groundwork for more personalized and effective patient management strategies.
 
 \newpage
 
