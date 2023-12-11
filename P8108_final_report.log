@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.18)  11 DEC 2023 14:36
+=======
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  11 DEC 2023 14:57
+>>>>>>> 697436a95a1743501de59923807b2485ba506648
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -675,12 +679,19 @@ Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-10-
 <P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf, id=322, 722.7pt x 433.62pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf>
+<<<<<<< HEAD
 Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf  used on input line 884.
 (pdftex.def)             Requested size: 469.76045pt x 281.85628pt.
+=======
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-13
+-1.pdf  used on input line 893.
+(pdftex.def)             Requested size: 469.76074pt x 277.6457pt.
+>>>>>>> 697436a95a1743501de59923807b2485ba506648
 [11]
 <P8108_final_report_files/figure-latex/unnamed-chunk-13-2.pdf, id=332, 722.7pt x 433.62pt>
 File: P8108_final_report_files/figure-latex/unnamed-chunk-13-2.pdf Graphic file (type pdf)
 <use P8108_final_report_files/figure-latex/unnamed-chunk-13-2.pdf>
+<<<<<<< HEAD
 Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-13-2.pdf  used on input line 886.
 (pdftex.def)             Requested size: 469.76045pt x 281.85628pt.
 <P8108_final_report_files/figure-latex/unnamed-chunk-14-1.pdf, id=333, 578.16pt x 289.08pt>
@@ -790,6 +801,142 @@ Underfull \vbox (badness 10000) detected at line 1722
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-10-10>
  ***********
+=======
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-13
+-2.pdf  used on input line 895.
+(pdftex.def)             Requested size: 469.75903pt x 275.30685pt.
+<P8108_final_report_files/figure-latex/unnamed-chunk-14-1.pdf, id=232, 568.1225
+pt x 278.03876pt>
+File: P8108_final_report_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file
+ (type pdf)
+<use P8108_final_report_files/figure-latex/unnamed-chunk-14-1.pdf>
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-14
+-1.pdf  used on input line 899.
+(pdftex.def)             Requested size: 469.7731pt x 229.90663pt.
+<P8108_final_report_files/figure-latex/unnamed-chunk-15-1.pdf, id=233, 568.1225
+pt x 278.03876pt>
+File: P8108_final_report_files/figure-latex/unnamed-chunk-15-1.pdf Graphic file
+ (type pdf)
+<use P8108_final_report_files/figure-latex/unnamed-chunk-15-1.pdf>
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-15
+-1.pdf  used on input line 908.
+(pdftex.def)             Requested size: 469.7731pt x 229.90663pt.
+[12 <./P8108_final_report_files/figure-latex/unnamed-chunk-13-1.pdf> <./P8108_f
+inal_report_files/figure-latex/unnamed-chunk-13-2.pdf>] [13 <./P8108_final_repo
+rt_files/figure-latex/unnamed-chunk-14-1.pdf> <./P8108_final_report_files/figur
+e-latex/unnamed-chunk-15-1.pdf>]
+<P8108_final_report_files/figure-latex/unnamed-chunk-16-1.pdf, id=272, 689.5762
+5pt x 285.065pt>
+File: P8108_final_report_files/figure-latex/unnamed-chunk-16-1.pdf Graphic file
+ (type pdf)
+<use P8108_final_report_files/figure-latex/unnamed-chunk-16-1.pdf>
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-16
+-1.pdf  used on input line 980.
+(pdftex.def)             Requested size: 469.75792pt x 194.19395pt.
+<P8108_final_report_files/figure-latex/unnamed-chunk-16-2.pdf, id=273, 689.5762
+5pt x 285.065pt>
+File: P8108_final_report_files/figure-latex/unnamed-chunk-16-2.pdf Graphic file
+ (type pdf)
+<use P8108_final_report_files/figure-latex/unnamed-chunk-16-2.pdf>
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-16
+-2.pdf  used on input line 981.
+(pdftex.def)             Requested size: 469.75792pt x 194.19395pt.
+[14] [15 <./P8108_final_report_files/figure-latex/unnamed-chunk-16-1.pdf> <./P8
+108_final_report_files/figure-latex/unnamed-chunk-16-2.pdf>]
+<P8108_final_report_files/figure-latex/unnamed-chunk-17-1.pdf, id=305, 545.0362
+5pt x 322.20375pt>
+File: P8108_final_report_files/figure-latex/unnamed-chunk-17-1.pdf Graphic file
+ (type pdf)
+<use P8108_final_report_files/figure-latex/unnamed-chunk-17-1.pdf>
+Package pdftex.def Info: P8108_final_report_files/figure-latex/unnamed-chunk-17
+-1.pdf  used on input line 1031.
+(pdftex.def)             Requested size: 469.7533pt x 277.69945pt.
+[16 <./P8108_final_report_files/figure-latex/unnamed-chunk-17-1.pdf>] [17] [18]
+[19]
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 1228.
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
+1315.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ts1lmtt.fd
+File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+
+LaTeX Font Warning: Font shape `T1/lmtt/bx/it' in size <10> not available
+(Font)              Font shape `T1/lmtt/b/sl' tried instead on input line 1443.
+
+
+[20]
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+[21]
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+[22]
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+[23]
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+[24]
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+[25]
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+[26]
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+[27]
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1731
+ []
+
+[28]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1734.
+[29]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1734.
+(./P8108_final_report.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1734.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1734.
+>>>>>>> 697436a95a1743501de59923807b2485ba506648
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -797,6 +944,7 @@ Package rerunfilecheck Info: File `P8108_final_report.out' has not changed.
 (rerunfilecheck)             Checksum: B4DEF70FA94154F83F1E140C6C0FBC20;5397.
  ) 
 Here is how much of TeX's memory you used:
+<<<<<<< HEAD
  14945 strings out of 476469
  244432 string characters out of 5800337
  1977043 words of memory out of 5000000
@@ -806,6 +954,41 @@ Here is how much of TeX's memory you used:
  75i,11n,79p,601b,513s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx8.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx9.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr6.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr9.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtko10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/Users/Cui Runze/AppData/Roaming/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
 Output written on P8108_final_report.pdf (32 pages, 669303 bytes).
+=======
+ 16381 strings out of 480608
+ 246711 string characters out of 5903631
+ 650582 words of memory out of 5000000
+ 31696 multiletter control sequences out of 15000+600000
+ 610009 words of font info for 145 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 41i,11n,42p,817b,390s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
+texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/local/texlive/2020/
+texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2020/texmf-dist/fon
+ts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvi
+ps/lm/lm-mathit.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-m
+athex.enc}</usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx10.pfb>
+</usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/loca
+l/texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx8.pfb></usr/local/texlive/2
+020/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></usr/local/texlive/2020/texmf-d
+ist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2020/texmf-dist/fonts/
+type1/public/lm/lmmi10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/publ
+ic/lm/lmmi5.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi7
+.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/
+local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texli
+ve/2020/texmf-dist/fonts/type1/public/lm/lmr5.pfb></usr/local/texlive/2020/texm
+f-dist/fonts/type1/public/lm/lmr6.pfb></usr/local/texlive/2020/texmf-dist/fonts
+/type1/public/lm/lmr7.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/publi
+c/lm/lmr8.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr9.pf
+b></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/lo
+cal/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></usr/local/texlive
+/2020/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2020/texmf
+-dist/fonts/type1/public/lm/lmtk10.pfb></usr/local/texlive/2020/texmf-dist/font
+s/type1/public/lm/lmtko10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/p
+ublic/lm/lmtt10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/l
+mtti10.pfb>
+Output written on P8108_final_report.pdf (31 pages, 662766 bytes).
+>>>>>>> 697436a95a1743501de59923807b2485ba506648
 PDF statistics:
  623 PDF objects out of 1000 (max. 8388607)
  513 compressed objects within 6 object streams
