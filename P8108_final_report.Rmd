@@ -344,7 +344,7 @@ Another graphical method is to compare the differences between the fitted surviv
 In the parametric proportional hazard models, we can use both $-\log \hat{S}(t)$ plot and $\log(-\log\hat{S}(t))$ to confirm if the hazard rate is constant. In other words, it can help us choose a proper distribution before fitting the models. For $-\log \hat{S}(t)$ plot, a straight line means constant hazard rate and the distribution should be exponential. Otherwise, Weibull model is better. In $\log(-\log\hat{S}(t))$ plot, if the slope of the straight line equals 1, then hazard rate should be constant. And if it is not, we choose Weibull model.
 
 
-**Schoenfeld residuals**
+**Schoenfeld Residuals Test**
 
 The Schoenfeld residuals test evaluating the proportional hazards assumption in Cox regression models. It involves plotting the residuals against time; a lack of systematic trends in this plot generally indicates that the assumption holds. A smoothed curve can also be added to the plot to aid in interpretation. Conversely, if the residuals display a distinct trend over time, it suggests a violation of the proportional hazards assumption. Such a violation may occur if the effect of a covariate on the hazard rate changes over time, leading to non-constant hazard ratios. This could be attributed to time-varying covariates or time-dependent effects, which alter the relationship between the covariates and the survival outcome throughout the study period.
 
@@ -410,9 +410,8 @@ km_plot =
   km |> autoplot() +
   labs(y = "S(t)",
        x = "Time",
-       subtitle = "Figure 2.2. Kaplan-Meier Survival Curve By Gender",
-       color = "Gender", fill = 'Gender') + theme(legend.position = "none")
-km_overall_plot + km_plot
+       subtitle = "Figure 2.2. Kaplan-Meier Survival Curves By Gender",
+       color = "Gender", fill = 'Gender')
 ```
 
 
@@ -429,9 +428,9 @@ fh_plot =
   fh |> autoplot() +
   labs(y = "S(t)",
        x = "Time",
-       subtitle = "Figure 2.4. Fleming-Harrington Survival Curve By Gender",
+       subtitle = "Figure 2.4. Fleming-Harrington Survival Curves By Gender",
        color = "Gender", fill = 'Gender')
-fh_overall_plot + fh_plot
+(km_overall_plot + km_plot) / (fh_overall_plot + fh_plot)
 ```
 
 From the graph we noticed that the median survival time is larger than 300 months. In other words, more than half of the individuals in this study have not experienced the event in the study period. Moreover, the Kaplan-Meier and Fleming-Harrington have similar trends and show no significant difference between genders. Given that the p-value is relatively high (p-value = 0.95) for both Kaplan-Meier and Fleming-Harrington estimators, we can further make sure that no significant difference appears in the survival experience between males and females.
